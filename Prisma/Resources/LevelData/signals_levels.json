@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 2,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  }
+]

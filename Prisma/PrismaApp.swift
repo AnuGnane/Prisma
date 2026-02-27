@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct PrismaApp: App {
@@ -13,5 +14,6 @@ struct PrismaApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(PersistenceManager.container)
     }
 }
