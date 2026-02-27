@@ -56,12 +56,30 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         return events
     }
 
+    // MARK: - Daily Event Loading (separate 365-event pool)
+
+    private static var cachedDailyEvents: [ArchiveEvent]?
+
+    private static func loadDailyEvents() -> [ArchiveEvent] {
+        if let cached = cachedDailyEvents { return cached }
+        guard let url = Bundle.main.url(forResource: "archive_events_daily", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let events = try? JSONDecoder().decode([ArchiveEvent].self, from: data),
+              !events.isEmpty else {
+            // Fall back to local events if daily pool not found
+            return loadEvents()
+        }
+        cachedDailyEvents = events
+        return events
+    }
+
     // MARK: - Init: Daily
 
     init(date: Date = .now) {
-        let events = Self.loadEvents()
-        let seed = date.dailySeed
-        let index = seed % events.count
+        let events = Self.loadDailyEvents()
+        // Use day-of-year so each calendar day gets a unique puzzle for a full year
+        let dayOfYear = (Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 1) - 1
+        let index = dayOfYear % events.count
         self.secretEvent = events[index]
         self.maxGuesses = 7
         self.gameState = .inProgress
