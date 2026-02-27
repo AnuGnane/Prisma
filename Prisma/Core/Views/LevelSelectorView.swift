@@ -68,7 +68,7 @@ struct LevelSelectorView: View {
     
     private var statsBar: some View {
         VStack(spacing: 8) {
-            Text("\(playedCount)/30 played · \(wonCount) won")
+            Text("\(playedCount)/100 played · \(wonCount) won")
                 .font(.system(size: 13, weight: .semibold, design: .monospaced))
                 .foregroundStyle(.white.opacity(0.5))
             
@@ -81,7 +81,7 @@ struct LevelSelectorView: View {
                     
                     RoundedRectangle(cornerRadius: 3)
                         .fill(colorForGame)
-                        .frame(width: geo.size.width * CGFloat(playedCount) / 30.0, height: 6)
+                        .frame(width: geo.size.width * CGFloat(playedCount) / 100.0, height: 6)
                         .animation(.easeInOut(duration: 0.3), value: playedCount)
                 }
             }
@@ -96,7 +96,7 @@ struct LevelSelectorView: View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 3)
         
         return LazyVGrid(columns: columns, spacing: 16) {
-            ForEach(1...30, id: \.self) { levelId in
+            ForEach(1...100, id: \.self) { levelId in
                 let progress = progressList.first(where: { $0.levelId == levelId })
                 let isPlayed = progress?.isPlayed ?? false
                 

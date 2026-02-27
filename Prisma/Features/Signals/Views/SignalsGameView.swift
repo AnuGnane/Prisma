@@ -110,7 +110,18 @@ struct SignalsGameView: View {
             .background(Capsule().fill(Color.white.opacity(0.08)))
 
             HStack(spacing: 16) {
-                if let levelId = viewModel.activeLevelId, levelId < 30 {
+                Button {
+                    dismiss()
+                } label: {
+                    Text(viewModel.activeLevelId == 100 ? "All Done" : "Done")
+                        .font(.system(size: 17, weight: .bold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
+                        .foregroundStyle(.white)
+                }
+
+                if let levelId = viewModel.activeLevelId, levelId < 100 {
                     Button {
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                             viewModel.loadLevel(levelId + 1)
@@ -124,17 +135,6 @@ struct SignalsGameView: View {
                             .foregroundStyle(.black)
                     }
                 }
-                
-                Button {
-                    dismiss()
-                } label: {
-                    Text(viewModel.activeLevelId == 30 ? "All Done" : "Done")
-                        .font(.system(size: 17, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
-                        .foregroundStyle(.white)
-                }
             }
         }
     }
@@ -142,35 +142,16 @@ struct SignalsGameView: View {
     // MARK: - Header
 
     private var header: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(spacing: 4) {
-                Text("SIGNALS")
-                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.5))
-                    .kerning(3)
+        VStack(spacing: 4) {
+            Text("SIGNALS")
+                .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                .foregroundStyle(.white.opacity(0.5))
+                .kerning(3)
 
-                counterPill
-                    .padding(.top, 2)
-            }
-            .frame(maxWidth: .infinity)
-
-            // 🛠 Debug reset — remove before shipping
-            Button {
-                viewModel.overrideForTesting(
-                    secret: SignalsCode(fromSeed: Date.now.dailySeed),
-                    maxGuesses: 5
-                )
-                showResultSheet = false
-            } label: {
-                Image(systemName: "arrow.counterclockwise")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.45))
-                    .padding(8)
-                    .background(Capsule().fill(Color.white.opacity(0.08)))
-            }
-            .buttonStyle(.plain)
-            .padding(.trailing, 16)
+            counterPill
+                .padding(.top, 2)
         }
+        .frame(maxWidth: .infinity)
     }
 
     /// Guess counter pill — liquid glass on iOS 26, frosted capsule on iOS 18.

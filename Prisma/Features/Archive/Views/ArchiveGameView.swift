@@ -118,7 +118,18 @@ struct ArchiveGameView: View {
             .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.06)))
 
             HStack(spacing: 16) {
-                if let levelId = viewModel.activeLevelId, levelId < 30 {
+                Button {
+                    dismiss()
+                } label: {
+                    Text(viewModel.activeLevelId == 100 ? "All Done" : "Done")
+                        .font(.system(size: 17, weight: .bold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
+                        .foregroundStyle(.white)
+                }
+
+                if let levelId = viewModel.activeLevelId, levelId < 100 {
                     Button {
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                             viewModel.loadLevel(levelId + 1)
@@ -132,17 +143,6 @@ struct ArchiveGameView: View {
                             .foregroundStyle(.black)
                     }
                 }
-                
-                Button {
-                    dismiss()
-                } label: {
-                    Text(viewModel.activeLevelId == 30 ? "All Done" : "Done")
-                        .font(.system(size: 17, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
-                        .foregroundStyle(.white)
-                }
             }
         }
     }
@@ -150,46 +150,25 @@ struct ArchiveGameView: View {
     // MARK: - Header
 
     private var header: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(spacing: 4) {
-                Text("ARCHIVE")
-                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.5))
-                    .kerning(3)
+        VStack(spacing: 4) {
+            Text("ARCHIVE")
+                .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                .foregroundStyle(.white.opacity(0.5))
+                .kerning(3)
 
-                counterPill
-                    .padding(.top, 2)
+            counterPill
+                .padding(.top, 2)
 
-                // Hint text
-                Text("\u{201C}\(viewModel.secretEvent.hint)\u{201D}")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.45))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .padding(.horizontal, 32)
-                    .padding(.top, 6)
-            }
-            .frame(maxWidth: .infinity)
-
-            // Debug reset
-            Button {
-                let events = Bundle.main.url(forResource: "archive_events", withExtension: "json")
-                    .flatMap { try? Data(contentsOf: $0) }
-                    .flatMap { try? JSONDecoder().decode([ArchiveEvent].self, from: $0) }
-                let seed = Date.now.dailySeed
-                let event = events?[seed % (events?.count ?? 1)] ?? viewModel.secretEvent
-                viewModel.overrideForTesting(event: event, maxGuesses: 7)
-                showResultSheet = false
-            } label: {
-                Image(systemName: "arrow.counterclockwise")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.45))
-                    .padding(8)
-                    .background(Capsule().fill(Color.white.opacity(0.08)))
-            }
-            .buttonStyle(.plain)
-            .padding(.trailing, 16)
+            // Hint text
+            Text("\u{201C}\(viewModel.secretEvent.hint)\u{201D}")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.white.opacity(0.45))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .padding(.horizontal, 32)
+                .padding(.top, 6)
         }
+        .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder

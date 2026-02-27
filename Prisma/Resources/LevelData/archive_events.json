@@ -164,7 +164,7 @@
     "day": 30,
     "month": 7,
     "year": 1966,
-    "hint": "England's finest 90 minutes — and a few more",
+    "hint": "England's finest 90 minutes \u2014 and a few more",
     "event": "England wins the FIFA World Cup"
   },
   {
@@ -237,6 +237,566 @@
     "month": 5,
     "year": 1945,
     "hint": "Dancing in the streets of London and beyond",
-    "event": "VE Day — Victory in Europe"
+    "event": "VE Day \u2014 Victory in Europe"
+  },
+  {
+    "day": 4,
+    "month": 10,
+    "year": 1957,
+    "hint": "A beeping sphere started the space race",
+    "event": "Sputnik 1 Launch",
+    "id": 31
+  },
+  {
+    "day": 1,
+    "month": 9,
+    "year": 1939,
+    "hint": "Tanks crossed a border, igniting a war",
+    "event": "Invasion of Poland",
+    "id": 32
+  },
+  {
+    "day": 24,
+    "month": 10,
+    "year": 1929,
+    "hint": "Wall Street panicked and fortunes vanished",
+    "event": "Black Thursday (Wall Street Crash)",
+    "id": 33
+  },
+  {
+    "day": 2,
+    "month": 9,
+    "year": 1945,
+    "hint": "A signature on the USS Missouri ended a global conflict",
+    "event": "End of World War II",
+    "id": 34
+  },
+  {
+    "day": 14,
+    "month": 5,
+    "year": 1948,
+    "hint": "A new nation was proclaimed in the Middle East",
+    "event": "Creation of the State of Israel",
+    "id": 35
+  },
+  {
+    "day": 1,
+    "month": 1,
+    "year": 1863,
+    "hint": "A proclamation made millions forever free",
+    "event": "Emancipation Proclamation",
+    "id": 36
+  },
+  {
+    "day": 12,
+    "month": 4,
+    "year": 1861,
+    "hint": "Cannons fired on Fort Sumter divided a nation",
+    "event": "Start of the American Civil War",
+    "id": 37
+  },
+  {
+    "day": 15,
+    "month": 4,
+    "year": 1865,
+    "hint": "A shot in a theater shocked the Union",
+    "event": "Assassination of Abraham Lincoln",
+    "id": 38
+  },
+  {
+    "day": 1,
+    "month": 7,
+    "year": 1867,
+    "hint": "A confederation brought provinces together in the north",
+    "event": "Canadian Confederation",
+    "id": 39
+  },
+  {
+    "day": 28,
+    "month": 6,
+    "year": 1919,
+    "hint": "A treaty in a palace ended the Great War",
+    "event": "Signing of the Treaty of Versailles",
+    "id": 40
+  },
+  {
+    "day": 7,
+    "month": 12,
+    "year": 1941,
+    "hint": "A date which will live in infamy",
+    "event": "Attack on Pearl Harbor",
+    "id": 41
+  },
+  {
+    "day": 20,
+    "month": 11,
+    "year": 1945,
+    "hint": "Justice sought in a German city post-war",
+    "event": "Start of the Nuremberg Trials",
+    "id": 42
+  },
+  {
+    "day": 26,
+    "month": 6,
+    "year": 1945,
+    "hint": "A charter signed in San Francisco to unite nations",
+    "event": "Signing of the UN Charter",
+    "id": 43
+  },
+  {
+    "day": 4,
+    "month": 4,
+    "year": 1968,
+    "hint": "A dreamer was lost on a balcony in Memphis",
+    "event": "Assassination of Martin Luther King Jr.",
+    "id": 44
+  },
+  {
+    "day": 17,
+    "month": 12,
+    "year": 1903,
+    "hint": "Two brothers took flight in Kitty Hawk",
+    "event": "Wright Brothers' First Flight",
+    "id": 45
+  },
+  {
+    "day": 15,
+    "month": 8,
+    "year": 1914,
+    "hint": "A canal opened, connecting two vast oceans",
+    "event": "Opening of the Panama Canal",
+    "id": 46
+  },
+  {
+    "day": 1,
+    "month": 10,
+    "year": 1908,
+    "hint": "A revolutionary car rolled off the assembly line",
+    "event": "Introduction of the Ford Model T",
+    "id": 47
+  },
+  {
+    "day": 21,
+    "month": 5,
+    "year": 1927,
+    "hint": "The Spirit of St. Louis crossed the Atlantic solo",
+    "event": "Charles Lindbergh's Transatlantic Flight",
+    "id": 48
+  },
+  {
+    "day": 4,
+    "month": 2,
+    "year": 1945,
+    "hint": "Three leaders met in Crimea to reshape Europe",
+    "event": "Yalta Conference",
+    "id": 49
+  },
+  {
+    "day": 5,
+    "month": 6,
+    "year": 1981,
+    "hint": "A mysterious illness was first reported in California",
+    "event": "First Reports of AIDS",
+    "id": 50
+  },
+  {
+    "day": 11,
+    "month": 3,
+    "year": 2011,
+    "hint": "A massive quake and a nuclear crisis in the east",
+    "event": "Fukushima Nuclear Disaster",
+    "id": 51
+  },
+  {
+    "day": 24,
+    "month": 8,
+    "year": 79,
+    "hint": "A mountain erupted, burying an ancient city in ash",
+    "event": "Eruption of Mount Vesuvius",
+    "id": 52
+  },
+  {
+    "day": 15,
+    "month": 3,
+    "year": 44,
+    "hint": "Beware the Ides of March, said a seer to an emperor",
+    "event": "Assassination of Julius Caesar",
+    "id": 53
+  },
+  {
+    "day": 31,
+    "month": 10,
+    "year": 1517,
+    "hint": "Ninety-five theses on a door sparked a reformation",
+    "event": "Martin Luther starts Protestant Reformation",
+    "id": 54
+  },
+  {
+    "day": 25,
+    "month": 4,
+    "year": 1953,
+    "hint": "The double helix structure of life was unveiled",
+    "event": "Discovery of DNA Structure",
+    "id": 55
+  },
+  {
+    "day": 20,
+    "month": 11,
+    "year": 1985,
+    "hint": "A graphical operating system changed personal computing",
+    "event": "Release of Windows 1.0",
+    "id": 56
+  },
+  {
+    "day": 18,
+    "month": 4,
+    "year": 1906,
+    "hint": "The earth shook and flames consumed the golden city",
+    "event": "San Francisco Earthquake",
+    "id": 57
+  },
+  {
+    "day": 21,
+    "month": 7,
+    "year": 1969,
+    "hint": "Footprints left in the lunar dust for the very first time",
+    "event": "First Walk on the Moon",
+    "id": 58
+  },
+  {
+    "day": 5,
+    "month": 9,
+    "year": 1972,
+    "hint": "Terror struck the Olympic Games in Munich",
+    "event": "Munich Massacre",
+    "id": 59
+  },
+  {
+    "day": 22,
+    "month": 1,
+    "year": 1973,
+    "hint": "A landmark decision on reproductive rights in the US",
+    "event": "Roe v. Wade Decision",
+    "id": 60
+  },
+  {
+    "day": 8,
+    "month": 8,
+    "year": 1974,
+    "hint": "A president resigned to avoid certain impeachment",
+    "event": "Nixon Resigns",
+    "id": 61
+  },
+  {
+    "day": 30,
+    "month": 4,
+    "year": 1975,
+    "hint": "Helicopters evacuated an embassy ending a long war",
+    "event": "Fall of Saigon",
+    "id": 62
+  },
+  {
+    "day": 4,
+    "month": 11,
+    "year": 1979,
+    "hint": "Hostages taken in a volatile embassy shift",
+    "event": "Iran Hostage Crisis Begins",
+    "id": 63
+  },
+  {
+    "day": 24,
+    "month": 4,
+    "year": 1990,
+    "hint": "A telescope launched to gaze into deep space",
+    "event": "Hubble Space Telescope Launch",
+    "id": 64
+  },
+  {
+    "day": 2,
+    "month": 8,
+    "year": 1990,
+    "hint": "Forces invaded a neighbor, starting a desert storm",
+    "event": "Iraq Invades Kuwait",
+    "id": 65
+  },
+  {
+    "day": 26,
+    "month": 2,
+    "year": 1993,
+    "hint": "A truck bomb echoed through twin towers",
+    "event": "World Trade Center Bombing",
+    "id": 66
+  },
+  {
+    "day": 19,
+    "month": 4,
+    "year": 1995,
+    "hint": "A domestic terror attack shattered an Oklahoma city",
+    "event": "Oklahoma City Bombing",
+    "id": 67
+  },
+  {
+    "day": 5,
+    "month": 7,
+    "year": 1996,
+    "hint": "A sheep was born, cloned from an adult cell",
+    "event": "Birth of Dolly the Sheep",
+    "id": 68
+  },
+  {
+    "day": 1,
+    "month": 1,
+    "year": 2002,
+    "hint": "A new currency was adopted across twelve nations",
+    "event": "Introduction of the Euro",
+    "id": 69
+  },
+  {
+    "day": 20,
+    "month": 3,
+    "year": 2003,
+    "hint": "A coalition launched a strike to topple a regime",
+    "event": "Invasion of Iraq Begins",
+    "id": 70
+  },
+  {
+    "day": 26,
+    "month": 12,
+    "year": 2004,
+    "hint": "A massive wave devastated shores across the ocean",
+    "event": "Indian Ocean Tsunami",
+    "id": 71
+  },
+  {
+    "day": 4,
+    "month": 11,
+    "year": 2008,
+    "hint": "Hope and change elected the first black president",
+    "event": "Election of Barack Obama",
+    "id": 72
+  },
+  {
+    "day": 15,
+    "month": 4,
+    "year": 2019,
+    "hint": "An iconic cathedral burned but did not shatter",
+    "event": "Notre-Dame de Paris Fire",
+    "id": 73
+  },
+  {
+    "day": 11,
+    "month": 3,
+    "year": 2020,
+    "hint": "A viral outbreak was declared global by the WHO",
+    "event": "COVID-19 Declared a Pandemic",
+    "id": 74
+  },
+  {
+    "day": 24,
+    "month": 2,
+    "year": 2022,
+    "hint": "A nation woke to an invasion on its eastern flank",
+    "event": "Russian Invasion of Ukraine",
+    "id": 75
+  },
+  {
+    "day": 11,
+    "month": 2,
+    "year": 1929,
+    "hint": "An independent city-state was born in Rome",
+    "event": "Lateran Treaty (Creation of Vatican City)",
+    "id": 76
+  },
+  {
+    "day": 9,
+    "month": 5,
+    "year": 1926,
+    "hint": "A flight claimed to be first over the northern pole",
+    "event": "Richard Byrd's North Pole Flight",
+    "id": 77
+  },
+  {
+    "day": 14,
+    "month": 12,
+    "year": 1911,
+    "hint": "A Norwegian team reached the southernmost point",
+    "event": "Amundsen Reaches the South Pole",
+    "id": 78
+  },
+  {
+    "day": 29,
+    "month": 5,
+    "year": 1953,
+    "hint": "The highest peak on Earth was finally conquered",
+    "event": "First Summit of Mount Everest",
+    "id": 79
+  },
+  {
+    "day": 12,
+    "month": 8,
+    "year": 1981,
+    "hint": "A grey box from IBM redefined personal computing",
+    "event": "Release of the IBM PC",
+    "id": 80
+  },
+  {
+    "day": 5,
+    "month": 5,
+    "year": 1821,
+    "hint": "An exiled emperor passed away on a remote island",
+    "event": "Death of Napoleon Bonaparte",
+    "id": 81
+  },
+  {
+    "day": 12,
+    "month": 2,
+    "year": 1809,
+    "hint": "Two great minds: one of evolution, one of emancipation, born today",
+    "event": "Birth of Darwin and Lincoln",
+    "id": 82
+  },
+  {
+    "day": 9,
+    "month": 4,
+    "year": 1865,
+    "hint": "An ultimate surrender at a courthouse ended the war",
+    "event": "Surrender at Appomattox",
+    "id": 83
+  },
+  {
+    "day": 10,
+    "month": 5,
+    "year": 1869,
+    "hint": "A golden spike united the east and west coasts",
+    "event": "Completion of the Transcontinental Railroad",
+    "id": 84
+  },
+  {
+    "day": 29,
+    "month": 12,
+    "year": 1890,
+    "hint": "The final major clash of the American Indian Wars",
+    "event": "Wounded Knee Massacre",
+    "id": 85
+  },
+  {
+    "day": 17,
+    "month": 1,
+    "year": 1893,
+    "hint": "A Hawaiian queen was overthrown by a committee",
+    "event": "Overthrow of the Hawaiian Kingdom",
+    "id": 86
+  },
+  {
+    "day": 15,
+    "month": 2,
+    "year": 1898,
+    "hint": "A sunken battleship ignited a war with Spain",
+    "event": "Sinking of the USS Maine",
+    "id": 87
+  },
+  {
+    "day": 8,
+    "month": 9,
+    "year": 1900,
+    "hint": "A devastating hurricane swept through a Texas island",
+    "event": "Galveston Hurricane",
+    "id": 88
+  },
+  {
+    "day": 6,
+    "month": 4,
+    "year": 1917,
+    "hint": "America officially joined the immense Great War",
+    "event": "US Enters World War I",
+    "id": 89
+  },
+  {
+    "day": 3,
+    "month": 3,
+    "year": 1918,
+    "hint": "A treaty took Russia out of a global conflict",
+    "event": "Treaty of Brest-Litovsk",
+    "id": 90
+  },
+  {
+    "day": 16,
+    "month": 1,
+    "year": 1920,
+    "hint": "A period began where certain spirits ran dry by law",
+    "event": "Start of Prohibition in the US",
+    "id": 91
+  },
+  {
+    "day": 26,
+    "month": 8,
+    "year": 1920,
+    "hint": "The 19th amendment guaranteed a woman's right to vote",
+    "event": "Women's Suffrage Recognized in US",
+    "id": 92
+  },
+  {
+    "day": 4,
+    "month": 11,
+    "year": 1922,
+    "hint": "An unsealed tomb revealed a boy king's golden mask",
+    "event": "Discovery of King Tut's Tomb",
+    "id": 93
+  },
+  {
+    "day": 24,
+    "month": 1,
+    "year": 1984,
+    "hint": "A groundbreaking friendly computer was introduced",
+    "event": "Apple Introduces the Macintosh",
+    "id": 94
+  },
+  {
+    "day": 1,
+    "month": 11,
+    "year": 1993,
+    "hint": "A treaty united nations under a new European banner",
+    "event": "Maastricht Treaty comes into effect",
+    "id": 95
+  },
+  {
+    "day": 15,
+    "month": 1,
+    "year": 2001,
+    "hint": "A free encyclopedia emerged to organize knowledge",
+    "event": "Launch of Wikipedia",
+    "id": 96
+  },
+  {
+    "day": 4,
+    "month": 2,
+    "year": 2004,
+    "hint": "A social network was born in a dorm room",
+    "event": "Launch of Facebook",
+    "id": 97
+  },
+  {
+    "day": 23,
+    "month": 4,
+    "year": 2005,
+    "hint": "The first video broadcast shared a trip to the zoo",
+    "event": "First YouTube video uploaded",
+    "id": 98
+  },
+  {
+    "day": 14,
+    "month": 7,
+    "year": 2015,
+    "hint": "A probe provided our first close look at a distant dwarf",
+    "event": "New Horizons flies by Pluto",
+    "id": 99
+  },
+  {
+    "day": 22,
+    "month": 5,
+    "year": 2017,
+    "hint": "Tragedy struck an arena in Manchester post-concert",
+    "event": "Manchester Arena Bombing",
+    "id": 100
   }
 ]
