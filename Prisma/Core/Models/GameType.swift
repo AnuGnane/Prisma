@@ -10,6 +10,7 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
     case shift
     case orbit
     case signals
+    case archive
 
     var id: String { rawValue }
 
@@ -19,6 +20,7 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         case .shift:   return "Shift"
         case .orbit:   return "Orbit"
         case .signals: return "Signals"
+        case .archive: return "Archive"
         }
     }
 
@@ -28,6 +30,7 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         case .shift:   return "Slide the grid to spell the words"
         case .orbit:   return "Tap when the marker hits the target"
         case .signals: return "Break the 4-digit code"
+        case .archive: return "Guess the historic date"
         }
     }
 }

@@ -1,16 +1,15 @@
 //
-//  SignalsInputView.swift
+//  ArchiveInputView.swift
 //  Prisma
 //
-//  Keypad only — no separate input row.
-//  The active guess row lives directly in the board (SignalsGameView).
+//  Keypad for Archive — same 0-9 layout as Signals.
 //  Bottom row: ⌫ · 0 · ✓
 //
 
 import SwiftUI
 
-struct SignalsInputView: View {
-    @Bindable var viewModel: SignalsGameViewModel
+struct ArchiveInputView: View {
+    @Bindable var viewModel: ArchiveGameViewModel
     var onSubmit: () -> Void
 
     private let numericRows: [[Int]] = [
@@ -28,7 +27,6 @@ struct SignalsInputView: View {
                     }
                 }
             }
-            // Bottom row: ⌫ · 0 · ✓
             HStack(spacing: 8) {
                 specialKey(label: "⌫", color: Color(red: 1, green: 0.45, blue: 0.45)) {
                     viewModel.deleteLastDigit()
@@ -98,31 +96,13 @@ struct SignalsInputView: View {
     }
 }
 
-#Preview("Keypad — no history") {
-    @Previewable @State var vm = SignalsGameViewModel(date: .now)
+#Preview {
+    @Previewable @State var vm = ArchiveGameViewModel(date: .now)
     ZStack {
         Color(red: 0.07, green: 0.07, blue: 0.10).ignoresSafeArea()
         VStack {
             Spacer()
-            SignalsInputView(viewModel: vm) { }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 32)
-        }
-    }
-}
-
-#Preview("Keypad — with guess history") {
-    @Previewable @State var vm = SignalsGameViewModel(date: .now)
-    let _ = {
-        vm.overrideForTesting(secret: SignalsCode(digits: [1,2,3,4]), maxGuesses: 5)
-        vm.currentInput = [9,9,9,9]; vm.submitGuess()
-        vm.currentInput = [5,1,7,8]; vm.submitGuess()
-    }()
-    ZStack {
-        Color(red: 0.07, green: 0.07, blue: 0.10).ignoresSafeArea()
-        VStack {
-            Spacer()
-            SignalsInputView(viewModel: vm) { }
+            ArchiveInputView(viewModel: vm) { }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 32)
         }

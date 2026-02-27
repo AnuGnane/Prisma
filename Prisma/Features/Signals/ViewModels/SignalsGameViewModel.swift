@@ -23,6 +23,7 @@ final class SignalsGameViewModel: ShareStringGenerator {
     private(set) var gameState: GameState = .notStarted
     private(set) var maxGuesses: Int
     private(set) var isDaily: Bool
+    private(set) var activeLevelId: Int?
     private(set) var startDate: Date = .now
 
     /// The 4-slot input buffer. nil means the slot is empty.
@@ -39,7 +40,33 @@ final class SignalsGameViewModel: ShareStringGenerator {
         self.secretCode  = SignalsCode(fromSeed: seed)
         self.maxGuesses  = 5
         self.isDaily     = true
+        self.activeLevelId = nil
         self.gameState   = .inProgress
+    }
+
+    // MARK: - Init: Progression
+    // The random code for progression generates deterministically using the level integer so it's always the same puzzle.
+
+    init(level: Int) {
+        let code = SignalsCode(fromSeed: level * 1000)
+        self.secretCode = code
+        self.maxGuesses = 5
+        self.gameState = .inProgress
+        self.isDaily = false
+        self.activeLevelId = level
+    }
+
+    /// Loads a specific level, resetting all game state.
+    func loadLevel(_ level: Int) {
+        let code = SignalsCode(fromSeed: level * 1000)
+        self.secretCode = code
+        self.maxGuesses = 5
+        self.gameState = .inProgress
+        self.guessHistory = []
+        self.currentInput = [nil, nil, nil, nil]
+        self.activeLevelId = level
+        self.startDate = .now
+        self.isDaily = false
     }
 
     // MARK: - Init: Progression

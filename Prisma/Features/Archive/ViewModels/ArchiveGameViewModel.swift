@@ -1,0 +1,288 @@
+//
+//  ArchiveGameViewModel.swift
+//  Prisma
+//
+//  Drives Archive game logic:
+//    - Daily mode: deterministic event from date seed
+//    - Mastermind-style per-digit feedback (8 digits, DD/MM/YYYY)
+//    - Arrow hint comparing full YYYYMMDD values
+//    - Date validation (rejects invalid dates with no penalty)
+//    - Wordle-style emoji share string
+//
+
+import Foundation
+import Observation
+
+@Observable
+final class ArchiveGameViewModel: ShareStringGenerator {
+
+    // MARK: - Game State
+
+    private(set) var secretEvent: ArchiveEvent
+    private(set) var guessHistory: [(guess: ArchiveGuess, feedback: ArchiveFeedback)] = []
+    private(set) var gameState: GameState = .notStarted
+    private(set) var maxGuesses: Int
+    private(set) var startDate: Date = .now
+
+    private(set) var isDaily: Bool
+    private(set) var activeLevelId: Int?
+
+    /// 8-slot input buffer. nil = empty.
+    var currentInput: [Int?] = Array(repeating: nil, count: 8)
+
+    /// True when the last submission was an invalid date — drives a shake animation.
+    var showInvalidShake = false
+
+    var remainingGuesses: Int { maxGuesses - guessHistory.count }
+    var guessCount: Int { guessHistory.count }
+    var isInputComplete: Bool { currentInput.allSatisfy { $0 != nil } }
+
+    // MARK: - Event Loading
+
+    private static var cachedEvents: [ArchiveEvent]?
+
+    private static func loadEvents() -> [ArchiveEvent] {
+        if let cached = cachedEvents { return cached }
+        guard let url = Bundle.main.url(forResource: "archive_events", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let events = try? JSONDecoder().decode([ArchiveEvent].self, from: data),
+              !events.isEmpty else {
+            // Fallback event if JSON fails to load
+            let fallback = ArchiveEvent(id: 0, day: 1, month: 1, year: 2000,
+                                        hint: "A new millennium begins", event: "Y2K")
+            return [fallback]
+        }
+        cachedEvents = events
+        return events
+    }
+
+    // MARK: - Init: Daily
+
+    init(date: Date = .now) {
+        let events = Self.loadEvents()
+        let seed = date.dailySeed
+        let index = seed % events.count
+        self.secretEvent = events[index]
+        self.maxGuesses = 7
+        self.gameState = .inProgress
+        self.isDaily = true
+        self.activeLevelId = nil
+    }
+
+    // MARK: - Init: Progression Level
+
+    init(level: Int) {
+        let events = Self.loadEvents()
+        // Level 1 gets index 0, Level 30 gets index 29. Wrap around if > 30.
+        let index = max(0, level - 1) % events.count
+        self.secretEvent = events[index]
+        self.maxGuesses = 7
+        self.gameState = .inProgress
+        self.isDaily = false
+        self.activeLevelId = level
+    }
+
+    /// Loads a specific level, resetting all game state.
+    func loadLevel(_ level: Int) {
+        let events = Self.loadEvents()
+        let index = max(0, level - 1) % events.count
+        self.secretEvent = events[index]
+        self.maxGuesses = 7
+        self.gameState = .inProgress
+        self.guessHistory = []
+        self.currentInput = Array(repeating: nil, count: 8)
+        self.isDaily = false
+        self.activeLevelId = level
+        self.startDate = .now
+    }
+
+    // MARK: - Input Handling
+
+    func inputDigit(_ digit: Int) {
+        guard !gameState.isOver else { return }
+        guard let slot = currentInput.firstIndex(of: nil) else { return }
+        currentInput[slot] = digit
+    }
+
+    func deleteLastDigit() {
+        guard !gameState.isOver else { return }
+        if let slot = currentInput.indices.last(where: { currentInput[$0] != nil }) {
+            currentInput[slot] = nil
+        }
+    }
+
+    // MARK: - Digit Key States (for keypad dimming)
+
+    enum KeyState {
+        case unknown, present, absent
+    }
+
+    var digitKeyStates: [Int: KeyState] {
+        var states: [Int: KeyState] = [:]
+        for (guess, feedback) in guessHistory {
+            for (idx, digit) in guess.digits.enumerated() {
+                let result = feedback.digitResults[idx]
+                switch result {
+                case .correct, .misplaced:
+                    states[digit] = .present
+                case .absent:
+                    if states[digit] != .present {
+                        states[digit] = .absent
+                    }
+                }
+            }
+        }
+        return states
+    }
+
+    // MARK: - Submit Guess
+
+    func submitGuess() {
+        guard !gameState.isOver else { return }
+        guard isInputComplete else { return }
+        let digits = currentInput.compactMap { $0 }
+        guard digits.count == 8 else { return }
+
+        let guess = ArchiveGuess(digits: digits)
+
+        // Validate date
+        guard guess.isValidDate else {
+            showInvalidShake = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
+                self?.showInvalidShake = false
+            }
+            return
+        }
+
+        let feedback = computeFeedback(guess: guess)
+        guessHistory.append((guess: guess, feedback: feedback))
+        currentInput = Array(repeating: nil, count: 8)
+
+        if feedback.isWin {
+            let score = calculateScore()
+            gameState = .completed(score: score)
+        } else if guessHistory.count >= maxGuesses {
+            gameState = .failed
+        }
+    }
+
+    // MARK: - Mastermind Feedback (8-digit)
+
+    func computeFeedback(guess: ArchiveGuess) -> ArchiveFeedback {
+        let secret = secretEvent.dateDigits
+        let guessDigits = guess.digits
+
+        var results = Array(repeating: DigitResult.absent, count: 8)
+        var secretUsed = Array(repeating: false, count: 8)
+        var guessUsed  = Array(repeating: false, count: 8)
+
+        // Pass 1: exact matches (green)
+        for i in 0..<8 {
+            if guessDigits[i] == secret[i] {
+                results[i]    = .correct
+                secretUsed[i] = true
+                guessUsed[i]  = true
+            }
+        }
+
+        // Pass 2: misplaced (yellow) — across all 8 positions
+        for i in 0..<8 {
+            guard !guessUsed[i] else { continue }
+            for j in 0..<8 {
+                guard !secretUsed[j], guessDigits[i] == secret[j] else { continue }
+                results[i]    = .misplaced
+                secretUsed[j] = true
+                guessUsed[i]  = true
+                break
+            }
+        }
+
+        // Arrow: compare YYYYMMDD values
+        let valueHint: ValueHint
+        let gVal = guess.numericValue
+        let sVal = secretEvent.numericValue
+        if gVal > sVal {
+            valueHint = .high    // guess is newer → go older
+        } else if gVal < sVal {
+            valueHint = .low     // guess is older → go newer
+        } else {
+            valueHint = .exact
+        }
+
+        return ArchiveFeedback(digitResults: results, valueHint: valueHint)
+    }
+
+    // MARK: - Score
+
+    private func calculateScore() -> Int {
+        let bonus = max(0, maxGuesses - guessHistory.count)
+        return 500 + bonus * 100
+    }
+
+    // MARK: - Share String
+
+    func generateShareString() -> String {
+        let dateStr = Date.now.formatted(.dateTime.day().month().year())
+        var lines = ["Archive · \(dateStr)"]
+
+        for (_, (_, feedback)) in guessHistory.enumerated() {
+            let emojis = feedback.digitResults.map { r -> String in
+                switch r {
+                case .correct:   return "🟩"
+                case .misplaced: return "🟨"
+                case .absent:    return "⬜"
+                }
+            }
+            // Group as DD / MM / YYYY: 2 + 2 + 4
+            let grouped = emojis[0..<2].joined() + " " +
+                          emojis[2..<4].joined() + " " +
+                          emojis[4..<8].joined()
+
+            let hint: String
+            switch feedback.valueHint {
+            case .high:  hint = " ⬇️"
+            case .low:   hint = " ⬆️"
+            case .exact: hint = " ✅"
+            }
+            lines.append(grouped + hint)
+        }
+
+        let result: String
+        switch gameState {
+        case .completed: result = "\(guessHistory.count)/\(maxGuesses) ✨"
+        case .failed:    result = "X/\(maxGuesses) 💀"
+        default:         result = ""
+        }
+        if !result.isEmpty { lines.append(result) }
+
+        return lines.joined(separator: "\n")
+    }
+
+    // MARK: - Testing Support
+
+    func overrideForTesting(event: ArchiveEvent, maxGuesses: Int) {
+        self.secretEvent = event
+        self.maxGuesses = maxGuesses
+        self.guessHistory = []
+        self.currentInput = Array(repeating: nil, count: 8)
+        self.gameState = .inProgress
+    }
+
+    // MARK: - Build GameResult
+
+    func buildGameResult() -> GameResult {
+        let score: Int
+        switch gameState {
+        case .completed(let s): score = s
+        default: score = 0
+        }
+        return GameResult(
+            gameType: .archive,
+            score: score,
+            shareString: generateShareString(),
+            guessCount: guessHistory.count,
+            isDaily: isDaily,
+            durationSeconds: Date.now.timeIntervalSince(startDate)
+        )
+    }
+}

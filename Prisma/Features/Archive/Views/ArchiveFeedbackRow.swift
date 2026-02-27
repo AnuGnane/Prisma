@@ -1,38 +1,40 @@
 //
-//  SignalsFeedbackRow.swift
+//  ArchiveFeedbackRow.swift
 //  Prisma
 //
-//  Displays one completed guess row with a staggered tile-flip reveal animation.
-//  Each of the 4 digit cells flips in with a 150ms delay between tiles.
-//  The High/Low/Exact hint fades in after all tiles have flipped.
+//  Displays one completed Archive guess with staggered tile-flip reveal.
+//  8 digits in DD / MM / YYYY grouping with "/" separators.
 //
 
 import SwiftUI
 
-struct SignalsFeedbackRow: View {
-    let guess: SignalsGuess
-    let feedback: SignalsFeedback
+struct ArchiveFeedbackRow: View {
+    let guess: ArchiveGuess
+    let feedback: ArchiveFeedback
 
-    /// One Bool per tile — drives the flip from unrevealed → colour-revealed.
-    @State private var revealed = [false, false, false, false]
+    @State private var revealed = Array(repeating: false, count: 8)
 
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<4, id: \.self) { index in
-                flipCell(index: index)
-            }
+        HStack(spacing: 0) {
+            // DD
+            digitGroup(range: 0..<2)
+            separator
+            // MM
+            digitGroup(range: 2..<4)
+            separator
+            // YYYY
+            digitGroup(range: 4..<8)
         }
         .frame(maxWidth: .infinity)
         .overlay(alignment: .trailing) {
             valueHintLabel
-                .frame(width: 36)
-                // Hint appears after the last tile has flipped
-                .opacity(revealed[3] ? 1 : 0)
-                .animation(.easeIn(duration: 0.2), value: revealed[3])
+                .frame(width: 32)
+                .opacity(revealed[7] ? 1 : 0)
+                .animation(.easeIn(duration: 0.2), value: revealed[7])
         }
         .onAppear {
-            for i in 0..<4 {
-                let delay = Double(i) * 0.15
+            for i in 0..<8 {
+                let delay = Double(i) * 0.12
                 withAnimation(
                     .easeInOut(duration: 0.35)
                     .delay(delay)
@@ -46,6 +48,26 @@ struct SignalsFeedbackRow: View {
         }
     }
 
+    // MARK: - Digit Group
+
+    @ViewBuilder
+    private func digitGroup(range: Range<Int>) -> some View {
+        HStack(spacing: 4) {
+            ForEach(range, id: \.self) { index in
+                flipCell(index: index)
+            }
+        }
+    }
+
+    // MARK: - Separator
+
+    private var separator: some View {
+        Text("/")
+            .font(.system(size: 16, weight: .semibold, design: .monospaced))
+            .foregroundStyle(.white.opacity(0.25))
+            .frame(width: 14)
+    }
+
     // MARK: - Flip Cell
 
     @ViewBuilder
@@ -54,29 +76,27 @@ struct SignalsFeedbackRow: View {
         let result = feedback.digitResults[index]
 
         ZStack {
-            // ── Front face: unrevealed placeholder ──
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(Color.white.opacity(0.18), lineWidth: 2)
-                .frame(width: 58, height: 58)
-                // Rotate away (0° → 90°) and fade out
+            // Front face: unrevealed
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1.5)
+                .frame(width: 36, height: 42)
                 .rotation3DEffect(.degrees(isRevealed ? 90 : 0),
                                   axis: (x: 0, y: 1, z: 0))
                 .opacity(isRevealed ? 0 : 1)
 
-            // ── Back face: coloured result cell ──
+            // Back face: coloured result
             Text("\(guess.digits[index])")
-                .font(.system(size: 22, weight: .bold, design: .monospaced))
+                .font(.system(size: 18, weight: .bold, design: .monospaced))
                 .foregroundStyle(.white)
-                .frame(width: 58, height: 58)
+                .frame(width: 36, height: 42)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(cellColor(for: result))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 8)
                         .strokeBorder(cellColor(for: result).opacity(0.6), lineWidth: 1)
                 )
-                // Rotate in (−90° → 0°) and fade in
                 .rotation3DEffect(.degrees(isRevealed ? 0 : -90),
                                   axis: (x: 0, y: 1, z: 0))
                 .opacity(isRevealed ? 1 : 0)
@@ -100,38 +120,38 @@ struct SignalsFeedbackRow: View {
             Image(systemName: "arrow.down.circle.fill")
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(Color(red: 0.80, green: 0.25, blue: 0.25))
-                .font(.title2)
+                .font(.title3)
         case .low:
             Image(systemName: "arrow.up.circle.fill")
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(Color(red: 0.24, green: 0.52, blue: 0.85))
-                .font(.title2)
+                .font(.title3)
         case .exact:
             Image(systemName: "checkmark.circle.fill")
                 .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(Color(red: 0.24, green: 0.65, blue: 0.36))
-                .font(.title2)
+                .font(.title3)
         }
     }
 }
 
 #Preview {
-    VStack(spacing: 12) {
-        SignalsFeedbackRow(
-            guess: SignalsGuess(digits: [5, 4, 4, 1]),
-            feedback: SignalsFeedback(
-                digitResults: [.correct, .misplaced, .absent, .absent],
-                valueHint: .high
+    VStack(spacing: 8) {
+        ArchiveFeedbackRow(
+            guess: ArchiveGuess(digits: [2, 0, 0, 7, 1, 9, 6, 9]),
+            feedback: ArchiveFeedback(
+                digitResults: [.correct, .correct, .misplaced, .absent, .correct, .correct, .correct, .correct],
+                valueHint: .exact
             )
         )
-        SignalsFeedbackRow(
-            guess: SignalsGuess(digits: [1, 2, 3, 4]),
-            feedback: SignalsFeedback(
-                digitResults: [.correct, .correct, .correct, .correct],
-                valueHint: .exact
+        ArchiveFeedbackRow(
+            guess: ArchiveGuess(digits: [1, 5, 0, 4, 1, 9, 1, 2]),
+            feedback: ArchiveFeedback(
+                digitResults: [.absent, .absent, .misplaced, .absent, .correct, .correct, .absent, .absent],
+                valueHint: .low
             )
         )
     }
     .padding()
-    .background(Color.black)
+    .background(Color(red: 0.07, green: 0.07, blue: 0.10))
 }

@@ -1,24 +1,23 @@
 //
-//  SignalsGameView.swift
+//  ArchiveGameView.swift
 //  Prisma
 //
-//  Main container for a Signals game session.
-//  Board: fixed maxGuesses rows — past guesses flip-reveal feedback,
-//  the current row shows live input with digit-pop spring animation,
-//  future rows are empty placeholders.
-//  Header counter pill uses iOS 26 glassEffect when available, capsule fill on iOS 18.
+//  Main container for Archive daily game.
+//  Board: fixed maxGuesses rows — feedback / active input / empty
+//  Active row: 8 cells in DD / MM / YYYY grouping with "/" separators
+//  Header: "ARCHIVE" + counter pill + hint text
 //
 
 import SwiftUI
 import SwiftData
 
-struct SignalsGameView: View {
-    @State private var viewModel: SignalsGameViewModel
+struct ArchiveGameView: View {
+    @State private var viewModel: ArchiveGameViewModel
     @State private var showResultSheet = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
-    init(viewModel: SignalsGameViewModel = SignalsGameViewModel(date: .now)) {
+    init(viewModel: ArchiveGameViewModel = ArchiveGameViewModel(date: .now)) {
         _viewModel = State(initialValue: viewModel)
     }
 
@@ -30,15 +29,15 @@ struct SignalsGameView: View {
             VStack(spacing: 0) {
                 header
                     .padding(.top, 4)
-                    .padding(.bottom, 14)
+                    .padding(.bottom, 10)
 
                 board
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 16)
 
                 Spacer(minLength: 8)
 
                 if !viewModel.gameState.isOver {
-                    SignalsInputView(viewModel: viewModel) {
+                    ArchiveInputView(viewModel: viewModel) {
                         viewModel.submitGuess()
                         if viewModel.gameState.isOver {
                             // Save local level progress (win or loss)
@@ -47,7 +46,7 @@ struct SignalsGameView: View {
                                 let score: Int
                                 if case .completed(let s) = viewModel.gameState { score = s } else { score = 0 }
                                 PersistenceManager.markLevelPlayed(
-                                    gameType: .signals,
+                                    gameType: .archive,
                                     levelId: levelId,
                                     won: didWin,
                                     score: score,
@@ -55,9 +54,7 @@ struct SignalsGameView: View {
                                     context: modelContext
                                 )
                             }
-                            
-                            // Delayed haptics/flow
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
                                 if viewModel.gameState.isCompleted { Haptics.playSuccess() }
                                 else { Haptics.playMediumImpact() }
                                 
@@ -88,6 +85,9 @@ struct SignalsGameView: View {
         }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(viewModel.gameState.isOver && !viewModel.isDaily)
+        .onChange(of: viewModel.showInvalidShake) { old, new in
+            if new { Haptics.playError() }
+        }
     }
 
     // MARK: - Local Result Overlay
@@ -96,18 +96,26 @@ struct SignalsGameView: View {
         VStack(spacing: 20) {
             let didWin = viewModel.gameState.isCompleted
             
-            HStack(spacing: 12) {
-                Image(systemName: didWin ? "checkmark.circle.fill" : "xmark.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(didWin ? Color(red: 0.24, green: 0.65, blue: 0.36) : Color(red: 0.85, green: 0.30, blue: 0.30))
+            VStack(spacing: 6) {
+                HStack(spacing: 12) {
+                    Image(systemName: didWin ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundStyle(didWin ? Color(red: 0.24, green: 0.65, blue: 0.36) : Color(red: 0.85, green: 0.30, blue: 0.30))
+                    
+                    Text(didWin ? "DATE CRACKED!" : "TIME'S UP")
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white)
+                }
                 
-                Text(didWin ? "LEVEL \(viewModel.activeLevelId ?? 0) COMPLETED" : "SIGNAL LOST")
-                    .font(.system(size: 15, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.white)
+                Text("\(viewModel.secretEvent.event) (\(viewModel.secretEvent.dateString))")
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 16)
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 14)
             .padding(.horizontal, 20)
-            .background(Capsule().fill(Color.white.opacity(0.08)))
+            .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.06)))
 
             HStack(spacing: 16) {
                 if let levelId = viewModel.activeLevelId, levelId < 30 {
@@ -144,22 +152,33 @@ struct SignalsGameView: View {
     private var header: some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: 4) {
-                Text("SIGNALS")
+                Text("ARCHIVE")
                     .font(.system(size: 13, weight: .heavy, design: .monospaced))
                     .foregroundStyle(.white.opacity(0.5))
                     .kerning(3)
 
                 counterPill
                     .padding(.top, 2)
+
+                // Hint text
+                Text("\u{201C}\(viewModel.secretEvent.hint)\u{201D}")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.45))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .padding(.horizontal, 32)
+                    .padding(.top, 6)
             }
             .frame(maxWidth: .infinity)
 
-            // 🛠 Debug reset — remove before shipping
+            // Debug reset
             Button {
-                viewModel.overrideForTesting(
-                    secret: SignalsCode(fromSeed: Date.now.dailySeed),
-                    maxGuesses: 5
-                )
+                let events = Bundle.main.url(forResource: "archive_events", withExtension: "json")
+                    .flatMap { try? Data(contentsOf: $0) }
+                    .flatMap { try? JSONDecoder().decode([ArchiveEvent].self, from: $0) }
+                let seed = Date.now.dailySeed
+                let event = events?[seed % (events?.count ?? 1)] ?? viewModel.secretEvent
+                viewModel.overrideForTesting(event: event, maxGuesses: 7)
                 showResultSheet = false
             } label: {
                 Image(systemName: "arrow.counterclockwise")
@@ -173,7 +192,6 @@ struct SignalsGameView: View {
         }
     }
 
-    /// Guess counter pill — liquid glass on iOS 26, frosted capsule on iOS 18.
     @ViewBuilder
     private var counterPill: some View {
         let label = Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
@@ -194,14 +212,16 @@ struct SignalsGameView: View {
     // MARK: - Board
 
     private var board: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             ForEach(0..<viewModel.maxGuesses, id: \.self) { rowIndex in
                 if rowIndex < viewModel.guessHistory.count {
                     let entry = viewModel.guessHistory[rowIndex]
-                    SignalsFeedbackRow(guess: entry.guess, feedback: entry.feedback)
-                        .id(rowIndex) // stable identity so flip triggers once per guess
+                    ArchiveFeedbackRow(guess: entry.guess, feedback: entry.feedback)
+                        .id(rowIndex)
                 } else if rowIndex == viewModel.guessHistory.count && !viewModel.gameState.isOver {
                     activeInputRow
+                        .modifier(ShakeEffect(shakes: viewModel.showInvalidShake ? 3 : 0))
+                        .animation(.easeInOut(duration: 0.4), value: viewModel.showInvalidShake)
                 } else {
                     emptyRow
                 }
@@ -213,33 +233,70 @@ struct SignalsGameView: View {
     // MARK: - Active Input Row
 
     private var activeInputRow: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<4, id: \.self) { index in
-                SignalsActiveCell(
+        HStack(spacing: 0) {
+            digitInputGroup(range: 0..<2)
+            inputSeparator
+            digitInputGroup(range: 2..<4)
+            inputSeparator
+            digitInputGroup(range: 4..<8)
+        }
+        .frame(maxWidth: .infinity)
+        .animation(.easeInOut(duration: 0.12), value: viewModel.currentInput.map { $0 ?? -1 })
+    }
+
+    @ViewBuilder
+    private func digitInputGroup(range: Range<Int>) -> some View {
+        HStack(spacing: 4) {
+            ForEach(range, id: \.self) { index in
+                ArchiveActiveCell(
                     digit: viewModel.currentInput[index],
                     isNextEmpty: viewModel.currentInput[index] == nil
                         && index == firstEmptyInputSlot
                 )
             }
         }
-        .frame(maxWidth: .infinity)
+    }
+
+    private var inputSeparator: some View {
+        Text("/")
+            .font(.system(size: 16, weight: .semibold, design: .monospaced))
+            .foregroundStyle(.white.opacity(0.25))
+            .frame(width: 14)
     }
 
     private var firstEmptyInputSlot: Int {
-        viewModel.currentInput.firstIndex(of: nil) ?? 4
+        viewModel.currentInput.firstIndex(of: nil) ?? 8
     }
 
     // MARK: - Empty Row
 
     private var emptyRow: some View {
-        HStack(spacing: 8) {
-            ForEach(0..<4, id: \.self) { _ in
-                RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(Color.white.opacity(0.10), lineWidth: 2)
-                    .frame(width: 58, height: 58)
-            }
+        HStack(spacing: 0) {
+            emptyGroup(count: 2)
+            emptySeparator
+            emptyGroup(count: 2)
+            emptySeparator
+            emptyGroup(count: 4)
         }
         .frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder
+    private func emptyGroup(count: Int) -> some View {
+        HStack(spacing: 4) {
+            ForEach(0..<count, id: \.self) { _ in
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color.white.opacity(0.10), lineWidth: 1.5)
+                    .frame(width: 36, height: 42)
+            }
+        }
+    }
+
+    private var emptySeparator: some View {
+        Text("/")
+            .font(.system(size: 16, weight: .semibold, design: .monospaced))
+            .foregroundStyle(.white.opacity(0.10))
+            .frame(width: 14)
     }
 
     // MARK: - Result Sheet
@@ -256,14 +313,18 @@ struct SignalsGameView: View {
                     : Color(red: 0.85, green: 0.30, blue: 0.30))
                 .symbolEffect(.bounce, value: showResultSheet)
 
-            Text(didWin ? "Signal Locked!" : "Signal Lost")
+            Text(didWin ? "Date Cracked!" : "Time's Up")
                 .font(.system(size: 28, weight: .bold))
                 .foregroundStyle(.primary)
 
-            if !didWin {
-                let secret = viewModel.secretCode.digits.map { "\($0)" }.joined(separator: " ")
-                Text("The code was: \(secret)")
-                    .font(.system(size: 15))
+            // Show event name and date
+            VStack(spacing: 6) {
+                Text(viewModel.secretEvent.event)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.center)
+                Text(viewModel.secretEvent.dateString)
+                    .font(.system(size: 15, weight: .medium, design: .monospaced))
                     .foregroundStyle(.secondary)
             }
 
@@ -295,16 +356,14 @@ struct SignalsGameView: View {
             Spacer()
         }
         .padding()
-        .presentationDetents([.fraction(0.50)])
+        .presentationDetents([.fraction(0.55)])
         .presentationCornerRadius(24)
     }
 }
 
 // MARK: - Active Cell with Bounce
 
-/// A single input slot in the active guess row.
-/// Springs to 1.12× scale when a digit lands, then settles back to 1.0.
-private struct SignalsActiveCell: View {
+private struct ArchiveActiveCell: View {
     let digit: Int?
     let isNextEmpty: Bool
 
@@ -312,18 +371,18 @@ private struct SignalsActiveCell: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 8)
                 .strokeBorder(
                     digit != nil
                         ? Color.white.opacity(0.80)
                         : (isNextEmpty ? Color.white.opacity(0.50) : Color.white.opacity(0.18)),
-                    lineWidth: isNextEmpty && digit == nil ? 2.5 : 2
+                    lineWidth: isNextEmpty && digit == nil ? 2 : 1.5
                 )
-                .frame(width: 58, height: 58)
+                .frame(width: 36, height: 42)
 
             if let d = digit {
                 Text("\(d)")
-                    .font(.system(size: 26, weight: .bold, design: .monospaced))
+                    .font(.system(size: 18, weight: .bold, design: .monospaced))
                     .foregroundStyle(.white)
                     .transition(.scale(scale: 0.6).combined(with: .opacity))
             }
@@ -331,7 +390,6 @@ private struct SignalsActiveCell: View {
         .scaleEffect(scale)
         .onChange(of: digit) { old, new in
             guard old == nil, new != nil else { return }
-            // Spring pop: scale up then settle back
             withAnimation(.spring(response: 0.12, dampingFraction: 0.45)) {
                 scale = 1.12
             }
@@ -344,27 +402,49 @@ private struct SignalsActiveCell: View {
     }
 }
 
+// MARK: - Shake Effect
+
+private struct ShakeEffect: GeometryEffect {
+    var shakes: Int
+    var animatableData: CGFloat {
+        get { CGFloat(shakes) }
+        set { shakes = Int(newValue) }
+    }
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        let offset = sin(animatableData * .pi * 2) * 8
+        return ProjectionTransform(CGAffineTransform(translationX: offset, y: 0))
+    }
+}
+
 // MARK: - Previews
 
 #Preview("Daily — In Progress") {
-    SignalsGameView()
+    ArchiveGameView()
         .modelContainer(for: [LevelProgress.self, GameResult.self], inMemory: true)
 }
 
-#Preview("Mid-game with key states") {
-    let vm = SignalsGameViewModel(date: .now)
-    vm.overrideForTesting(secret: SignalsCode(digits: [1, 2, 3, 4]), maxGuesses: 5)
-    vm.currentInput = [9, 9, 9, 9]; vm.submitGuess()
-    vm.currentInput = [5, 1, 7, 8]; vm.submitGuess()
-    return SignalsGameView(viewModel: vm)
+#Preview("Mid-game") {
+    let vm = ArchiveGameViewModel(date: .now)
+    // Override with a known event for testing
+    let testEvent = ArchiveEvent(id: 99, day: 20, month: 7, year: 1969,
+                                  hint: "One small step changed it all",
+                                  event: "Apollo 11 Moon Landing")
+    vm.overrideForTesting(event: testEvent, maxGuesses: 7)
+    vm.currentInput = [1, 5, 0, 4, 1, 9, 1, 2]; vm.submitGuess()
+    vm.currentInput = [2, 0, 0, 7, 1, 9, 5, 0]; vm.submitGuess()
+    return ArchiveGameView(viewModel: vm)
         .modelContainer(for: [LevelProgress.self, GameResult.self], inMemory: true)
 }
 
-#Preview("Completed") {
-    let vm = SignalsGameViewModel(date: .now)
-    vm.overrideForTesting(secret: SignalsCode(digits: [1, 2, 3, 4]), maxGuesses: 5)
-    vm.currentInput = [9, 9, 9, 9]; vm.submitGuess()
-    vm.currentInput = [1, 2, 3, 4]; vm.submitGuess()
-    return SignalsGameView(viewModel: vm)
+#Preview("Completed — Win") {
+    let vm = ArchiveGameViewModel(date: .now)
+    let testEvent = ArchiveEvent(id: 99, day: 20, month: 7, year: 1969,
+                                  hint: "One small step changed it all",
+                                  event: "Apollo 11 Moon Landing")
+    vm.overrideForTesting(event: testEvent, maxGuesses: 7)
+    vm.currentInput = [1, 5, 0, 4, 1, 9, 1, 2]; vm.submitGuess()
+    vm.currentInput = [2, 0, 0, 7, 1, 9, 6, 9]; vm.submitGuess()
+    return ArchiveGameView(viewModel: vm)
         .modelContainer(for: [LevelProgress.self, GameResult.self], inMemory: true)
 }

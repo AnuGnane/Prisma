@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "day": 20,
+    "month": 7,
+    "year": 1969,
+    "hint": "One small step changed it all",
+    "event": "Apollo 11 Moon Landing"
+  },
+  {
+    "id": 2,
+    "day": 15,
+    "month": 4,
+    "year": 1912,
+    "hint": "An unsinkable promise, broken by ice",
+    "event": "Sinking of the Titanic"
+  },
+  {
+    "id": 3,
+    "day": 9,
+    "month": 11,
+    "year": 1989,
+    "hint": "A divided city reunited overnight",
+    "event": "Fall of the Berlin Wall"
+  },
+  {
+    "id": 4,
+    "day": 28,
+    "month": 8,
+    "year": 1963,
+    "hint": "A dream spoken to a quarter million",
+    "event": "MLK 'I Have a Dream' Speech"
+  },
+  {
+    "id": 5,
+    "day": 6,
+    "month": 6,
+    "year": 1944,
+    "hint": "The longest day on five beaches",
+    "event": "D-Day Normandy Landings"
+  },
+  {
+    "id": 6,
+    "day": 14,
+    "month": 7,
+    "year": 1789,
+    "hint": "A fortress-prison stormed by revolution",
+    "event": "Storming of the Bastille"
+  },
+  {
+    "id": 7,
+    "day": 12,
+    "month": 10,
+    "year": 1492,
+    "hint": "Three ships found a continent by mistake",
+    "event": "Columbus reaches the Americas"
+  },
+  {
+    "id": 8,
+    "day": 11,
+    "month": 9,
+    "year": 2001,
+    "hint": "A morning that changed airport security forever",
+    "event": "September 11 Attacks"
+  },
+  {
+    "id": 9,
+    "day": 22,
+    "month": 11,
+    "year": 1963,
+    "hint": "A motorcade in Dallas ended an era",
+    "event": "Assassination of JFK"
+  },
+  {
+    "id": 10,
+    "day": 6,
+    "month": 8,
+    "year": 1945,
+    "hint": "A blinding flash over a Japanese city",
+    "event": "Atomic bombing of Hiroshima"
+  },
+  {
+    "id": 11,
+    "day": 2,
+    "month": 6,
+    "year": 1953,
+    "hint": "Westminster Abbey crowned a new era",
+    "event": "Coronation of Queen Elizabeth II"
+  },
+  {
+    "id": 12,
+    "day": 4,
+    "month": 7,
+    "year": 1776,
+    "hint": "Thirteen colonies signed their freedom",
+    "event": "US Declaration of Independence"
+  },
+  {
+    "id": 13,
+    "day": 18,
+    "month": 6,
+    "year": 1815,
+    "hint": "A battlefield in Belgium ended an emperor",
+    "event": "Battle of Waterloo"
+  },
+  {
+    "id": 14,
+    "day": 12,
+    "month": 4,
+    "year": 1961,
+    "hint": "108 minutes orbiting Earth for the first time",
+    "event": "Yuri Gagarin's spaceflight"
+  },
+  {
+    "id": 15,
+    "day": 1,
+    "month": 1,
+    "year": 2000,
+    "hint": "Fireworks, fear of bugs, and a new millennium",
+    "event": "Y2K / Millennium celebrations"
+  },
+  {
+    "id": 16,
+    "day": 28,
+    "month": 6,
+    "year": 1914,
+    "hint": "A bullet in Sarajevo lit the fuse",
+    "event": "Assassination of Archduke Franz Ferdinand"
+  },
+  {
+    "id": 17,
+    "day": 11,
+    "month": 11,
+    "year": 1918,
+    "hint": "The eleventh hour of the eleventh day",
+    "event": "World War I Armistice"
+  },
+  {
+    "id": 18,
+    "day": 29,
+    "month": 6,
+    "year": 2007,
+    "hint": "A glass rectangle in your pocket changed everything",
+    "event": "First iPhone released"
+  },
+  {
+    "id": 19,
+    "day": 25,
+    "month": 12,
+    "year": 1066,
+    "hint": "A Norman duke claimed England's throne",
+    "event": "Coronation of William the Conqueror"
+  },
+  {
+    "id": 20,
+    "day": 5,
+    "month": 11,
+    "year": 1605,
+    "hint": "Barrels of gunpowder beneath Parliament",
+    "event": "Gunpowder Plot discovered"
+  },
+  {
+    "id": 21,
+    "day": 30,
+    "month": 7,
+    "year": 1966,
+    "hint": "England's finest 90 minutes — and a few more",
+    "event": "England wins the FIFA World Cup"
+  },
+  {
+    "id": 22,
+    "day": 26,
+    "month": 4,
+    "year": 1986,
+    "hint": "Reactor number four couldn't be contained",
+    "event": "Chernobyl nuclear disaster"
+  },
+  {
+    "id": 23,
+    "day": 11,
+    "month": 2,
+    "year": 1990,
+    "hint": "27 years behind bars, then a walk to freedom",
+    "event": "Nelson Mandela released from prison"
+  },
+  {
+    "id": 24,
+    "day": 28,
+    "month": 1,
+    "year": 1986,
+    "hint": "73 seconds after liftoff, the sky split in two",
+    "event": "Space Shuttle Challenger disaster"
+  },
+  {
+    "id": 25,
+    "day": 15,
+    "month": 6,
+    "year": 1215,
+    "hint": "A meadow by the Thames, a king's hand forced to sign",
+    "event": "Signing of the Magna Carta"
+  },
+  {
+    "id": 26,
+    "day": 31,
+    "month": 8,
+    "year": 1997,
+    "hint": "A tunnel in Paris and a people's princess",
+    "event": "Death of Princess Diana"
+  },
+  {
+    "id": 27,
+    "day": 16,
+    "month": 12,
+    "year": 1773,
+    "hint": "A harbour full of tea, dumped in protest",
+    "event": "Boston Tea Party"
+  },
+  {
+    "id": 28,
+    "day": 21,
+    "month": 7,
+    "year": 2011,
+    "hint": "The final shuttle touched down for good",
+    "event": "Last Space Shuttle mission (STS-135)"
+  },
+  {
+    "id": 29,
+    "day": 10,
+    "month": 5,
+    "year": 1994,
+    "hint": "The rainbow nation inaugurated its first",
+    "event": "Nelson Mandela inaugurated as President"
+  },
+  {
+    "id": 30,
+    "day": 8,
+    "month": 5,
+    "year": 1945,
+    "hint": "Dancing in the streets of London and beyond",
+    "event": "VE Day — Victory in Europe"
+  }
+]
