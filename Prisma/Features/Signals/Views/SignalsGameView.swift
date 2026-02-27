@@ -3,9 +3,10 @@
 //  Prisma
 //
 //  Main container for a Signals game session.
-//  Board: fixed maxGuesses rows — past guesses show feedback,
-//  the current row shows live input, future rows are empty placeholders.
-//  Keypad always anchored to the bottom.
+//  Board: fixed maxGuesses rows — past guesses flip-reveal feedback,
+//  the current row shows live input with digit-pop spring animation,
+//  future rows are empty placeholders.
+//  Header counter pill uses iOS 26 glassEffect when available, capsule fill on iOS 18.
 //
 
 import SwiftUI
@@ -28,13 +29,11 @@ struct SignalsGameView: View {
                     .padding(.top, 4)
                     .padding(.bottom, 14)
 
-                // Fixed board — all maxGuesses rows always visible
                 board
                     .padding(.horizontal, 24)
 
                 Spacer(minLength: 8)
 
-                // Keypad always at bottom (hidden when game is over)
                 if !viewModel.gameState.isOver {
                     SignalsInputView(viewModel: viewModel) {
                         viewModel.submitGuess()
@@ -65,13 +64,7 @@ struct SignalsGameView: View {
                     .foregroundStyle(.white.opacity(0.5))
                     .kerning(3)
 
-                // Guess counter pill
-                Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
-                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.6))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
-                    .background(Capsule().fill(Color.white.opacity(0.10)))
+                counterPill
                     .padding(.top, 2)
             }
             .frame(maxWidth: .infinity)
@@ -95,25 +88,36 @@ struct SignalsGameView: View {
         }
     }
 
+    /// Guess counter pill — liquid glass on iOS 26, frosted capsule on iOS 18.
+    @ViewBuilder
+    private var counterPill: some View {
+        let label = Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
+            .font(.system(size: 13, weight: .semibold, design: .monospaced))
+            .foregroundStyle(.white.opacity(0.7))
+            .padding(.horizontal, 14)
+            .padding(.vertical, 5)
+
+        if #available(iOS 26, *) {
+            label
+                .glassEffect(.regular, in: Capsule())
+        } else {
+            label
+                .background(Capsule().fill(Color.white.opacity(0.12)))
+        }
+    }
+
     // MARK: - Board
 
-    /// Fixed grid: for each row index 0..<maxGuesses, render the appropriate row type.
     private var board: some View {
         VStack(spacing: 8) {
             ForEach(0..<viewModel.maxGuesses, id: \.self) { rowIndex in
                 if rowIndex < viewModel.guessHistory.count {
-                    // Submitted guess — show feedback
                     let entry = viewModel.guessHistory[rowIndex]
                     SignalsFeedbackRow(guess: entry.guess, feedback: entry.feedback)
-                        .transition(.asymmetric(
-                            insertion: .push(from: .bottom),
-                            removal: .opacity
-                        ))
+                        .id(rowIndex) // stable identity so flip triggers once per guess
                 } else if rowIndex == viewModel.guessHistory.count && !viewModel.gameState.isOver {
-                    // Active input row — live digits from currentInput
                     activeInputRow
                 } else {
-                    // Future / unfilled row
                     emptyRow
                 }
             }
@@ -126,30 +130,14 @@ struct SignalsGameView: View {
     private var activeInputRow: some View {
         HStack(spacing: 8) {
             ForEach(0..<4, id: \.self) { index in
-                let digit = viewModel.currentInput[index]
-                let isNextEmpty = digit == nil && index == firstEmptyInputSlot
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(
-                            digit != nil
-                                ? Color.white.opacity(0.8)
-                                : (isNextEmpty ? Color.white.opacity(0.50) : Color.white.opacity(0.18)),
-                            lineWidth: isNextEmpty ? 2.5 : 2
-                        )
-                        .frame(width: 58, height: 58)
-
-                    if let d = digit {
-                        Text("\(d)")
-                            .font(.system(size: 26, weight: .bold, design: .monospaced))
-                            .foregroundStyle(.white)
-                            .transition(.scale(scale: 0.7).combined(with: .opacity))
-                    }
-                }
-                .animation(.easeInOut(duration: 0.12), value: digit)
+                SignalsActiveCell(
+                    digit: viewModel.currentInput[index],
+                    isNextEmpty: viewModel.currentInput[index] == nil
+                        && index == firstEmptyInputSlot
+                )
             }
         }
         .frame(maxWidth: .infinity)
-        .animation(.easeInOut(duration: 0.12), value: viewModel.currentInput.map { $0 ?? -1 })
     }
 
     private var firstEmptyInputSlot: Int {
@@ -162,7 +150,7 @@ struct SignalsGameView: View {
         HStack(spacing: 8) {
             ForEach(0..<4, id: \.self) { _ in
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(Color.white.opacity(0.12), lineWidth: 2)
+                    .strokeBorder(Color.white.opacity(0.10), lineWidth: 2)
                     .frame(width: 58, height: 58)
             }
         }
@@ -222,6 +210,52 @@ struct SignalsGameView: View {
         .presentationCornerRadius(24)
     }
 }
+
+// MARK: - Active Cell with Bounce
+
+/// A single input slot in the active guess row.
+/// Springs to 1.12× scale when a digit lands, then settles back to 1.0.
+private struct SignalsActiveCell: View {
+    let digit: Int?
+    let isNextEmpty: Bool
+
+    @State private var scale: CGFloat = 1.0
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(
+                    digit != nil
+                        ? Color.white.opacity(0.80)
+                        : (isNextEmpty ? Color.white.opacity(0.50) : Color.white.opacity(0.18)),
+                    lineWidth: isNextEmpty && digit == nil ? 2.5 : 2
+                )
+                .frame(width: 58, height: 58)
+
+            if let d = digit {
+                Text("\(d)")
+                    .font(.system(size: 26, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+                    .transition(.scale(scale: 0.6).combined(with: .opacity))
+            }
+        }
+        .scaleEffect(scale)
+        .onChange(of: digit) { old, new in
+            guard old == nil, new != nil else { return }
+            // Spring pop: scale up then settle back
+            withAnimation(.spring(response: 0.12, dampingFraction: 0.45)) {
+                scale = 1.12
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                withAnimation(.spring(response: 0.12, dampingFraction: 0.6)) {
+                    scale = 1.0
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Previews
 
 #Preview("Daily — In Progress") {
     SignalsGameView()
