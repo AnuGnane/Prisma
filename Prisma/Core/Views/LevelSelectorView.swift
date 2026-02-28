@@ -206,6 +206,8 @@ struct LevelSelectorView: View {
             SignalsGameView(viewModel: SignalsGameViewModel(level: levelId))
         case .archive:
             ArchiveGameView(viewModel: ArchiveGameViewModel(level: levelId))
+        case .cargo:
+            CargoGameView(viewModel: CargoGameViewModel(level: levelId))
         default:
             Text("Coming Soon")
                 .foregroundStyle(.white)

@@ -64,6 +64,9 @@ struct ArchiveGameView: View {
                                     }
                                 }
                             }
+                            
+                            // Game Center reporting
+                            reportToGameCenter()
                         }
                     }
                     .padding(.horizontal, 24)
@@ -151,10 +154,37 @@ struct ArchiveGameView: View {
 
     private var header: some View {
         VStack(spacing: 4) {
-            Text("ARCHIVE")
-                .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.5))
-                .kerning(3)
+            ZStack {
+                Text("ARCHIVE")
+                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                    .foregroundStyle(.white.opacity(0.5))
+                    .kerning(3)
+                
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .padding(8)
+                    }
+                    .padding(.leading, 8)
+                    
+                    Spacer()
+                    
+                    Button {
+                        viewModel.reset()
+                        Haptics.playMediumImpact()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.4))
+                            .padding(8)
+                    }
+                    .padding(.trailing, 12)
+                }
+            }
 
             counterPill
                 .padding(.top, 2)
@@ -162,10 +192,12 @@ struct ArchiveGameView: View {
             // Hint text
             Text("\u{201C}\(viewModel.secretEvent.hint)\u{201D}")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.white.opacity(0.45))
+                .foregroundStyle(.white.opacity(0.55))
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .padding(.horizontal, 32)
+                .lineLimit(3)
+                .minimumScaleFactor(0.85)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 20)
                 .padding(.top, 6)
         }
         .frame(maxWidth: .infinity)
@@ -393,6 +425,45 @@ private struct ShakeEffect: GeometryEffect {
     func effectValue(size: CGSize) -> ProjectionTransform {
         let offset = sin(animatableData * .pi * 2) * 8
         return ProjectionTransform(CGAffineTransform(translationX: offset, y: 0))
+    }
+}
+
+// MARK: - Game Center Reporting
+
+extension ArchiveGameView {
+    private func reportToGameCenter() {
+        // let gc = GameCenterManager.shared
+        // let didWin = viewModel.gameState.isCompleted
+
+        // // Achievement: first archive puzzle completed (win or lose)
+        // gc.reportAchievement(GameCenterManager.Achievement.firstArchive)
+
+        // if viewModel.isDaily && didWin {
+        //     // Daily best score (fewer guesses = better)
+        //     gc.submitScore(viewModel.guessCount,
+        //                    leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyBest])
+
+        //     // Update streak
+        //     let streak = StreakManager.recordDailyWin(game: "archive")
+        //     gc.submitScore(streak,
+        //                    leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyStreak])
+
+        //     // Streak achievements
+        //     if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
+        //     if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
+        //     if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
+        // }
+
+        // if !viewModel.isDaily && didWin {
+        //     // Count all won local levels across both games for mastery
+        //     let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
+        //     gc.submitScore(totalWon,
+        //                    leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
+
+        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local25, current: totalWon, target: 25)
+        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local50, current: totalWon, target: 50)
+        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local100, current: totalWon, target: 100)
+        // }
     }
 }
 

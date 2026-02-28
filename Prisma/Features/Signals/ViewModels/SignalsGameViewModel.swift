@@ -278,4 +278,16 @@ final class SignalsGameViewModel: ShareStringGenerator {
             durationSeconds: Date.now.timeIntervalSince(startDate)
         )
     }
+    func reset() {
+        if isDaily {
+            self.secretCode = SignalsCode(fromSeed: Int(Date().dailySeed))
+        } else if let levelId = activeLevelId {
+            self.secretCode = SignalsCode(fromSeed: levelId * 1000)
+        }
+        
+        self.guessHistory = []
+        self.currentInput = [nil, nil, nil, nil]
+        self.gameState = .inProgress
+        self.startDate = Date.now
+    }
 }

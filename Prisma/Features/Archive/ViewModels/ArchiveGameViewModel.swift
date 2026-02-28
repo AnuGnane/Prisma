@@ -303,4 +303,21 @@ final class ArchiveGameViewModel: ShareStringGenerator {
             durationSeconds: Date.now.timeIntervalSince(startDate)
         )
     }
+    func reset() {
+        if isDaily {
+            let events = Self.loadDailyEvents()
+            let dayOfYear = (Calendar.current.ordinality(of: .day, in: .year, for: .now) ?? 1) - 1
+            let index = dayOfYear % events.count
+            self.secretEvent = events[index]
+        } else if let levelId = activeLevelId {
+            let events = Self.loadEvents()
+            let index = max(0, levelId - 1) % events.count
+            self.secretEvent = events[index]
+        }
+        
+        self.guessHistory = []
+        self.currentInput = Array(repeating: nil, count: 8)
+        self.gameState = .inProgress
+        self.startDate = .now
+    }
 }

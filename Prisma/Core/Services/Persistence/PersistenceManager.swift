@@ -115,4 +115,12 @@ struct PersistenceManager {
         let progressList = fetchLevelProgress(for: gameType, context: context)
         return progressList.contains(where: { $0.levelId == levelId && $0.isPlayed })
     }
+
+    // MARK: - Total Local Wins (for Game Center mastery leaderboard)
+
+    static func totalLocalWins(context: ModelContext) -> Int {
+        let signalsWins = fetchLevelProgress(for: .signals, context: context).filter { $0.won }.count
+        let archiveWins = fetchLevelProgress(for: .archive, context: context).filter { $0.won }.count
+        return signalsWins + archiveWins
+    }
 }

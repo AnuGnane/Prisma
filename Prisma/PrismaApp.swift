@@ -10,6 +10,10 @@ import SwiftData
 
 @main
 struct PrismaApp: App {
+    init() {
+        // GameCenterManager.shared.authenticate()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

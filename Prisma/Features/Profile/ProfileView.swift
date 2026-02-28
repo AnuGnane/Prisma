@@ -1,0 +1,349 @@
+//
+//  ProfileView.swift
+//  Prisma
+//
+//  Displays the player's stats: local progress, daily history, streaks.
+//  Designed as the "You" tab in the main TabView.
+//
+
+import SwiftUI
+import SwiftData
+
+struct ProfileView: View {
+    @Query private var allLevelProgress: [LevelProgress]
+    @Query(sort: \GameResult.date, order: .reverse) private var allGameResults: [GameResult]
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var signalsProgress: [LevelProgress] {
+        allLevelProgress.filter { $0.gameTypeRaw == GameType.signals.rawValue }
+    }
+    private var archiveProgress: [LevelProgress] {
+        allLevelProgress.filter { $0.gameTypeRaw == GameType.archive.rawValue }
+    }
+    private var dailyResults: [GameResult] {
+        allGameResults.filter { $0.isDaily }
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Section header
+                        Text("YOUR STATS")
+                            .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .kerning(2)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 8)
+
+                        // Game stat cards
+                        HStack(spacing: 12) {
+                            StatCard(
+                                game: .signals,
+                                icon: "antenna.radiowaves.left.and.right",
+                                accentColor: Color(red: 0.24, green: 0.65, blue: 0.36),
+                                progress: signalsProgress
+                            )
+                            StatCard(
+                                game: .archive,
+                                icon: "clock.arrow.circlepath",
+                                accentColor: Color(red: 0.24, green: 0.52, blue: 0.85),
+                                progress: archiveProgress
+                            )
+                        }
+                        .padding(.horizontal, 20)
+
+                        // Streak info
+                        streakSection
+
+                        // Daily history
+                        if !dailyResults.isEmpty {
+                            dailyHistorySection
+                        } else {
+                            emptyDailySection
+                        }
+
+                        // Game Center placeholder
+                        gameCenterPlaceholder
+                    }
+                    .padding(.bottom, 40)
+                }
+            }
+            .navigationTitle("You")
+            .navigationBarTitleDisplayMode(.large)
+        }
+    }
+
+    // MARK: - Streak Section
+
+    private var streakSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionLabel("DAILY STREAKS")
+
+            HStack(spacing: 12) {
+                StreakPill(
+                    label: "Signals",
+                    streak: StreakManager.currentStreak(for: "signals"),
+                    color: Color(red: 0.24, green: 0.65, blue: 0.36)
+                )
+                StreakPill(
+                    label: "Archive",
+                    streak: StreakManager.currentStreak(for: "archive"),
+                    color: Color(red: 0.24, green: 0.52, blue: 0.85)
+                )
+            }
+        }
+        .padding(.horizontal, 20)
+    }
+
+    // MARK: - Daily History Section
+
+    private var dailyHistorySection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionLabel("RECENT DAILY RESULTS")
+
+            VStack(spacing: 1) {
+                ForEach(Array(dailyResults.prefix(20)), id: \.date) { result in
+                    DailyResultRow(result: result)
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .padding(.horizontal, 20)
+    }
+
+    private var emptyDailySection: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "moon.stars.fill")
+                .font(.system(size: 32))
+                .foregroundStyle(.secondary)
+            Text("No daily puzzles played yet")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(.secondary)
+            Text("Complete your first daily puzzle to see results here.")
+                .font(.system(size: 13))
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
+        .padding(.horizontal, 20)
+    }
+
+    // MARK: - Game Center Placeholder
+
+    private var gameCenterPlaceholder: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionLabel("LEADERBOARDS")
+
+            HStack(spacing: 14) {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(.secondary.opacity(0.6))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Game Center")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                    Text("Coming soon — leaderboards & achievements")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.tertiary)
+                }
+
+                Spacer()
+
+                Text("SOON")
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(Color.secondary.opacity(0.15)))
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+        }
+        .padding(.horizontal, 20)
+    }
+
+    // MARK: - Helper
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+            .foregroundStyle(.secondary)
+            .kerning(1.5)
+    }
+}
+
+// MARK: - Stat Card
+
+private struct StatCard: View {
+    let game: GameType
+    let icon: String
+    let accentColor: Color
+    let progress: [LevelProgress]
+
+    private var won: Int { progress.filter { $0.won }.count }
+    private var played: Int { progress.filter { $0.isPlayed }.count }
+    private var winRate: Double { played > 0 ? Double(won) / Double(played) : 0 }
+    private var avgGuesses: Double {
+        let wins = progress.filter { $0.won }
+        guard !wins.isEmpty else { return 0 }
+        return Double(wins.reduce(0) { $0 + $1.guessesUsed }) / Double(wins.count)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            // Header
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(accentColor)
+                Text(game.displayName)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.primary)
+            }
+
+            // Big stat
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(alignment: .lastTextBaseline, spacing: 4) {
+                    Text("\(won)")
+                        .font(.system(size: 32, weight: .heavy, design: .rounded))
+                        .foregroundStyle(accentColor)
+                    Text("/ 100")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                }
+                Text("levels won")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
+            }
+
+            // Progress bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.secondary.opacity(0.15))
+                        .frame(height: 6)
+                    Capsule().fill(accentColor)
+                        .frame(width: max(0, geo.size.width * CGFloat(won) / 100), height: 6)
+                }
+            }
+            .frame(height: 6)
+
+            // Secondary stats
+            HStack {
+                miniStat(label: "Win Rate", value: played > 0 ? "\(Int(winRate * 100))%" : "—")
+                Spacer()
+                miniStat(label: "Avg Guesses", value: avgGuesses > 0 ? String(format: "%.1f", avgGuesses) : "—")
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 20).fill(Color(.secondarySystemGroupedBackground)))
+    }
+
+    private func miniStat(label: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(value)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(.primary)
+            Text(label)
+                .font(.system(size: 10))
+                .foregroundStyle(.tertiary)
+        }
+    }
+}
+
+// MARK: - Streak Pill
+
+private struct StreakPill: View {
+    let label: String
+    let streak: Int
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "flame.fill")
+                .font(.system(size: 18))
+                .foregroundStyle(streak > 0 ? color : Color.secondary.opacity(0.4))
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text("\(streak)")
+                    .font(.system(size: 22, weight: .heavy, design: .rounded))
+                    .foregroundStyle(streak > 0 ? color : .secondary)
+                Text("\(label) streak")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity)
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+    }
+}
+
+// MARK: - Daily Result Row
+
+private struct DailyResultRow: View {
+    let result: GameResult
+
+    private var gameColor: Color {
+        switch result.gameType {
+        case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
+        case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
+        default: return .secondary
+        }
+    }
+
+    private var formattedDate: String {
+        let fmt = DateFormatter()
+        fmt.dateStyle = .medium
+        fmt.timeStyle = .none
+        return fmt.string(from: result.date)
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // Win/loss indicator
+            Circle()
+                .fill(result.score > 0 ? gameColor : Color.secondary.opacity(0.3))
+                .frame(width: 10, height: 10)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(result.gameType.displayName)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.primary)
+                Text(formattedDate)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            if result.score > 0 {
+                Text("\(result.guessCount) guesses")
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Lost")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(Color(.secondarySystemGroupedBackground))
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    ProfileView()
+        .modelContainer(for: [LevelProgress.self, GameResult.self], inMemory: true)
+}

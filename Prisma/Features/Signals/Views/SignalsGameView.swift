@@ -67,6 +67,9 @@ struct SignalsGameView: View {
                                     }
                                 }
                             }
+                            
+                            // Game Center reporting
+                            reportToGameCenter()
                         }
                     }
                     .padding(.horizontal, 24)
@@ -143,10 +146,37 @@ struct SignalsGameView: View {
 
     private var header: some View {
         VStack(spacing: 4) {
-            Text("SIGNALS")
-                .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.5))
-                .kerning(3)
+            ZStack {
+                Text("SIGNALS")
+                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                    .foregroundStyle(.white.opacity(0.5))
+                    .kerning(3)
+                
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .padding(8)
+                    }
+                    .padding(.leading, 8)
+                    
+                    Spacer()
+                    
+                    Button {
+                        viewModel.reset()
+                        Haptics.playMediumImpact()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.4))
+                            .padding(8)
+                    }
+                    .padding(.trailing, 12)
+                }
+            }
 
             counterPill
                 .padding(.top, 2)
@@ -322,6 +352,50 @@ private struct SignalsActiveCell: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Game Center Reporting
+
+extension SignalsGameView {
+    private func reportToGameCenter() {
+        // let gc = GameCenterManager.shared
+        // let didWin = viewModel.gameState.isCompleted
+
+        // // Achievement: first signal puzzle completed (win or lose)
+        // gc.reportAchievement(GameCenterManager.Achievement.firstSignal)
+
+        // if viewModel.isDaily && didWin {
+        //     // Daily best score (fewer guesses = better)
+        //     gc.submitScore(viewModel.guessCount,
+        //                    leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyBest])
+
+        //     // Update streak
+        //     let streak = StreakManager.recordDailyWin(game: "signals")
+        //     gc.submitScore(streak,
+        //                    leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyStreak])
+
+        //     // Streak achievements
+        //     if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
+        //     if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
+        //     if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
+
+        //     // Perfect score (1 guess)
+        //     if viewModel.guessCount == 1 {
+        //         gc.reportAchievement(GameCenterManager.Achievement.perfectSignal)
+        //     }
+        // }
+
+        // if !viewModel.isDaily && didWin {
+        //     // Count all won local levels across both games for mastery
+        //     let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
+        //     gc.submitScore(totalWon,
+        //                    leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
+
+        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local25, current: totalWon, target: 25)
+        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local50, current: totalWon, target: 50)
+        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local100, current: totalWon, target: 100)
+        // }
     }
 }
 
