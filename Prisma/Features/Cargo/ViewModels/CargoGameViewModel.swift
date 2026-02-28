@@ -101,7 +101,20 @@ final class CargoGameViewModel {
     // MARK: - Legacy Piece Selection (kept for tests/undo fallback)
 
     func selectPiece(at index: Int) {
-        guard !isPiecePlaced(at: index) && !isAwaitingSubmit && draggingPieceId == nil else { return }
+        guard !isPiecePlaced(at: index) else { return }
+        
+        // If a piece is currently pending, touching a new piece in the tray should cancel that pending piece
+        if isAwaitingSubmit {
+            cancelPendingPiece()
+        }
+        
+        // If a previous drag was cancelled by the system (no drop callback), we can get stuck
+        // with draggingPieceId set. Clear it so the user can tap a piece to recover.
+        if draggingPieceId != nil {
+            draggingPieceId = nil
+            ghostOrigin = nil
+            lastValidOrigin = nil
+        }
         selectedPieceIndex = index
     }
 
@@ -115,8 +128,16 @@ final class CargoGameViewModel {
 
     // MARK: - Drag & Drop Interactions
 
+    // Timestamp to prevent SwiftUI stray drag starts immediately after drop
+    private var lastDropTime: Date = .distantPast
+
     func beginDrag(pieceId: Int) {
         guard gameState == .inProgress else { return }
+        
+        // Debounce: ignore drag starts if a drop just happened less than 0.3s ago
+        if Date().timeIntervalSince(lastDropTime) < 0.3 {
+            return
+        }
         
         // If we are dragging the currently pending piece, clear its pending status but remember its origin
         if pieceId == pendingPieceId {
@@ -124,7 +145,10 @@ final class CargoGameViewModel {
             pendingPieceId = nil
             pendingOrigin = nil
         } else {
-            guard !isAwaitingSubmit else { return }
+            // Dragging a NEW piece while another is pending - intuitively cancel the pending piece
+            if isAwaitingSubmit {
+                cancelPendingPiece()
+            }
             lastValidOrigin = nil
         }
         
@@ -134,7 +158,10 @@ final class CargoGameViewModel {
     }
 
     func cancelDrag() {
-        if let pId = draggingPieceId, let restoreOrigin = lastValidOrigin {
+        guard draggingPieceId != nil else { return }
+        
+        if let pId = draggingPieceId, let restoreOrigin = lastValidOrigin, piece(with: pId) != nil {
+            // This piece was previously valid on the board, restore to pending state there
             pendingPieceId = pId
             pendingOrigin = restoreOrigin
             lastValidOrigin = nil
@@ -144,8 +171,16 @@ final class CargoGameViewModel {
     }
 
     func updateDragLocation(coord: CellCoord?) {
-        guard draggingPieceId != nil else { return }
-        ghostOrigin = coord
+        guard let pId = draggingPieceId, let coord = coord, let piece = piece(with: pId) else {
+            ghostOrigin = coord
+            return
+        }
+        
+        let bounds = piece.bounds
+        let originR = coord.row - (bounds.rows / 2)
+        let originC = coord.col - (bounds.cols / 2)
+        
+        ghostOrigin = CellCoord(originR, originC)
     }
 
     func dropDraggingPiece() {
@@ -160,6 +195,7 @@ final class CargoGameViewModel {
             pendingPieceId = pId
             pendingOrigin = origin
             lastValidOrigin = nil // Success, so clear restore point
+            selectedPieceIndex = nil // Deselect tray item when placed
         } else if let restoreOrigin = lastValidOrigin {
             // Invalid drop but it was a pending piece -> restore it!
             pendingPieceId = pId
@@ -170,6 +206,7 @@ final class CargoGameViewModel {
         // Reset drag tracking
         draggingPieceId = nil
         ghostOrigin = nil
+        lastDropTime = Date()
     }
 
     // MARK: - Pending State Actions
@@ -388,7 +425,7 @@ final class CargoGameViewModel {
 
 // MARK: - CargoPiece Init from bare components (for fallback)
 
-private extension CargoPiece {
+extension CargoPiece {
     init(id: Int, cells: [CellCoord]) {
         self.id = id
         self.baseCells = cells

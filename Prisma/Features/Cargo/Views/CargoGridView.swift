@@ -51,6 +51,16 @@ struct CargoGridView: View {
                                         return NSItemProvider(object: String(pendingPieceId ?? 0) as NSString)
                                     }
                                     return NSItemProvider()
+                                } preview: {
+                                    if isPending, let pId = pendingPieceId {
+                                        PieceThumbnail(
+                                            piece: CargoPiece(id: pId, cells: pendingCells),
+                                            isSelected: false,
+                                            isPlaced: false
+                                        )
+                                    } else {
+                                        EmptyView()
+                                    }
                                 }
                         }
                     }

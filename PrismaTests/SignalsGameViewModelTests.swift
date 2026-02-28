@@ -4,6 +4,7 @@
 //
 
 import Testing
+import Foundation
 @testable import Prisma
 
 @Suite("SignalsGameViewModel")

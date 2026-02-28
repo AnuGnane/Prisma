@@ -24,7 +24,6 @@ struct CargoPieceTray: View {
             HStack(spacing: 12) {
                 ForEach(pieces) { piece in
                     let idx = pieces.firstIndex(where: { $0.id == piece.id }) ?? 0
-                    let isDragging = piece.id == draggingId
                     Button {
                         if !placedPieceIds.contains(piece.id) {
                             onSelect(idx)
@@ -44,12 +43,12 @@ struct CargoPieceTray: View {
                             onDragStart(piece.id)
                         }
                         return NSItemProvider(object: String(piece.id) as NSString)
-                        PieceThumbnail(piece: piece, isSelected: true, isPlaced: false)
-                            .onDisappear {
-                                // If the preview disappears (drop ended organically or OS aborted it),
-                                // calling cancelDrag gracefully handles any stuck dragging state.
-                                onDragCancel()
-                            }
+                    } preview: {
+                        PieceThumbnail(
+                            piece: piece,
+                            isSelected: false,
+                            isPlaced: false
+                        )
                     }
                 }
             }

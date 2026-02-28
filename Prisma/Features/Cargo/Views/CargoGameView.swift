@@ -26,11 +26,6 @@ struct CargoGameView: View {
         ZStack {
             Color(red: 0.07, green: 0.07, blue: 0.10)
                 .ignoresSafeArea()
-                .onDrop(of: [.text], isTargeted: nil) { providers in
-                    // Dropping completely outside the grid cancels the drag
-                    viewModel.cancelDrag()
-                    return true
-                }
 
             VStack(spacing: 0) {
                 header
@@ -78,10 +73,12 @@ struct CargoGameView: View {
                 }
             }
         }
-        .animation(.spring(response: 0.4), value: viewModel.isGameOver)
         .animation(.default, value: viewModel.showingSolution)
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("cancelDragSafe"))) { _ in
+            viewModel.cancelDrag()
+        }
     }
 
     // MARK: - Header
