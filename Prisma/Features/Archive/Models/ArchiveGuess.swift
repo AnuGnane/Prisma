@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ArchiveGuess {
+struct ArchiveGuess: Equatable {
     /// The raw 8 digits: [D, D, M, M, Y, Y, Y, Y]
     let digits: [Int]
 

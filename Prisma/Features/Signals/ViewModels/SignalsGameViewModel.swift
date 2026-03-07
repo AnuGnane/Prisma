@@ -269,13 +269,25 @@ final class SignalsGameViewModel: ShareStringGenerator {
         case .completed(let s): score = s
         default: score = 0
         }
+        
+        // Serialize the complete guess history
+        let guessHistoryWithFeedback = guessHistory.map { (guess, feedback) in
+            SignalsGuessWithFeedback(guess: guess, feedback: feedback)
+        }
+        let serializedState = SignalsStateSerializer.serialize(guessHistoryWithFeedback)
+        if serializedState == nil {
+            print("⚠️ SignalsGameViewModel: Failed to serialize guess history")
+        }
+        
         return GameResult(
             gameType: .signals,
             score: score,
             shareString: generateShareString(),
             guessCount: guessHistory.count,
             isDaily: isDaily,
-            durationSeconds: Date.now.timeIntervalSince(startDate)
+            durationSeconds: Date.now.timeIntervalSince(startDate),
+            levelId: activeLevelId,
+            signalsStateJSON: serializedState
         )
     }
     func reset() {

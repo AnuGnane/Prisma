@@ -54,7 +54,7 @@ struct CargoGridView: View {
                                 } preview: {
                                     if isPending, let pId = pendingPieceId {
                                         PieceThumbnail(
-                                            piece: CargoPiece(id: pId, cells: pendingCells),
+                                            piece: CargoPiece(id: pId, baseCells: pendingCells),
                                             isSelected: false,
                                             isPlaced: false
                                         )

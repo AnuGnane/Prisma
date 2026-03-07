@@ -38,10 +38,12 @@ struct CargoPieceTray: View {
                     }
                     .buttonStyle(.plain)
                     .onDrag {
-                        if !placedPieceIds.contains(piece.id) {
-                            onSelect(idx) // Select it when drag starts too
-                            onDragStart(piece.id)
+                        // Prevent dragging placed pieces
+                        guard !placedPieceIds.contains(piece.id) else {
+                            return NSItemProvider()
                         }
+                        onSelect(idx) // Select it when drag starts too
+                        onDragStart(piece.id)
                         return NSItemProvider(object: String(piece.id) as NSString)
                     } preview: {
                         PieceThumbnail(

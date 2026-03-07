@@ -103,9 +103,10 @@ final class CargoGameViewModel {
     func selectPiece(at index: Int) {
         guard !isPiecePlaced(at: index) else { return }
         
-        // If a piece is currently pending, touching a new piece in the tray should cancel that pending piece
+        // While a piece is pending on the grid, ignore tray taps so the submit bar and shape persist.
+        // Pending is only cleared by X or Submit. (Stray taps can occur during drag-release transition.)
         if isAwaitingSubmit {
-            cancelPendingPiece()
+            return
         }
         
         // If a previous drag was cancelled by the system (no drop callback), we can get stuck
@@ -128,29 +129,23 @@ final class CargoGameViewModel {
 
     // MARK: - Drag & Drop Interactions
 
-    // Timestamp to prevent SwiftUI stray drag starts immediately after drop
-    private var lastDropTime: Date = .distantPast
-
     func beginDrag(pieceId: Int) {
         guard gameState == .inProgress else { return }
         
-        // Debounce: ignore drag starts if a drop just happened less than 0.3s ago
-        if Date().timeIntervalSince(lastDropTime) < 0.3 {
+        // Prevent dragging already placed pieces
+        guard !isPiecePlaced(id: pieceId) else { return }
+        
+        // Never clear pending when drag starts from the grid (same piece). Keeps submit/flip/rotate bar
+        // and shape on screen until user explicitly taps X or Submit. User can move by cancelling (X) then re-dragging from tray.
+        if pieceId == pendingPieceId {
             return
         }
         
-        // If we are dragging the currently pending piece, clear its pending status but remember its origin
-        if pieceId == pendingPieceId {
-            lastValidOrigin = pendingOrigin
-            pendingPieceId = nil
-            pendingOrigin = nil
-        } else {
-            // Dragging a NEW piece while another is pending - intuitively cancel the pending piece
-            if isAwaitingSubmit {
-                cancelPendingPiece()
-            }
-            lastValidOrigin = nil
+        // Dragging a different piece from the tray while another is pending — cancel the pending piece
+        if isAwaitingSubmit {
+            cancelPendingPiece()
         }
+        lastValidOrigin = nil
         
         selectedPieceIndex = nil // Clear multi-select overlay when dragging begins
         draggingPieceId = pieceId
@@ -206,7 +201,6 @@ final class CargoGameViewModel {
         // Reset drag tracking
         draggingPieceId = nil
         ghostOrigin = nil
-        lastDropTime = Date()
     }
 
     // MARK: - Pending State Actions
@@ -365,14 +359,74 @@ final class CargoGameViewModel {
         showingSolution = true
     }
 
+    // MARK: - Share & Persistence (Daily)
+
+    /// Share string for daily Cargo: pieces placed out of total, and empty squares if any.
+    func generateShareString() -> String {
+        let placed = placedPieceIds.count
+        let total = pieces.count
+        let empty = grid.emptyCellCount
+        if empty == 0 {
+            return "Prisma Cargo · \(placed)/\(total) pieces ✓"
+        }
+        return "Prisma Cargo · \(placed)/\(total) pieces · \(empty) empty"
+    }
+
+    /// Build a GameResult for saving daily Cargo completion. Use the given date as the game date (start of day).
+    func buildGameResult(gameDate: Date) -> GameResult {
+        let score: Int
+        if case .completed(let s, _) = gameState { score = s } else { score = 0 }
+        
+        // Serialize the final grid state
+        let serializedState = CargoStateSerializer.serialize(grid)
+        if serializedState == nil {
+            print("⚠️ CargoGameViewModel: Failed to serialize grid state for daily game")
+        }
+        
+        return GameResult(
+            gameType: .cargo,
+            date: gameDate,
+            score: score,
+            shareString: generateShareString(),
+            guessCount: 0,
+            isDaily: true,
+            durationSeconds: Double(elapsedSeconds),
+            cargoStateJSON: serializedState
+        )
+    }
+    
+    /// Build a GameResult for saving local level Cargo completion.
+    func buildLocalGameResult() -> GameResult {
+        let score: Int
+        if case .completed(let s, _) = gameState { score = s } else { score = 0 }
+        
+        // Serialize the final grid state
+        let serializedState = CargoStateSerializer.serialize(grid)
+        if serializedState == nil {
+            print("⚠️ CargoGameViewModel: Failed to serialize grid state for local game")
+        }
+        
+        return GameResult(
+            gameType: .cargo,
+            date: .now,
+            score: score,
+            shareString: generateShareString(),
+            guessCount: 0,
+            isDaily: false,
+            durationSeconds: Double(elapsedSeconds),
+            levelId: activeLevelId,
+            cargoStateJSON: serializedState
+        )
+    }
+
     // MARK: - Fallback Puzzle
 
     private static func fallbackPuzzle() -> CargoPuzzle {
         let pieces = [
-            CargoPiece(id: 1, cells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
-            CargoPiece(id: 2, cells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
-            CargoPiece(id: 3, cells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
-            CargoPiece(id: 4, cells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
+            CargoPiece(id: 1, baseCells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
+            CargoPiece(id: 2, baseCells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
+            CargoPiece(id: 3, baseCells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
+            CargoPiece(id: 4, baseCells: [CellCoord(0,0),CellCoord(0,1),CellCoord(1,0),CellCoord(1,1)]),
         ]
         return CargoPuzzle(id: 0, gridRows: 4, gridCols: 4, blockedCells: [], pieces: pieces)
     }
@@ -426,8 +480,10 @@ final class CargoGameViewModel {
 // MARK: - CargoPiece Init from bare components (for fallback)
 
 extension CargoPiece {
-    init(id: Int, cells: [CellCoord]) {
+    init(id: Int, baseCells: [CellCoord]) {
         self.id = id
-        self.baseCells = cells
+        self.baseCells = baseCells
+        self.rotationSteps = 0
+        self.isFlipped = false
     }
 }

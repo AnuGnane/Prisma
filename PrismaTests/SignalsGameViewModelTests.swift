@@ -169,6 +169,77 @@ struct SignalsGameViewModelTests {
         #expect(share.contains("🟩"))
         #expect(share.contains("✅") || share.contains("2/6"))
     }
+    
+    // MARK: - Game State Serialization
+    
+    @Test("buildGameResult includes serialized guess history for daily mode")
+    func testBuildGameResultSerializesGuessHistoryDaily() {
+        let vm = SignalsGameViewModel(date: .now)
+        vm.overrideForTesting(secret: SignalsCode(digits: [1, 2, 3, 4]), maxGuesses: 6)
+        
+        // Submit a few guesses
+        vm.currentInput = [5, 6, 7, 8]
+        vm.submitGuess()
+        vm.currentInput = [1, 2, 3, 4]
+        vm.submitGuess()
+        
+        let result = vm.buildGameResult()
+        
+        // Verify the result has serialized state
+        #expect(result.signalsStateJSON != nil)
+        #expect(result.isDaily == true)
+        #expect(result.guessCount == 2)
+        
+        // Verify we can deserialize it back
+        if let json = result.signalsStateJSON {
+            let deserialized = SignalsStateSerializer.deserialize(json)
+            #expect(deserialized != nil)
+            #expect(deserialized?.count == 2)
+        }
+    }
+    
+    @Test("buildGameResult includes serialized guess history for local mode")
+    func testBuildGameResultSerializesGuessHistoryLocal() {
+        let vm = SignalsGameViewModel(level: 5)
+        
+        // Submit a few guesses
+        vm.currentInput = [9, 9, 9, 9]
+        vm.submitGuess()
+        vm.currentInput = [8, 8, 8, 8]
+        vm.submitGuess()
+        
+        let result = vm.buildGameResult()
+        
+        // Verify the result has serialized state
+        #expect(result.signalsStateJSON != nil)
+        #expect(result.isDaily == false)
+        #expect(result.guessCount == 2)
+        
+        // Verify we can deserialize it back
+        if let json = result.signalsStateJSON {
+            let deserialized = SignalsStateSerializer.deserialize(json)
+            #expect(deserialized != nil)
+            #expect(deserialized?.count == 2)
+        }
+    }
+    
+    @Test("buildGameResult handles empty guess history")
+    func testBuildGameResultWithNoGuesses() {
+        let vm = SignalsGameViewModel(date: .now)
+        
+        let result = vm.buildGameResult()
+        
+        // Should still have serialized state (empty array)
+        #expect(result.signalsStateJSON != nil)
+        #expect(result.guessCount == 0)
+        
+        // Verify we can deserialize it back
+        if let json = result.signalsStateJSON {
+            let deserialized = SignalsStateSerializer.deserialize(json)
+            #expect(deserialized != nil)
+            #expect(deserialized?.count == 0)
+        }
+    }
 }
 
 // MARK: - Test Helper

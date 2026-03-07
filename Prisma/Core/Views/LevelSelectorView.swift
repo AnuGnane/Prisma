@@ -15,17 +15,28 @@ struct LevelSelectorView: View {
     
     @Environment(\.modelContext) private var modelContext
     @Query private var progressList: [LevelProgress]
+    @Query private var gameResults: [GameResult]
     
     init(game: GameType) {
         self.game = game
         let raw = game.rawValue
         _progressList = Query(filter: #Predicate<LevelProgress> { $0.gameTypeRaw == raw })
+        _gameResults = Query(filter: #Predicate<GameResult> { $0.gameTypeRaw == raw && !$0.isDaily })
     }
     
     // MARK: - Aggregate Stats
     
     private var playedCount: Int { progressList.filter(\.isPlayed).count }
     private var wonCount: Int { progressList.filter(\.won).count }
+    
+    // MARK: - Helper to find GameResult for a level
+    
+    private func gameResult(for levelId: Int) -> GameResult? {
+        // Find GameResult by levelId (much more reliable than date matching)
+        return gameResults.first { result in
+            result.levelId == levelId
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -101,7 +112,18 @@ struct LevelSelectorView: View {
                 let isPlayed = progress?.isPlayed ?? false
                 
                 if isPlayed {
-                    playedCell(levelId: levelId, won: progress?.won ?? false, score: progress?.score ?? 0)
+                    NavigationLink {
+                        LocalLevelSolutionView(
+                            game: game,
+                            levelId: levelId,
+                            won: progress?.won ?? false,
+                            score: progress?.score ?? 0,
+                            gameResult: gameResult(for: levelId)
+                        )
+                    } label: {
+                        playedCell(levelId: levelId, won: progress?.won ?? false, score: progress?.score ?? 0)
+                    }
+                    .buttonStyle(.plain)
                 } else {
                     NavigationLink(destination: destination(for: levelId)) {
                         unplayedCell(levelId: levelId)

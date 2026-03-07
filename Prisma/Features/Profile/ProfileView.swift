@@ -13,12 +13,17 @@ struct ProfileView: View {
     @Query private var allLevelProgress: [LevelProgress]
     @Query(sort: \GameResult.date, order: .reverse) private var allGameResults: [GameResult]
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.modelContext) private var modelContext
+    @State private var showResetConfirmation = false
 
     private var signalsProgress: [LevelProgress] {
         allLevelProgress.filter { $0.gameTypeRaw == GameType.signals.rawValue }
     }
     private var archiveProgress: [LevelProgress] {
         allLevelProgress.filter { $0.gameTypeRaw == GameType.archive.rawValue }
+    }
+    private var cargoProgress: [LevelProgress] {
+        allLevelProgress.filter { $0.gameTypeRaw == GameType.cargo.rawValue }
     }
     private var dailyResults: [GameResult] {
         allGameResults.filter { $0.isDaily }
@@ -41,18 +46,26 @@ struct ProfileView: View {
                             .padding(.top, 8)
 
                         // Game stat cards
-                        HStack(spacing: 12) {
+                        VStack(spacing: 12) {
+                            HStack(spacing: 12) {
+                                StatCard(
+                                    game: .signals,
+                                    icon: "antenna.radiowaves.left.and.right",
+                                    accentColor: Color(red: 0.24, green: 0.65, blue: 0.36),
+                                    progress: signalsProgress
+                                )
+                                StatCard(
+                                    game: .archive,
+                                    icon: "clock.arrow.circlepath",
+                                    accentColor: Color(red: 0.24, green: 0.52, blue: 0.85),
+                                    progress: archiveProgress
+                                )
+                            }
                             StatCard(
-                                game: .signals,
-                                icon: "antenna.radiowaves.left.and.right",
-                                accentColor: Color(red: 0.24, green: 0.65, blue: 0.36),
-                                progress: signalsProgress
-                            )
-                            StatCard(
-                                game: .archive,
-                                icon: "clock.arrow.circlepath",
-                                accentColor: Color(red: 0.24, green: 0.52, blue: 0.85),
-                                progress: archiveProgress
+                                game: .cargo,
+                                icon: "shippingbox.fill",
+                                accentColor: Color(red: 1.00, green: 0.55, blue: 0.26),
+                                progress: cargoProgress
                             )
                         }
                         .padding(.horizontal, 20)
@@ -69,12 +82,27 @@ struct ProfileView: View {
 
                         // Game Center placeholder
                         gameCenterPlaceholder
+                        
+                        // Reset button (developer tool)
+                        resetButton
                     }
                     .padding(.bottom, 40)
                 }
             }
             .navigationTitle("You")
             .navigationBarTitleDisplayMode(.large)
+            .confirmationDialog(
+                "Reset All Progress",
+                isPresented: $showResetConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Reset Everything", role: .destructive) {
+                    resetAllProgress()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This will delete all local level progress and game history. Daily games will not be affected. This action cannot be undone.")
+            }
         }
     }
 
@@ -107,8 +135,13 @@ struct ProfileView: View {
             sectionLabel("RECENT DAILY RESULTS")
 
             VStack(spacing: 1) {
-                ForEach(Array(dailyResults.prefix(20)), id: \.date) { result in
-                    DailyResultRow(result: result)
+                ForEach(Array(dailyResults.prefix(20)), id: \.persistentModelID) { result in
+                    NavigationLink {
+                        PastDailyResultView(result: result)
+                    } label: {
+                        DailyResultRow(result: result)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -176,6 +209,51 @@ struct ProfileView: View {
             .font(.system(size: 11, weight: .heavy, design: .monospaced))
             .foregroundStyle(.secondary)
             .kerning(1.5)
+    }
+    
+    // MARK: - Reset Button
+    
+    private var resetButton: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionLabel("DEVELOPER")
+            
+            Button {
+                showResetConfirmation = true
+            } label: {
+                HStack {
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 16))
+                    Text("Reset All Local Progress")
+                        .font(.system(size: 15, weight: .semibold))
+                    Spacer()
+                }
+                .foregroundStyle(.red)
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.secondarySystemGroupedBackground))
+                )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 20)
+    }
+    
+    // MARK: - Reset Function
+    
+    private func resetAllProgress() {
+        // Delete all local level progress
+        for progress in allLevelProgress {
+            modelContext.delete(progress)
+        }
+        
+        // Delete all local game results (keep daily games)
+        for result in allGameResults where !result.isDaily {
+            modelContext.delete(result)
+        }
+        
+        // Save changes
+        try? modelContext.save()
     }
 }
 
@@ -296,6 +374,7 @@ private struct DailyResultRow: View {
         switch result.gameType {
         case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
         case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
+        case .cargo:   return Color(red: 1.00, green: 0.55, blue: 0.26)
         default: return .secondary
         }
     }
@@ -325,7 +404,12 @@ private struct DailyResultRow: View {
 
             Spacer()
 
-            if result.score > 0 {
+            if result.gameType == .cargo {
+                Text(result.shareString)
+                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            } else if result.score > 0 {
                 Text("\(result.guessCount) guesses")
                     .font(.system(size: 13, weight: .medium, design: .monospaced))
                     .foregroundStyle(.secondary)

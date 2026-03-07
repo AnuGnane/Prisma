@@ -73,14 +73,25 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         return events
     }
 
+    /// Returns the daily event for a given date (for viewing past solutions).
+    static func dailyEvent(for date: Date) -> ArchiveEvent {
+        let events = loadDailyEvents()
+        let dayOfYear = (Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 1) - 1
+        let index = dayOfYear % events.count
+        return events[index]
+    }
+
+    /// Returns the event for a local level (for viewing past solutions).
+    static func event(forLevel levelId: Int) -> ArchiveEvent {
+        let events = loadEvents()
+        let index = max(0, levelId - 1) % events.count
+        return events[index]
+    }
+
     // MARK: - Init: Daily
 
     init(date: Date = .now) {
-        let events = Self.loadDailyEvents()
-        // Use day-of-year so each calendar day gets a unique puzzle for a full year
-        let dayOfYear = (Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 1) - 1
-        let index = dayOfYear % events.count
-        self.secretEvent = events[index]
+        self.secretEvent = Self.dailyEvent(for: date)
         self.maxGuesses = 7
         self.gameState = .inProgress
         self.isDaily = true
@@ -294,13 +305,26 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         case .completed(let s): score = s
         default: score = 0
         }
+        
+        // Serialize guess history for persistence
+        let guessesWithFeedback = guessHistory.map { (guess, feedback) in
+            ArchiveGuessWithFeedback(guess: guess, feedback: feedback)
+        }
+        let serializedState = ArchiveStateSerializer.serialize(guessesWithFeedback)
+        
+        if serializedState == nil {
+            print("⚠️ ArchiveGameViewModel: Failed to serialize guess history")
+        }
+        
         return GameResult(
             gameType: .archive,
             score: score,
             shareString: generateShareString(),
             guessCount: guessHistory.count,
             isDaily: isDaily,
-            durationSeconds: Date.now.timeIntervalSince(startDate)
+            durationSeconds: Date.now.timeIntervalSince(startDate),
+            levelId: activeLevelId,
+            archiveStateJSON: serializedState
         )
     }
     func reset() {

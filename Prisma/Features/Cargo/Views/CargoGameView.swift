@@ -46,11 +46,7 @@ struct CargoGameView: View {
                         ghostIsValid: viewModel.ghostIsValid,
                         pendingCells: viewModel.isAwaitingSubmit ? viewModel.ghostCells : [],
                         pendingPieceId: viewModel.pendingPieceId,
-                        onDragPending: {
-                            if let pid = viewModel.pendingPieceId {
-                                viewModel.beginDrag(pieceId: pid)
-                            }
-                        },
+                        onDragPending: nil,
                         onHoverGrid: { viewModel.updateDragLocation(coord: $0) },
                         onDropGrid: {
                             viewModel.dropDraggingPiece()
@@ -332,15 +328,25 @@ struct CargoGameView: View {
                 if !viewModel.isDaily {
                     localResultActions
                 } else {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Done")
-                            .font(.system(size: 17, weight: .bold))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
-                            .foregroundStyle(.black)
+                    VStack(spacing: 12) {
+                        ShareLink(item: viewModel.generateShareString()) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .font(.system(size: 17, weight: .semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.15)))
+                                .foregroundStyle(.white)
+                        }
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("Done")
+                                .font(.system(size: 17, weight: .bold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
+                                .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
+                                .foregroundStyle(.black)
+                        }
                     }
                 }
 
@@ -355,6 +361,9 @@ struct CargoGameView: View {
                             .padding(.vertical, 8)
                     }
                 }
+            }
+            .onAppear {
+                if viewModel.isDaily { saveResult() }
             }
         )
     }
@@ -441,6 +450,16 @@ struct CargoGameView: View {
                 guessesUsed: 0,
                 context: modelContext
             )
+            // Also save GameResult for local mode to enable history display with user state
+            let result = viewModel.buildLocalGameResult()
+            PersistenceManager.save(result, context: modelContext)
+        }
+        if viewModel.isDaily {
+            let gameDate = Calendar.current.startOfDay(for: Date())
+            if PersistenceManager.fetchResult(for: .cargo, on: gameDate, context: modelContext) == nil {
+                let result = viewModel.buildGameResult(gameDate: gameDate)
+                PersistenceManager.save(result, context: modelContext)
+            }
         }
     }
 }

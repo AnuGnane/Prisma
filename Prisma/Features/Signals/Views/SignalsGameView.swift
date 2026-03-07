@@ -56,6 +56,10 @@ struct SignalsGameView: View {
                                 )
                             }
                             
+                            // Save GameResult for both daily and local games to enable history display
+                            let result = viewModel.buildGameResult()
+                            PersistenceManager.save(result, context: modelContext)
+                            
                             // Delayed haptics/flow
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
                                 if viewModel.gameState.isCompleted { Haptics.playSuccess() }

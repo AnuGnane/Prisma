@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ArchiveFeedback {
+struct ArchiveFeedback: Equatable {
     /// Per-digit result for all 8 positions.
     let digitResults: [DigitResult]   // length 8
     /// High / Low / Exact hint based on full date comparison.

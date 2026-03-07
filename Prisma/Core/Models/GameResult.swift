@@ -15,6 +15,12 @@ final class GameResult {
     var guessCount: Int
     var isDaily: Bool
     var durationSeconds: Double
+    var levelId: Int?  // For local games only, nil for daily games
+    
+    // Game state persistence properties
+    var cargoStateJSON: String?
+    var signalsStateJSON: String?
+    var archiveStateJSON: String?
 
     init(
         gameType: GameType,
@@ -23,7 +29,11 @@ final class GameResult {
         shareString: String,
         guessCount: Int = 0,
         isDaily: Bool,
-        durationSeconds: Double = 0
+        durationSeconds: Double = 0,
+        levelId: Int? = nil,
+        cargoStateJSON: String? = nil,
+        signalsStateJSON: String? = nil,
+        archiveStateJSON: String? = nil
     ) {
         self.gameTypeRaw    = gameType.rawValue
         self.date           = date
@@ -32,6 +42,10 @@ final class GameResult {
         self.guessCount     = guessCount
         self.isDaily        = isDaily
         self.durationSeconds = durationSeconds
+        self.levelId        = levelId
+        self.cargoStateJSON = cargoStateJSON
+        self.signalsStateJSON = signalsStateJSON
+        self.archiveStateJSON = archiveStateJSON
     }
 
     var gameType: GameType {

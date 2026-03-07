@@ -54,6 +54,10 @@ struct ArchiveGameView: View {
                                     context: modelContext
                                 )
                             }
+                            // Save GameResult for both daily and local games to enable history display
+                            let result = viewModel.buildGameResult()
+                            PersistenceManager.save(result, context: modelContext)
+                            
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
                                 if viewModel.gameState.isCompleted { Haptics.playSuccess() }
                                 else { Haptics.playMediumImpact() }
