@@ -32,8 +32,10 @@ struct ShiftGridView: View {
     var body: some View {
         GeometryReader { geo in
             let side = min(geo.size.width, geo.size.height)
+            let inset: CGFloat = 6 // Internal padding to prevent clipping
+            let usable = side - inset * 2
             let totalSpacing = spacing * CGFloat(ShiftGrid.size - 1)
-            let cellSize = (side - totalSpacing) / CGFloat(ShiftGrid.size)
+            let cellSize = (usable - totalSpacing) / CGFloat(ShiftGrid.size)
             let step = cellSize + spacing
 
             ZStack {
@@ -47,7 +49,7 @@ struct ShiftGridView: View {
 
                 // Active row/column glow line
                 if let drag = activeDrag {
-                    glowLine(for: drag, step: step, side: side)
+                    glowLine(for: drag, step: step, usable: usable, inset: inset)
                 }
 
                 // Grid cells
@@ -69,8 +71,8 @@ struct ShiftGridView: View {
                         .offset(cellOffset(row: row, col: col))
                         .zIndex(isActive(row: row, col: col) ? 2 : highlighted ? 1 : 0)
                         .position(
-                            x: CGFloat(col) * step + cellSize / 2 + spacing / 2,
-                            y: CGFloat(row) * step + cellSize / 2 + spacing / 2
+                            x: inset + CGFloat(col) * step + cellSize / 2,
+                            y: inset + CGFloat(row) * step + cellSize / 2
                         )
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: popping)
                         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: shimmering)
@@ -105,10 +107,11 @@ struct ShiftGridView: View {
     // MARK: - Glow Line
 
     @ViewBuilder
-    private func glowLine(for drag: ActiveDrag, step: CGFloat, side: CGFloat) -> some View {
+    private func glowLine(for drag: ActiveDrag, step: CGFloat, usable: CGFloat, inset: CGFloat) -> some View {
+        let side = usable + inset * 2
         switch drag {
         case .row(let r):
-            let y = CGFloat(r) * step + step / 2
+            let y = inset + CGFloat(r) * step + step / 2
             Rectangle()
                 .fill(
                     LinearGradient(
@@ -121,7 +124,7 @@ struct ShiftGridView: View {
                 .allowsHitTesting(false)
 
         case .column(let c):
-            let x = CGFloat(c) * step + step / 2
+            let x = inset + CGFloat(c) * step + step / 2
             Rectangle()
                 .fill(
                     LinearGradient(

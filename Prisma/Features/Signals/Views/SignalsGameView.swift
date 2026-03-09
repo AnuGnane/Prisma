@@ -15,6 +15,7 @@ import SwiftData
 struct SignalsGameView: View {
     @State private var viewModel: SignalsGameViewModel
     @State private var showResultSheet = false
+    @State private var showGiveUpAlert = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
@@ -82,6 +83,11 @@ struct SignalsGameView: View {
                         insertion: .move(edge: .bottom).combined(with: .opacity),
                         removal: .opacity
                     ))
+                } else if viewModel.gameState == .gaveUp {
+                    signalsGaveUpOverlay
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 32)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else if !viewModel.isDaily {
                     localResultOverlay
                         .padding(.horizontal, 24)
@@ -93,8 +99,26 @@ struct SignalsGameView: View {
         .sheet(isPresented: $showResultSheet) {
             resultSheet
         }
+        .alert("Give Up?", isPresented: $showGiveUpAlert) {
+            Button("Give Up", role: .destructive) {
+                viewModel.giveUp()
+                let result = viewModel.buildGameResult()
+                PersistenceManager.save(result, context: modelContext)
+                if let lvl = viewModel.activeLevelId {
+                    PersistenceManager.markLevelPlayed(
+                        gameType: .signals, levelId: lvl, won: false,
+                        score: 0, guessesUsed: viewModel.guessCount, context: modelContext
+                    )
+                }
+                Haptics.playMediumImpact()
+            }
+            Button("Keep Playing", role: .cancel) { }
+        } message: {
+            Text("You'll be able to see the answer.")
+        }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(viewModel.gameState.isOver && !viewModel.isDaily)
+        .showTutorialOnFirstPlay(for: .signals)
     }
 
     // MARK: - Local Result Overlay
@@ -146,6 +170,70 @@ struct SignalsGameView: View {
         }
     }
 
+    // MARK: - Gave Up Overlay
+
+    private var signalsGaveUpOverlay: some View {
+        VStack(spacing: 20) {
+            HStack(spacing: 12) {
+                Image(systemName: "flag.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(.red.opacity(0.7))
+                Text("GAVE UP")
+                    .font(.system(size: 15, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .background(Capsule().fill(Color.white.opacity(0.08)))
+
+            // Show the secret code
+            VStack(spacing: 6) {
+                Text("The code was:")
+                    .font(.system(size: 13)).foregroundStyle(.white.opacity(0.5))
+                HStack(spacing: 8) {
+                    ForEach(viewModel.solutionDigits, id: \.self) { digit in
+                        Text("\(digit)")
+                            .font(.system(size: 26, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(red: 0.24, green: 0.65, blue: 0.36).opacity(0.3))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .strokeBorder(Color(red: 0.24, green: 0.65, blue: 0.36).opacity(0.6), lineWidth: 1.5)
+                                    )
+                            )
+                    }
+                }
+            }
+
+            HStack(spacing: 16) {
+                Button {
+                    viewModel.reset()
+                } label: {
+                    Text("Try Again")
+                        .font(.system(size: 17, weight: .bold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
+                        .foregroundStyle(.white)
+                }
+
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
+                        .font(.system(size: 17, weight: .bold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
+                        .foregroundStyle(.black)
+                }
+            }
+        }
+    }
+
     // MARK: - Header
 
     private var header: some View {
@@ -168,6 +256,17 @@ struct SignalsGameView: View {
                     .padding(.leading, 8)
                     
                     Spacer()
+
+                    if viewModel.gameState == .inProgress {
+                        Button {
+                            showGiveUpAlert = true
+                        } label: {
+                            Image(systemName: "flag.fill")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(.red.opacity(0.5))
+                                .padding(8)
+                        }
+                    }
                     
                     Button {
                         viewModel.reset()

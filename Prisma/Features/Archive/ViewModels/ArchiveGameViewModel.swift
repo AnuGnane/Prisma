@@ -343,5 +343,21 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         self.currentInput = Array(repeating: nil, count: 8)
         self.gameState = .inProgress
         self.startDate = .now
+        self.showingSolution = false
     }
+
+    // MARK: - Give Up
+
+    private(set) var showingSolution = false
+
+    func giveUp() {
+        guard gameState == .inProgress else { return }
+        gameState = .gaveUp
+    }
+
+    func showSolution() { showingSolution = true }
+    func hideSolution() { showingSolution = false }
+
+    /// The secret event for display
+    var solutionEvent: ArchiveEvent { secretEvent }
 }

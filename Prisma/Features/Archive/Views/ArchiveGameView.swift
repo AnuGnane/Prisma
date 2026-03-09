@@ -14,6 +14,7 @@ import SwiftData
 struct ArchiveGameView: View {
     @State private var viewModel: ArchiveGameViewModel
     @State private var showResultSheet = false
+    @State private var showGiveUpAlert = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
@@ -79,6 +80,11 @@ struct ArchiveGameView: View {
                         insertion: .move(edge: .bottom).combined(with: .opacity),
                         removal: .opacity
                     ))
+                } else if viewModel.gameState == .gaveUp {
+                    archiveGaveUpOverlay
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 32)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else if !viewModel.isDaily {
                     localResultOverlay
                         .padding(.horizontal, 24)
@@ -90,8 +96,26 @@ struct ArchiveGameView: View {
         .sheet(isPresented: $showResultSheet) {
             resultSheet
         }
+        .alert("Give Up?", isPresented: $showGiveUpAlert) {
+            Button("Give Up", role: .destructive) {
+                viewModel.giveUp()
+                let result = viewModel.buildGameResult()
+                PersistenceManager.save(result, context: modelContext)
+                if let lvl = viewModel.activeLevelId {
+                    PersistenceManager.markLevelPlayed(
+                        gameType: .archive, levelId: lvl, won: false,
+                        score: 0, guessesUsed: viewModel.guessCount, context: modelContext
+                    )
+                }
+                Haptics.playMediumImpact()
+            }
+            Button("Keep Playing", role: .cancel) { }
+        } message: {
+            Text("You'll be able to see the answer.")
+        }
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(viewModel.gameState.isOver && !viewModel.isDaily)
+        .showTutorialOnFirstPlay(for: .archive)
         .onChange(of: viewModel.showInvalidShake) { old, new in
             if new { Haptics.playError() }
         }
@@ -154,6 +178,61 @@ struct ArchiveGameView: View {
         }
     }
 
+    // MARK: - Gave Up Overlay
+
+    private var archiveGaveUpOverlay: some View {
+        VStack(spacing: 20) {
+            HStack(spacing: 12) {
+                Image(systemName: "flag.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(.red.opacity(0.7))
+                Text("GAVE UP")
+                    .font(.system(size: 15, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .background(Capsule().fill(Color.white.opacity(0.08)))
+
+            // Show the answer
+            VStack(spacing: 6) {
+                Text(viewModel.solutionEvent.event)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                Text(viewModel.solutionEvent.dateString)
+                    .font(.system(size: 20, weight: .bold, design: .monospaced))
+                    .foregroundStyle(Color(red: 0.24, green: 0.52, blue: 0.85))
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 14).fill(Color.white.opacity(0.06)))
+
+            HStack(spacing: 16) {
+                Button {
+                    viewModel.reset()
+                } label: {
+                    Text("Try Again")
+                        .font(.system(size: 17, weight: .bold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
+                        .foregroundStyle(.white)
+                }
+
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
+                        .font(.system(size: 17, weight: .bold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
+                        .foregroundStyle(.black)
+                }
+            }
+        }
+    }
+
     // MARK: - Header
 
     private var header: some View {
@@ -176,6 +255,17 @@ struct ArchiveGameView: View {
                     .padding(.leading, 8)
                     
                     Spacer()
+
+                    if viewModel.gameState == .inProgress {
+                        Button {
+                            showGiveUpAlert = true
+                        } label: {
+                            Image(systemName: "flag.fill")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(.red.opacity(0.5))
+                                .padding(8)
+                        }
+                    }
                     
                     Button {
                         viewModel.reset()

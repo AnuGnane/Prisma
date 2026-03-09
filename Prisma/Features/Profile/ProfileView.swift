@@ -100,6 +100,17 @@ struct ProfileView: View {
             }
             .navigationTitle("You")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        SettingsView()
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 15))
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                }
+            }
             .confirmationDialog(
                 "Reset All Progress",
                 isPresented: $showResetConfirmation,
@@ -133,6 +144,18 @@ struct ProfileView: View {
                     color: Color(red: 0.24, green: 0.52, blue: 0.85)
                 )
             }
+            HStack(spacing: 12) {
+                StreakPill(
+                    label: "Cargo",
+                    streak: StreakManager.currentStreak(for: "cargo"),
+                    color: Color(red: 1.00, green: 0.55, blue: 0.26)
+                )
+                StreakPill(
+                    label: "Shift",
+                    streak: StreakManager.currentStreak(for: "shift"),
+                    color: Color(red: 0.65, green: 0.24, blue: 0.85)
+                )
+            }
         }
         .padding(.horizontal, 20)
     }
@@ -142,6 +165,9 @@ struct ProfileView: View {
     private var dailyHistorySection: some View {
         VStack(alignment: .leading, spacing: 10) {
             sectionLabel("RECENT DAILY RESULTS")
+
+            DailyCalendarView()
+                .padding(.bottom, 8)
 
             VStack(spacing: 1) {
                 ForEach(Array(dailyResults.prefix(20)), id: \.persistentModelID) { result in

@@ -301,5 +301,21 @@ final class SignalsGameViewModel: ShareStringGenerator {
         self.currentInput = [nil, nil, nil, nil]
         self.gameState = .inProgress
         self.startDate = Date.now
+        self.showingSolution = false
     }
+
+    // MARK: - Give Up
+
+    private(set) var showingSolution = false
+
+    func giveUp() {
+        guard gameState == .inProgress else { return }
+        gameState = .gaveUp
+    }
+
+    func showSolution() { showingSolution = true }
+    func hideSolution() { showingSolution = false }
+
+    /// The secret code digits for display
+    var solutionDigits: [Int] { secretCode.digits }
 }

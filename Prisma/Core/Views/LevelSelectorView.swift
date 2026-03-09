@@ -164,19 +164,33 @@ struct LevelSelectorView: View {
     
     @ViewBuilder
     private func playedCell(levelId: Int, won: Bool, score: Int) -> some View {
-        VStack(spacing: 12) {
+        let progress = progressList.first(where: { $0.levelId == levelId })
+        VStack(spacing: 8) {
             Text("\(levelId)")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(won ? .white : .white.opacity(0.35))
             
             if won {
-                HStack(spacing: 4) {
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 10))
-                    Text("\(score)")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                if game == .shift {
+                    // Star rating for Shift based on moves
+                    let moves = progress?.guessesUsed ?? 0
+                    let stars = shiftStars(moves: moves, score: score)
+                    HStack(spacing: 2) {
+                        ForEach(0..<3) { i in
+                            Image(systemName: i < stars ? "star.fill" : "star")
+                                .font(.system(size: 11))
+                                .foregroundStyle(i < stars ? colorForGame : .white.opacity(0.2))
+                        }
+                    }
+                } else {
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 10))
+                        Text("\(score)")
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    }
+                    .foregroundStyle(colorForGame)
                 }
-                .foregroundStyle(colorForGame)
             } else {
                 HStack(spacing: 4) {
                     Image(systemName: "xmark")
@@ -197,6 +211,14 @@ struct LevelSelectorView: View {
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(won ? colorForGame.opacity(0.3) : Color(red: 0.85, green: 0.30, blue: 0.30).opacity(0.15), lineWidth: 1)
         )
+    }
+
+    /// Returns 1–3 stars for a Shift level based on move count vs score tier
+    private func shiftStars(moves: Int, score: Int) -> Int {
+        // Score is out of 1000. ≥900 → 3 stars, ≥600 → 2, else 1
+        if score >= 900 { return 3 }
+        if score >= 600 { return 2 }
+        return 1
     }
     
     // MARK: - Helpers

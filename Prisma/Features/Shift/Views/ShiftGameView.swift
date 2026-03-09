@@ -101,12 +101,15 @@ struct ShiftGameView: View {
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
                 viewModel.giveUp()
-                // Save as give-up
+                // Save with actual partial progress
                 let result = viewModel.buildGameResult()
                 modelContext.insert(result)
                 if let lvl = viewModel.activeLevelId {
-                    PersistenceManager.markLevelPlayed(gameType: .shift, levelId: lvl, won: false, score: 0,
-                                                        guessesUsed: viewModel.moveCount, context: modelContext)
+                    PersistenceManager.markLevelPlayed(
+                        gameType: .shift, levelId: lvl, won: false,
+                        score: viewModel.currentScore,
+                        guessesUsed: viewModel.moveCount, context: modelContext
+                    )
                 }
             }
             Button("Keep Playing", role: .cancel) { }
@@ -119,6 +122,7 @@ struct ShiftGameView: View {
                 moveCountBounce = false
             }
         }
+        .showTutorialOnFirstPlay(for: .shift)
     }
 
     // MARK: - Header
@@ -334,9 +338,7 @@ struct ShiftGameView: View {
                 .background(RoundedRectangle(cornerRadius: 14).fill(.white.opacity(0.08)))
 
                 HStack(spacing: 12) {
-                    Button {
-                        UIPasteboard.general.string = viewModel.generateShareString()
-                    } label: {
+                    ShareLink(item: viewModel.generateShareString()) {
                         Label("Share", systemImage: "square.and.arrow.up")
                             .font(.system(size: 14, weight: .semibold)).foregroundStyle(.white)
                             .padding(.horizontal, 18).padding(.vertical, 10)
@@ -392,6 +394,10 @@ struct ShiftGameView: View {
             if case .completed(let s) = viewModel.gameState { sc = s } else { sc = 0 }
             PersistenceManager.markLevelPlayed(gameType: .shift, levelId: lvl, won: won, score: sc,
                                                 guessesUsed: viewModel.moveCount, context: modelContext)
+        }
+        // Record daily streak
+        if viewModel.isDaily, case .completed = viewModel.gameState {
+            _ = StreakManager.recordDailyWin(game: "shift")
         }
         dismiss()
     }

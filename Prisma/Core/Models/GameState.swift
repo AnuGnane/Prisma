@@ -10,10 +10,11 @@ enum GameState: Equatable {
     case inProgress
     case completed(score: Int)
     case failed
+    case gaveUp
 
     var isOver: Bool {
         switch self {
-        case .completed, .failed: return true
+        case .completed, .failed, .gaveUp: return true
         default: return false
         }
     }

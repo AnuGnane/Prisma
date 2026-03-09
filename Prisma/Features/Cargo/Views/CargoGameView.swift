@@ -72,6 +72,7 @@ struct CargoGameView: View {
         .animation(.default, value: viewModel.showingSolution)
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
+        .showTutorialOnFirstPlay(for: .cargo)
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("cancelDragSafe"))) { _ in
             viewModel.cancelDrag()
         }
@@ -165,11 +166,15 @@ struct CargoGameView: View {
                     if viewModel.selectedPieceIndex != nil && !viewModel.isGameOver {
                         HStack(spacing: 12) {
                             transformButton(icon: "rotate.right", action: {
-                                viewModel.rotateSelectedPiece()
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    viewModel.rotateSelectedPiece()
+                                }
                                 Haptics.playMediumImpact()
                             })
                             transformButton(icon: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill", action: {
-                                viewModel.flipSelectedPiece()
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    viewModel.flipSelectedPiece()
+                                }
                                 Haptics.playMediumImpact()
                             })
                         }
@@ -253,7 +258,9 @@ struct CargoGameView: View {
 
             // Rotate
             Button {
-                viewModel.rotatePendingPiece()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    viewModel.rotatePendingPiece()
+                }
                 Haptics.playMediumImpact()
             } label: {
                 Image(systemName: "rotate.right")
@@ -265,7 +272,9 @@ struct CargoGameView: View {
 
             // Flip
             Button {
-                viewModel.flipPendingPiece()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    viewModel.flipPendingPiece()
+                }
                 Haptics.playMediumImpact()
             } label: {
                 Image(systemName: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill")
@@ -399,6 +408,14 @@ struct CargoGameView: View {
 
     private var localResultActions: some View {
         HStack(spacing: 12) {
+            ShareLink(item: viewModel.generateShareString()) {
+                Label("Share", systemImage: "square.and.arrow.up")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding(.horizontal, 14).padding(.vertical, 12)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.08)))
+            }
+
             Button { dismiss() } label: {
                 Text("Done")
                     .font(.system(size: 16, weight: .semibold))
@@ -459,6 +476,10 @@ struct CargoGameView: View {
             if PersistenceManager.fetchResult(for: .cargo, on: gameDate, context: modelContext) == nil {
                 let result = viewModel.buildGameResult(gameDate: gameDate)
                 PersistenceManager.save(result, context: modelContext)
+            }
+            // Record daily streak
+            if score >= 700 {
+                _ = StreakManager.recordDailyWin(game: "cargo")
             }
         }
     }

@@ -59,4 +59,10 @@ struct StreakManager {
     static func currentStreak(for game: String) -> Int {
         defaults.integer(forKey: currentStreakKey(for: game))
     }
+
+    /// Resets the streak for a game (used from Settings).
+    static func resetStreak(for game: String) {
+        defaults.removeObject(forKey: lastWinDateKey(for: game))
+        defaults.removeObject(forKey: currentStreakKey(for: game))
+    }
 }
