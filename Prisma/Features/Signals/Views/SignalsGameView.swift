@@ -124,7 +124,8 @@ struct SignalsGameView: View {
             Text("You'll be able to see the answer.")
         }
         .toolbar(.hidden, for: .tabBar)
-        .navigationBarBackButtonHidden(viewModel.gameState.isOver && !viewModel.isDaily)
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
         .showTutorialOnFirstPlay(for: .signals)
     }
 

@@ -75,6 +75,10 @@ enum CargoStateSerializer: GameStateSerializer {
     /// - Parameter json: JSON string to deserialize
     /// - Returns: Reconstructed CargoGrid, or nil if deserialization fails
     static func deserialize(_ json: String) -> CargoGrid? {
+        return deserialize(json, originalPieces: nil)
+    }
+
+    static func deserialize(_ json: String, originalPieces: [CargoPiece]?) -> CargoGrid? {
         // Convert string to data
         guard let data = json.data(using: .utf8) else {
             print("❌ CargoStateSerializer: Invalid UTF-8 encoding")
@@ -97,9 +101,16 @@ enum CargoStateSerializer: GameStateSerializer {
         
         // Reconstruct placed pieces
         for placedPiece in state.placedPieces {
-            // Reconstruct the piece from saved baseCells
-            let baseCells = placedPiece.baseCells.map { CellCoord($0.row, $0.col) }
-            var piece = CargoPiece(id: placedPiece.pieceId, baseCells: baseCells)
+            // Find the original piece to retain correct baseCells and offset
+            var piece: CargoPiece
+            if let originalPiece = originalPieces?.first(where: { $0.id == placedPiece.pieceId }) {
+                piece = originalPiece
+            } else {
+                // Fallback: Reconstruct the piece from saved baseCells (may have origin shift issues)
+                let baseCells = placedPiece.baseCells.map { CellCoord($0.row, $0.col) }
+                piece = CargoPiece(id: placedPiece.pieceId, baseCells: baseCells)
+            }
+
             piece.rotationSteps = placedPiece.rotationSteps
             piece.isFlipped = placedPiece.isFlipped
             

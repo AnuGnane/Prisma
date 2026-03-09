@@ -121,7 +121,7 @@ struct ArchiveGameView: View {
             Text("You'll be able to see the answer.")
         }
         .toolbar(.hidden, for: .tabBar)
-        .navigationBarBackButtonHidden(viewModel.gameState.isOver && !viewModel.isDaily)
+        .navigationBarBackButtonHidden(true)
         .showTutorialOnFirstPlay(for: .archive)
         .onChange(of: viewModel.showInvalidShake) { old, new in
             if new { Haptics.playError() }

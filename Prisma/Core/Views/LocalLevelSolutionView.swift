@@ -209,21 +209,29 @@ struct LocalLevelSolutionView: View {
     
     // MARK: - User State Rendering
     
+    private var historyUnavailableView: AnyView {
+        AnyView(
+            VStack(spacing: 8) {
+                Text("Game history unavailable for games before this feature")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+        )
+    }
+
     private var cargoUserState: some View {
         guard let result = gameResult,
-              let json = result.cargoStateJSON,
-              let grid = CargoStateSerializer.deserialize(json) else {
-            return AnyView(
-                VStack(spacing: 8) {
-                    Text("Game history unavailable for games before this feature")
-                        .font(.system(size: 14))
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(16)
-                .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
-            )
+              let json = result.cargoStateJSON else {
+            return historyUnavailableView
+        }
+        
+        let originalPieces = CargoPuzzleLoader.puzzle(for: levelId)?.pieces
+        guard let grid = CargoStateSerializer.deserialize(json, originalPieces: originalPieces) else {
+            return historyUnavailableView
         }
         
         return AnyView(

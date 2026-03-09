@@ -65,33 +65,28 @@ struct ContentView: View {
                                 game: .signals,
                                 icon: "antenna.radiowaves.left.and.right",
                                 color: Color(red: 0.24, green: 0.65, blue: 0.36),
-                                destination: isDaily ? AnyView(SignalsGameView()) : AnyView(LevelSelectorView(game: .signals))
+                                isDaily: isDaily
                             )
 
                             GameCard(
                                 game: .archive,
                                 icon: "clock.arrow.circlepath",
                                 color: Color(red: 0.24, green: 0.52, blue: 0.85),
-                                destination: isDaily ? AnyView(ArchiveGameView()) : AnyView(LevelSelectorView(game: .archive))
+                                isDaily: isDaily
                             )
 
                             GameCard(
                                 game: .cargo,
                                 icon: "shippingbox.fill",
                                 color: Color(red: 1.00, green: 0.55, blue: 0.26),
-                                destination: isDaily ? AnyView(CargoGameView()) : AnyView(LevelSelectorView(game: .cargo))
+                                isDaily: isDaily
                             )
 
                             GameCard(
                                 game: .shift,
                                 icon: "slider.horizontal.3",
                                 color: Color(red: 0.65, green: 0.24, blue: 0.85),
-                                destination: isDaily
-                                    ? AnyView(ShiftGameView(
-                                        puzzle: ShiftPuzzleGenerator.generateDailyPuzzle(for: .now),
-                                        isDaily: true
-                                      ))
-                                    : AnyView(LevelSelectorView(game: .shift))
+                                isDaily: isDaily
                             )
                         }
                         .padding(.horizontal, 24)
@@ -100,6 +95,19 @@ struct ContentView: View {
                 }
             }
             .navigationBarHidden(true)
+            .navigationDestination(for: GameCardValue.self) { value in
+                if value.isDaily {
+                    switch value.game {
+                    case .signals: SignalsGameView()
+                    case .archive: ArchiveGameView()
+                    case .cargo: CargoGameView()
+                    case .shift: ShiftGameView(puzzle: ShiftPuzzleGenerator.generateDailyPuzzle(for: .now), isDaily: true)
+                    case .orbit: Text("Coming Soon")
+                    }
+                } else {
+                    LevelSelectorView(game: value.game)
+                }
+            }
         }
     }
 
@@ -127,11 +135,16 @@ struct ContentView: View {
 
 // MARK: - Game Card
 
+struct GameCardValue: Hashable {
+    let game: GameType
+    let isDaily: Bool
+}
+
 struct GameCard: View {
     let game: GameType
     let icon: String
     let color: Color
-    let destination: AnyView
+    let isDaily: Bool
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -140,7 +153,7 @@ struct GameCard: View {
     }
 
     var body: some View {
-        NavigationLink(destination: destination.navigationBarBackButtonHidden(false).tint(color)) {
+        NavigationLink(value: GameCardValue(game: game, isDaily: isDaily)) {
             HStack(spacing: 16) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
@@ -179,6 +192,7 @@ struct GameCard: View {
                     .strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
             )
         }
+        .buttonStyle(.plain)
     }
 }
 
