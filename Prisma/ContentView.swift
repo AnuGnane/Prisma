@@ -10,13 +10,9 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.colorScheme) private var colorScheme
-
-    // Adaptive background: dark in dark mode, light in light mode
+    // Dark space background matching the game aesthetic
     private var bgColor: Color {
-        colorScheme == .dark
-            ? Color(red: 0.07, green: 0.07, blue: 0.10)
-            : Color(.systemGroupedBackground)
+        Color(red: 0.05, green: 0.05, blue: 0.08)
     }
 
     var body: some View {
@@ -33,9 +29,10 @@ struct ContentView: View {
                 ProfileView()
             }
         }
-        .tint(colorScheme == .dark ? .white : .primary)
+        .tint(.white)
         .toolbarBackground(bgColor, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
+        .preferredColorScheme(.dark)
     }
 
     // MARK: - Game List
@@ -44,7 +41,14 @@ struct ContentView: View {
     private func gameList(isDaily: Bool) -> some View {
         NavigationStack {
             ZStack {
-                bgColor.ignoresSafeArea()
+                ZStack {
+                    bgColor
+                    RadialGradient(
+                        colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
+                        center: .top, startRadius: 50, endRadius: 500
+                    )
+                }
+                .ignoresSafeArea()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
@@ -52,7 +56,7 @@ struct ContentView: View {
 
                         Text(isDaily ? "DAILY PUZZLES" : "LOCAL ARCHIVE")
                             .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.4))
                             .kerning(1.5)
                             .padding(.horizontal, 24)
 
@@ -105,11 +109,17 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Prisma")
                 .font(.system(size: 42, weight: .heavy, design: .rounded))
-                .foregroundStyle(.primary)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                 Color(red: 0.4, green: 0.6, blue: 1.0)],
+                        startPoint: .leading, endPoint: .trailing
+                    )
+                )
 
             Text("Your daily cognitive signal.")
                 .font(.system(size: 17, weight: .medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.5))
         }
         .padding(.horizontal, 24)
     }
@@ -126,7 +136,7 @@ struct GameCard: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private var cardBg: Color {
-        colorScheme == .dark ? Color(white: 0.12) : Color(.secondarySystemGroupedBackground)
+        Color(white: 0.12)
     }
 
     var body: some View {
@@ -181,7 +191,7 @@ struct DisabledGameCard: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private var cardBg: Color {
-        colorScheme == .dark ? Color(white: 0.08) : Color(.tertiarySystemGroupedBackground)
+        Color(white: 0.08)
     }
 
     var body: some View {

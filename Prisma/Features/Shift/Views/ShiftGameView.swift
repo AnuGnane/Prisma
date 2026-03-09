@@ -21,6 +21,12 @@ struct ShiftGameView: View {
         ))
     }
 
+    init(puzzle: ShiftPuzzle, restoredGrid: ShiftGrid, isDaily: Bool, levelId: Int? = nil) {
+        _viewModel = State(initialValue: ShiftGameViewModel(
+            puzzle: puzzle, restoredGrid: restoredGrid, isDaily: isDaily, levelId: levelId
+        ))
+    }
+
     var body: some View {
         ZStack {
             // Background
@@ -44,7 +50,7 @@ struct ShiftGameView: View {
                     completedWords: viewModel.completedWords,
                     hintWord: nil
                 )
-                .frame(height: 80, alignment: .top)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 4)
 
@@ -87,30 +93,10 @@ struct ShiftGameView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button { exitGame() } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.white.opacity(0.6))
-                        .frame(width: 32, height: 32)
-                        .background(Circle().fill(.white.opacity(0.06)))
-                }
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
                 viewModel.giveUp()
-                // Save with actual partial progress
-                let result = viewModel.buildGameResult()
-                modelContext.insert(result)
-                if let lvl = viewModel.activeLevelId {
-                    PersistenceManager.markLevelPlayed(
-                        gameType: .shift, levelId: lvl, won: false,
-                        score: viewModel.currentScore,
-                        guessesUsed: viewModel.moveCount, context: modelContext
-                    )
-                }
             }
             Button("Keep Playing", role: .cancel) { }
         } message: {
@@ -128,8 +114,8 @@ struct ShiftGameView: View {
     // MARK: - Header
 
     private var gameHeader: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(spacing: 4) {
+            ZStack {
                 Text("SHIFT")
                     .font(.system(size: 22, weight: .black, design: .rounded))
                     .foregroundStyle(
@@ -139,12 +125,32 @@ struct ShiftGameView: View {
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
-                Text(viewModel.isDaily ? "Daily Puzzle" : "Level \(viewModel.activeLevelId ?? 0)")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.4))
-            }
 
-            Spacer()
+                HStack {
+                    Button {
+                        exitGame()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .padding(8)
+                    }
+                    .padding(.leading, 8)
+
+                    Spacer()
+
+                    Button {
+                        viewModel.reset()
+                        Haptics.playMediumImpact()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.4))
+                            .padding(8)
+                    }
+                    .padding(.trailing, 12)
+                }
+            }
 
             if viewModel.showingSolution {
                 Text("SOLUTION")
@@ -159,9 +165,10 @@ struct ShiftGameView: View {
                         .animation(.spring(response: 0.25, dampingFraction: 0.4), value: moveCountBounce)
                     pill(icon: "clock", value: viewModel.timerString)
                 }
+                .padding(.top, 2)
             }
         }
-        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
     }
 
     private func pill(icon: String, value: String) -> some View {
@@ -224,18 +231,21 @@ struct ShiftGameView: View {
             Spacer()
 
             if viewModel.gameState == .inProgress {
-                ctrlBtn(icon: "flag.fill", label: "Give Up", off: false, tint: .red.opacity(0.7)) {
+                Button {
                     showGiveUpAlert = true
+                } label: {
+                    Text("Give Up")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.7))
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
+                        .background(Capsule().fill(Color.white.opacity(0.08)))
                 }
             } else if viewModel.gameState == .gaveUp {
                 ctrlBtn(icon: "eye.fill", label: "Solution",
                         off: viewModel.solutionGrid == nil, tint: .orange) {
                     viewModel.showSolution()
                 }
-            }
-
-            ctrlBtn(icon: "arrow.counterclockwise", label: "Reset", off: false, tint: .white.opacity(0.5)) {
-                viewModel.reset()
             }
         }
     }
@@ -257,59 +267,58 @@ struct ShiftGameView: View {
 
     private var gaveUpOverlay: some View {
         ZStack {
-            Color.black.opacity(0.7).ignoresSafeArea()
+            Color.black.opacity(0.85).ignoresSafeArea()
 
-            VStack(spacing: 20) {
-                Image(systemName: "flag.fill")
-                    .font(.system(size: 40))
-                    .foregroundStyle(.red.opacity(0.7))
+            VStack(spacing: 24) {
+                VStack(spacing: 8) {
+                    Text("GAVE UP")
+                        .font(.system(size: 24, weight: .black, design: .rounded))
+                        .foregroundStyle(.white)
 
-                Text("GAVE UP")
-                    .font(.system(size: 22, weight: .black, design: .rounded))
-                    .foregroundStyle(.white)
+                    Text("\(viewModel.completedWords.count) of \(viewModel.puzzle.targetWords.count) words found")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.5))
+                }
 
                 VStack(spacing: 8) {
                     statRow("Moves Made", "\(viewModel.moveCount)", nil)
-                    statRow("Words Found", "\(viewModel.completedWords.count)/\(viewModel.puzzle.targetWords.count)", nil)
                     statRow("Time", viewModel.timerString, nil)
                 }
                 .padding(16)
-                .background(RoundedRectangle(cornerRadius: 14).fill(.white.opacity(0.08)))
+                .background(RoundedRectangle(cornerRadius: 14).fill(Color(white: 0.12)))
 
-                HStack(spacing: 12) {
+                VStack(spacing: 10) {
                     if viewModel.solutionGrid != nil {
                         Button { viewModel.showSolution() } label: {
-                            Label("View Solution", systemImage: "eye")
-                                .font(.system(size: 14, weight: .semibold)).foregroundStyle(.orange)
-                                .padding(.horizontal, 18).padding(.vertical, 10)
-                                .background(Capsule().fill(.orange.opacity(0.15)))
+                            Text("View Solution")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(
+                                    Capsule().fill(
+                                        LinearGradient(
+                                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                                            startPoint: .leading, endPoint: .trailing
+                                        )
+                                    )
+                                )
                         }
-                    }
-
-                    Button { viewModel.reset() } label: {
-                        Label("Try Again", systemImage: "arrow.counterclockwise")
-                            .font(.system(size: 14, weight: .semibold)).foregroundStyle(.white)
-                            .padding(.horizontal, 18).padding(.vertical, 10)
-                            .background(Capsule().fill(.white.opacity(0.1)))
                     }
 
                     Button { saveAndDismiss() } label: {
                         Text("Exit")
-                            .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
-                            .padding(.horizontal, 20).padding(.vertical, 10)
-                            .background(
-                                Capsule().fill(
-                                    LinearGradient(
-                                        colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                                 Color(red: 0.4, green: 0.6, blue: 1.0)],
-                                        startPoint: .leading, endPoint: .trailing
-                                    )
-                                )
-                            )
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.7))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Capsule().fill(Color.white.opacity(0.08)))
                     }
                 }
+                .padding(.horizontal, 20)
             }
-            .padding(28)
+            .padding(32)
         }
         .transition(.opacity)
     }
@@ -376,9 +385,9 @@ struct ShiftGameView: View {
     // MARK: - Exit (preserves current state, no auto-loss)
 
     private func exitGame() {
+        // Always save state on exit, so mid-game progress is preserved
         let result = viewModel.buildGameResult()
         modelContext.insert(result)
-        // Don't mark level as played/lost — just save the game result
         dismiss()
     }
 

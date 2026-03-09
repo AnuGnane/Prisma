@@ -63,6 +63,15 @@ final class ShiftGameViewModel {
         scanForWords()
     }
 
+    /// Restore from a previously saved grid (mid-game exit)
+    init(puzzle: ShiftPuzzle, restoredGrid: ShiftGrid, isDaily: Bool, levelId: Int? = nil) {
+        self.puzzle = puzzle
+        self.currentGrid = restoredGrid
+        self.isDaily = isDaily
+        self.activeLevelId = levelId
+        scanForWords()
+    }
+
     // MARK: - Move Operations
 
     func performMove(_ move: ShiftMove) {

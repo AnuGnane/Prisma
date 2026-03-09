@@ -35,8 +35,14 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
+                ZStack {
+                    Color(red: 0.05, green: 0.05, blue: 0.08)
+                    RadialGradient(
+                        colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
+                        center: .top, startRadius: 50, endRadius: 500
+                    )
+                }
+                .ignoresSafeArea()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
@@ -232,7 +238,7 @@ struct ProfileView: View {
                     .background(Capsule().fill(Color.secondary.opacity(0.15)))
             }
             .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(white: 0.12)))
         }
         .padding(.horizontal, 20)
     }
@@ -266,7 +272,7 @@ struct ProfileView: View {
                 .padding(16)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.secondarySystemGroupedBackground))
+                        .fill(Color(white: 0.12))
                 )
             }
             .buttonStyle(.plain)
@@ -356,7 +362,7 @@ private struct StatCard: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 20).fill(Color(.secondarySystemGroupedBackground)))
+        .background(RoundedRectangle(cornerRadius: 20).fill(Color(white: 0.12)))
     }
 
     private func miniStat(label: String, value: String) -> some View {
@@ -396,7 +402,7 @@ private struct StreakPill: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color(white: 0.12)))
     }
 }
 
@@ -457,7 +463,7 @@ private struct DailyResultRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Color(white: 0.12))
     }
 }
 

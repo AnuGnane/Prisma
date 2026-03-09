@@ -40,8 +40,14 @@ struct LevelSelectorView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 0.07, green: 0.07, blue: 0.10)
-                .ignoresSafeArea()
+            ZStack {
+                Color(red: 0.05, green: 0.05, blue: 0.08)
+                RadialGradient(
+                    colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
+                    center: .top, startRadius: 50, endRadius: 500
+                )
+            }
+            .ignoresSafeArea()
             
             ScrollView {
                 VStack(spacing: 20) {
@@ -54,7 +60,7 @@ struct LevelSelectorView: View {
         }
         .navigationTitle(game.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(Color(red: 0.07, green: 0.07, blue: 0.10), for: .navigationBar)
+        .toolbarBackground(Color(red: 0.05, green: 0.05, blue: 0.08), for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar(.hidden, for: .tabBar)
     }
@@ -69,7 +75,7 @@ struct LevelSelectorView: View {
             
             Text("LOCAL PUZZLES")
                 .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(.white.opacity(0.4))
                 .kerning(2)
         }
         .padding(.bottom, 4)
@@ -254,7 +260,15 @@ struct LevelSelectorView: View {
             CargoGameView(viewModel: CargoGameViewModel(level: levelId))
         case .shift:
             if let puzzle = ShiftPuzzleLoader.loadLevel(levelId) {
-                ShiftGameView(puzzle: puzzle, isDaily: false, levelId: levelId)
+                // Check for a saved in-progress game state
+                if let savedResult = gameResult(for: levelId),
+                   let json = savedResult.shiftStateJSON,
+                   let state = ShiftStateSerializer.deserialize(json),
+                   let restoredGrid = state.toShiftGrid() {
+                    ShiftGameView(puzzle: puzzle, restoredGrid: restoredGrid, isDaily: false, levelId: levelId)
+                } else {
+                    ShiftGameView(puzzle: puzzle, isDaily: false, levelId: levelId)
+                }
             } else {
                 Text("Failed to load level \(levelId)")
                     .foregroundStyle(.white)

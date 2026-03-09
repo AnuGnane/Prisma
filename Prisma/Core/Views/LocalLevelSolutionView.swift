@@ -474,7 +474,7 @@ struct LocalLevelSolutionView: View {
         // Determine which words are completed in the final state
         var completedWords: Set<UUID> = []
         for targetWord in targetWords {
-            if grid.containsWord(targetWord.word, at: targetWord.position) {
+            if grid.findWord(targetWord.word) != nil {
                 completedWords.insert(targetWord.id)
             }
         }
