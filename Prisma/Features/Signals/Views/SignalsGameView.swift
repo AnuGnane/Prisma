@@ -25,8 +25,15 @@ struct SignalsGameView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.07, green: 0.07, blue: 0.10)
-                .ignoresSafeArea()
+            // Background
+            ZStack {
+                Color(red: 0.05, green: 0.05, blue: 0.08)
+                RadialGradient(
+                    colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
+                    center: .top, startRadius: 50, endRadius: 500
+                )
+            }
+            .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 header
@@ -162,8 +169,16 @@ struct SignalsGameView: View {
                             .font(.system(size: 17, weight: .bold))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
-                            .foregroundStyle(.black)
+                            .background(
+                                Capsule().fill(
+                                    LinearGradient(
+                                        colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                                 Color(red: 0.4, green: 0.6, blue: 1.0)],
+                                        startPoint: .leading, endPoint: .trailing
+                                    )
+                                )
+                            )
+                            .foregroundStyle(.white)
                     }
                 }
             }
@@ -227,8 +242,16 @@ struct SignalsGameView: View {
                         .font(.system(size: 17, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
-                        .foregroundStyle(.black)
+                        .background(
+                            Capsule().fill(
+                                LinearGradient(
+                                    colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                             Color(red: 0.4, green: 0.6, blue: 1.0)],
+                                    startPoint: .leading, endPoint: .trailing
+                                )
+                            )
+                        )
+                        .foregroundStyle(.white)
                 }
             }
         }
@@ -240,9 +263,14 @@ struct SignalsGameView: View {
         VStack(spacing: 4) {
             ZStack {
                 Text("SIGNALS")
-                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.5))
-                    .kerning(3)
+                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                    )
                 
                 HStack {
                     Button {
@@ -400,7 +428,15 @@ struct SignalsGameView: View {
                 .font(.system(size: 17, weight: .semibold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(RoundedRectangle(cornerRadius: 14).fill(Color(white: 0.18)))
+                .background(
+                    Capsule().fill(
+                        LinearGradient(
+                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                    )
+                )
                 .foregroundStyle(.white)
                 .padding(.horizontal, 32)
                 .padding(.top, 8)

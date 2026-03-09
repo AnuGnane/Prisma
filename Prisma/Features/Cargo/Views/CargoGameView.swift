@@ -24,8 +24,15 @@ struct CargoGameView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.07, green: 0.07, blue: 0.10)
-                .ignoresSafeArea()
+            // Background
+            ZStack {
+                Color(red: 0.05, green: 0.05, blue: 0.08)
+                RadialGradient(
+                    colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
+                    center: .top, startRadius: 50, endRadius: 500
+                )
+            }
+            .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 header
@@ -84,9 +91,14 @@ struct CargoGameView: View {
         VStack(spacing: 4) {
             ZStack {
                 Text("CARGO")
-                    .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.5))
-                    .kerning(3)
+                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                    )
                 
                 HStack {
                     Button {
@@ -343,7 +355,15 @@ struct CargoGameView: View {
                                 .font(.system(size: 17, weight: .semibold))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
-                                .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.15)))
+                                .background(
+                                    Capsule().fill(
+                                        LinearGradient(
+                                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                                            startPoint: .leading, endPoint: .trailing
+                                        )
+                                    )
+                                )
                                 .foregroundStyle(.white)
                         }
                         Button {
@@ -353,8 +373,16 @@ struct CargoGameView: View {
                                 .font(.system(size: 17, weight: .bold))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
-                                .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
-                                .foregroundStyle(.black)
+                                .background(
+                                    Capsule().fill(
+                                        LinearGradient(
+                                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                                            startPoint: .leading, endPoint: .trailing
+                                        )
+                                    )
+                                )
+                                .foregroundStyle(.white)
                         }
                     }
                 }
@@ -421,7 +449,15 @@ struct CargoGameView: View {
                     .font(.system(size: 16, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
+                    .background(
+                        Capsule().fill(
+                            LinearGradient(
+                                colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                         Color(red: 0.4, green: 0.6, blue: 1.0)],
+                                startPoint: .leading, endPoint: .trailing
+                            )
+                        )
+                    )
                     .foregroundStyle(.white)
             }
 
@@ -434,8 +470,16 @@ struct CargoGameView: View {
                         .font(.system(size: 16, weight: .bold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
-                        .foregroundStyle(.black)
+                        .background(
+                            Capsule().fill(
+                                LinearGradient(
+                                    colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
+                                             Color(red: 0.4, green: 0.6, blue: 1.0)],
+                                    startPoint: .leading, endPoint: .trailing
+                                )
+                            )
+                        )
+                        .foregroundStyle(.white)
                 }
             }
         }
