@@ -38,6 +38,7 @@ struct LocalLevelSolutionView: View {
         case .cargo: return result.cargoStateJSON != nil
         case .signals: return result.signalsStateJSON != nil
         case .archive: return result.archiveStateJSON != nil
+        case .shift: return result.shiftStateJSON != nil
         default: return false
         }
     }
@@ -125,6 +126,8 @@ struct LocalLevelSolutionView: View {
                 archiveSolution
             case .cargo:
                 cargoSolution
+            case .shift:
+                shiftSolution
             default:
                 EmptyView()
             }
@@ -140,6 +143,8 @@ struct LocalLevelSolutionView: View {
             archiveUserState
         case .cargo:
             cargoUserState
+        case .shift:
+            shiftUserState
         default:
             EmptyView()
         }
@@ -392,6 +397,120 @@ struct LocalLevelSolutionView: View {
                     .foregroundStyle(Color(red: 0.85, green: 0.30, blue: 0.30))
             }
         }
+    }
+    
+    // MARK: - Shift Game Views
+    
+    private var shiftSolution: some View {
+        // Load the solution grid from the level data
+        VStack(spacing: 12) {
+            if let puzzle = ShiftPuzzleLoader.loadLevel(levelId),
+               let solGrid = puzzle.solutionGrid {
+                let solHighlighted: Set<Int> = {
+                    var cells = Set<Int>()
+                    for tw in puzzle.targetWords {
+                        if let loc = solGrid.findWord(tw.word) {
+                            for c in loc.cells { cells.insert(c.row * ShiftGrid.size + c.col) }
+                        }
+                    }
+                    return cells
+                }()
+
+                TargetWordListView(
+                    targetWords: puzzle.targetWords,
+                    completedWords: Set(puzzle.targetWords.map(\.id)),
+                    hintWord: nil
+                )
+
+                ShiftGridView(
+                    grid: .constant(solGrid),
+                    highlightedCells: solHighlighted,
+                    hintCells: [],
+                    interactive: false,
+                    onMove: { _ in }
+                )
+                .frame(maxHeight: 350)
+            } else {
+                Text("Solution unavailable for this level")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+    }
+    
+    private var shiftUserState: some View {
+        guard let result = gameResult,
+              let json = result.shiftStateJSON,
+              let state = ShiftStateSerializer.deserialize(json),
+              let grid = state.toShiftGrid() else {
+            return AnyView(
+                VStack(spacing: 8) {
+                    Text("Game history unavailable for games before this feature")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+            )
+        }
+        
+        // Convert serializable target words to TargetWord objects
+        let targetWords = state.targetWords.map { serializableWord in
+            TargetWord(
+                word: serializableWord.word,
+                position: WordPosition(
+                    row: serializableWord.row,
+                    startCol: serializableWord.startCol,
+                    direction: WordDirection(rawValue: serializableWord.direction) ?? .horizontal
+                )
+            )
+        }
+        
+        // Determine which words are completed in the final state
+        var completedWords: Set<UUID> = []
+        for targetWord in targetWords {
+            if grid.containsWord(targetWord.word, at: targetWord.position) {
+                completedWords.insert(targetWord.id)
+            }
+        }
+        
+        return AnyView(
+            VStack(alignment: .leading, spacing: 16) {
+                // Target words list
+                TargetWordListView(
+                    targetWords: targetWords,
+                    completedWords: completedWords,
+                    hintWord: nil
+                )
+                
+                // Grid view (read-only — highlight all completed word cells)
+                let allHighlighted: Set<Int> = {
+                    var cells = Set<Int>()
+                    for tw in targetWords where completedWords.contains(tw.id) {
+                        if let loc = grid.findWord(tw.word) {
+                            for c in loc.cells { cells.insert(c.row * ShiftGrid.size + c.col) }
+                        }
+                    }
+                    return cells
+                }()
+
+                ShiftGridView(
+                    grid: .constant(grid),
+                    highlightedCells: allHighlighted,
+                    hintCells: [],
+                    interactive: false,
+                    onMove: { _ in }
+                )
+                .frame(height: 320)
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(red: 0.07, green: 0.07, blue: 0.10)))
+        )
     }
 }
 

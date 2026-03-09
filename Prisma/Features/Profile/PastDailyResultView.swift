@@ -28,6 +28,7 @@ struct PastDailyResultView: View {
         case .cargo: return result.cargoStateJSON != nil
         case .signals: return result.signalsStateJSON != nil
         case .archive: return result.archiveStateJSON != nil
+        case .shift: return result.shiftStateJSON != nil
         default: return false
         }
     }
@@ -170,6 +171,8 @@ struct PastDailyResultView: View {
             archiveUserState
         case .cargo:
             cargoUserState
+        case .shift:
+            shiftUserState
         default:
             EmptyView()
         }
@@ -185,6 +188,8 @@ struct PastDailyResultView: View {
                 archiveSolution
             case .cargo:
                 cargoSolution
+            case .shift:
+                shiftSolution
             default:
                 EmptyView()
             }
@@ -433,6 +438,85 @@ struct PastDailyResultView: View {
                     .foregroundStyle(Color(red: 0.85, green: 0.30, blue: 0.30))
             }
         }
+    }
+    
+    // MARK: - Shift Game Views
+    
+    private var shiftSolution: some View {
+        Text("Shift solution view not yet implemented")
+            .font(.system(size: 14))
+            .foregroundStyle(.secondary)
+    }
+    
+    private var shiftUserState: some View {
+        guard let json = result.shiftStateJSON,
+              let state = ShiftStateSerializer.deserialize(json),
+              let grid = state.toShiftGrid() else {
+            return AnyView(
+                VStack(spacing: 8) {
+                    Text("Game history unavailable for games before this feature")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+            )
+        }
+        
+        // Convert serializable target words to TargetWord objects
+        let targetWords = state.targetWords.map { serializableWord in
+            TargetWord(
+                word: serializableWord.word,
+                position: WordPosition(
+                    row: serializableWord.row,
+                    startCol: serializableWord.startCol,
+                    direction: WordDirection(rawValue: serializableWord.direction) ?? .horizontal
+                )
+            )
+        }
+        
+        // Determine which words are completed in the final state
+        var completedWords: Set<UUID> = []
+        for targetWord in targetWords {
+            if grid.containsWord(targetWord.word, at: targetWord.position) {
+                completedWords.insert(targetWord.id)
+            }
+        }
+        
+        return AnyView(
+            VStack(alignment: .leading, spacing: 16) {
+                // Target words list
+                TargetWordListView(
+                    targetWords: targetWords,
+                    completedWords: completedWords,
+                    hintWord: nil
+                )
+                
+                // Grid view (read-only)
+                let allHighlighted: Set<Int> = {
+                    var cells = Set<Int>()
+                    for tw in targetWords where completedWords.contains(tw.id) {
+                        if let loc = grid.findWord(tw.word) {
+                            for c in loc.cells { cells.insert(c.row * ShiftGrid.size + c.col) }
+                        }
+                    }
+                    return cells
+                }()
+
+                ShiftGridView(
+                    grid: .constant(grid),
+                    highlightedCells: allHighlighted,
+                    hintCells: [],
+                    interactive: false,
+                    onMove: { _ in }
+                )
+                .frame(height: 280)
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color(red: 0.07, green: 0.07, blue: 0.10)))
+        )
     }
 }
 

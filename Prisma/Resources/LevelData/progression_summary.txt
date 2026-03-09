@@ -1,0 +1,123 @@
+Shift Game Difficulty Progression (Levels 1-100)
+============================================================
+Level    Tier          Words    Word Length    Moves
+------------------------------------------------------------
+1        Beginner      2        3-4            3
+2        Beginner      2        3-4            3
+3        Beginner      2        3-4            3
+4        Beginner      2        3-4            3
+5        Beginner      2        3-4            4
+6        Beginner      2        3-4            4
+7        Beginner      2        3-4            4
+8        Beginner      2        3-4            4
+9        Beginner      2        3-4            4
+10       Beginner      2        3-4            4
+11       Beginner      2        3-4            5
+12       Beginner      2        3-4            5
+13       Beginner      2        3-4            5
+14       Beginner      2        3-4            5
+15       Beginner      2        3-4            5
+16       Beginner      2        3-4            5
+17       Beginner      2        3-4            5
+18       Beginner      2        3-4            5
+19       Beginner      2        3-4            6
+20       Beginner      2        3-4            6
+------------------------------------------------------------
+21       Intermediate  3        3-5            6
+22       Intermediate  3        3-5            6
+23       Intermediate  3        3-5            6
+24       Intermediate  3        3-5            6
+25       Intermediate  3        3-5            7
+26       Intermediate  3        3-5            7
+27       Intermediate  3        3-5            7
+28       Intermediate  3        3-5            7
+29       Intermediate  3        3-5            7
+30       Intermediate  3        3-5            7
+31       Intermediate  3        3-5            8
+32       Intermediate  3        3-5            8
+33       Intermediate  3        3-5            8
+34       Intermediate  3        3-5            8
+35       Intermediate  3        3-5            8
+36       Intermediate  3        3-5            8
+37       Intermediate  3        3-5            8
+38       Intermediate  3        3-5            9
+39       Intermediate  3        3-5            9
+40       Intermediate  3        3-5            9
+41       Intermediate  4        4-6            9
+42       Intermediate  4        4-6            9
+43       Intermediate  4        4-6            9
+44       Intermediate  4        4-6            9
+45       Intermediate  4        4-6            10
+46       Intermediate  4        4-6            10
+47       Intermediate  4        4-6            10
+48       Intermediate  4        4-6            10
+49       Intermediate  4        4-6            10
+50       Intermediate  4        4-6            10
+51       Intermediate  4        4-6            11
+52       Intermediate  4        4-6            11
+53       Intermediate  4        4-6            11
+54       Intermediate  4        4-6            11
+55       Intermediate  4        4-6            11
+56       Intermediate  4        4-6            11
+57       Intermediate  4        4-6            11
+58       Intermediate  4        4-6            12
+59       Intermediate  4        4-6            12
+60       Intermediate  4        4-6            12
+------------------------------------------------------------
+61       Advanced      4        4-6            12
+62       Advanced      4        4-6            12
+63       Advanced      4        4-6            12
+64       Advanced      4        4-6            12
+65       Advanced      4        4-6            13
+66       Advanced      4        4-6            13
+67       Advanced      4        4-6            13
+68       Advanced      4        4-6            13
+69       Advanced      4        4-6            13
+70       Advanced      4        4-6            13
+71       Advanced      5        5-6            14
+72       Advanced      5        5-6            14
+73       Advanced      5        5-6            14
+74       Advanced      5        5-6            14
+75       Advanced      5        5-6            14
+76       Advanced      5        5-6            14
+77       Advanced      5        5-6            14
+78       Advanced      5        5-6            15
+79       Advanced      5        5-6            15
+80       Advanced      5        5-6            15
+81       Advanced      5        5-7            15
+82       Advanced      5        5-7            15
+83       Advanced      5        5-7            15
+84       Advanced      5        5-7            15
+85       Advanced      5        5-7            16
+------------------------------------------------------------
+86       Expert        5        5-7            16
+87       Expert        5        5-7            16
+88       Expert        5        5-7            16
+89       Expert        5        5-7            16
+90       Expert        5        5-7            16
+91       Expert        5        5-7            16
+92       Expert        5        5-7            17
+93       Expert        5        5-7            17
+94       Expert        5        5-7            17
+95       Expert        5        5-7            17
+96       Expert        5        6-7            17
+97       Expert        5        6-7            17
+98       Expert        5        6-7            17
+99       Expert        5        6-7            18
+100      Expert        5        6-7            18
+============================================================
+
+Key Milestones:
+- Level 1: Tutorial level (2 words, 3-4 letters, 3 moves)
+- Level 21: First 3-word puzzle
+- Level 41: First 4-word puzzle
+- Level 71: First 5-word puzzle (maximum)
+- Level 81: First 5-7 letter words
+- Level 100: Ultimate challenge (5 words, 6-7 letters, 18 moves)
+
+Progression Characteristics:
+- Word count increases at tier boundaries (20, 40, 70)
+- Word length increases gradually every 20-25 levels
+- Move count increases smoothly (logarithmic curve)
+- No sudden difficulty spikes
+- Clear progression milestones for player motivation

@@ -230,6 +230,13 @@ struct LevelSelectorView: View {
             ArchiveGameView(viewModel: ArchiveGameViewModel(level: levelId))
         case .cargo:
             CargoGameView(viewModel: CargoGameViewModel(level: levelId))
+        case .shift:
+            if let puzzle = ShiftPuzzleLoader.loadLevel(levelId) {
+                ShiftGameView(puzzle: puzzle, isDaily: false, levelId: levelId)
+            } else {
+                Text("Failed to load level \(levelId)")
+                    .foregroundStyle(.white)
+            }
         default:
             Text("Coming Soon")
                 .foregroundStyle(.white)

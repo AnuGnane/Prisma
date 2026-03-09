@@ -25,6 +25,9 @@ struct ProfileView: View {
     private var cargoProgress: [LevelProgress] {
         allLevelProgress.filter { $0.gameTypeRaw == GameType.cargo.rawValue }
     }
+    private var shiftProgress: [LevelProgress] {
+        allLevelProgress.filter { $0.gameTypeRaw == GameType.shift.rawValue }
+    }
     private var dailyResults: [GameResult] {
         allGameResults.filter { $0.isDaily }
     }
@@ -66,6 +69,12 @@ struct ProfileView: View {
                                 icon: "shippingbox.fill",
                                 accentColor: Color(red: 1.00, green: 0.55, blue: 0.26),
                                 progress: cargoProgress
+                            )
+                            StatCard(
+                                game: .shift,
+                                icon: "slider.horizontal.3",
+                                accentColor: Color(red: 0.65, green: 0.24, blue: 0.85),
+                                progress: shiftProgress
                             )
                         }
                         .padding(.horizontal, 20)
@@ -375,6 +384,7 @@ private struct DailyResultRow: View {
         case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
         case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
         case .cargo:   return Color(red: 1.00, green: 0.55, blue: 0.26)
+        case .shift:   return Color(red: 0.65, green: 0.24, blue: 0.85)
         default: return .secondary
         }
     }

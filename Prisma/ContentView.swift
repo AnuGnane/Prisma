@@ -78,7 +78,17 @@ struct ContentView: View {
                                 destination: isDaily ? AnyView(CargoGameView()) : AnyView(LevelSelectorView(game: .cargo))
                             )
 
-                            DisabledGameCard(game: .shift, icon: "slider.horizontal.3")
+                            GameCard(
+                                game: .shift,
+                                icon: "slider.horizontal.3",
+                                color: Color(red: 0.65, green: 0.24, blue: 0.85),
+                                destination: isDaily
+                                    ? AnyView(ShiftGameView(
+                                        puzzle: ShiftPuzzleGenerator.generateDailyPuzzle(for: .now),
+                                        isDaily: true
+                                      ))
+                                    : AnyView(LevelSelectorView(game: .shift))
+                            )
                         }
                         .padding(.horizontal, 24)
                     }
