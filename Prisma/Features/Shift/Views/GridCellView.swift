@@ -41,14 +41,14 @@ struct GridCellView: View {
                                startPoint: .topLeading, endPoint: .bottomTrailing)
             )
         } else {
-            return AnyShapeStyle(Color(white: 0.12))
+            return AnyShapeStyle(AppTheme.keyFill)
         }
     }
 
     private var borderColor: Color {
         isHintCell ? .orange.opacity(0.7) :
         isHighlighted ? Color(red: 0.5, green: 0.3, blue: 0.95).opacity(0.6) :
-            .white.opacity(0.08)
+            AppTheme.cellBorder
     }
 
     private var shadowColor: Color {
@@ -59,7 +59,7 @@ struct GridCellView: View {
 
     private var textColor: Color {
         isHintCell ? .orange :
-        isHighlighted ? .white :
-            .white.opacity(0.85)
+        isHighlighted ? .primary :
+            .primary.opacity(0.85)
     }
 }

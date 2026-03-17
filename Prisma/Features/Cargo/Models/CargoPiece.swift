@@ -119,7 +119,7 @@ extension CargoPiece {
         Color(red: 1.00, green: 0.42, blue: 0.42),  // coral red
         Color(red: 1.00, green: 0.85, blue: 0.24),  // amber
         Color(red: 0.78, green: 0.48, blue: 1.00),  // lavender
-        Color(red: 1.00, green: 0.55, blue: 0.26),  // tangerine
+        AppTheme.cargo,  // tangerine
         Color(red: 0.27, green: 0.85, blue: 0.78),  // teal
         Color(red: 1.00, green: 0.41, blue: 0.71),  // pink
     ]

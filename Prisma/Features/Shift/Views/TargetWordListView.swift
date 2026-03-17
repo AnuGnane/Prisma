@@ -17,14 +17,14 @@ struct TargetWordListView: View {
             HStack {
                 Text("FIND \(targetWords.count) WORDS")
                     .font(.system(size: 11, weight: .heavy, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.4))
+                    .foregroundStyle(.primary.opacity(0.4))
                     .kerning(1.5)
 
                 Spacer()
 
                 Text("\(completedWords.count)/\(targetWords.count)")
                     .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundStyle(completedWords.count == targetWords.count ? .green : .white.opacity(0.5))
+                    .foregroundStyle(completedWords.count == targetWords.count ? .green : .primary.opacity(0.5))
             }
 
             FlowLayout(spacing: 8) {
@@ -49,19 +49,19 @@ struct TargetWordListView: View {
             // Always show the word text
             Text(word.word)
                 .font(.system(size: 14, weight: .bold, design: .rounded))
-                .foregroundStyle(done ? .green : .white)
+                .foregroundStyle(done ? .green : .primary)
                 .strikethrough(done, color: .green)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
             Capsule().fill(
-                done ? Color.green.opacity(0.12) : Color.white.opacity(0.06)
+                done ? Color.green.opacity(0.12) : AppTheme.cellFill
             )
         )
         .overlay(
             Capsule().strokeBorder(
-                done ? Color.green.opacity(0.3) : Color.white.opacity(0.08),
+                done ? Color.green.opacity(0.3) : AppTheme.cellBorder,
                 lineWidth: 1
             )
         )

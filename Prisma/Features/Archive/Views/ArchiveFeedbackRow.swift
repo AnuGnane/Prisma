@@ -64,7 +64,7 @@ struct ArchiveFeedbackRow: View {
     private var separator: some View {
         Text("/")
             .font(.system(size: 16, weight: .semibold, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.25))
+            .foregroundStyle(AppTheme.dimText)
             .frame(width: 14)
     }
 
@@ -78,7 +78,7 @@ struct ArchiveFeedbackRow: View {
         ZStack {
             // Front face: unrevealed
             RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1.5)
+                .strokeBorder(AppTheme.cellBorder, lineWidth: 1.5)
                 .frame(width: 36, height: 42)
                 .rotation3DEffect(.degrees(isRevealed ? 90 : 0),
                                   axis: (x: 0, y: 1, z: 0))
@@ -87,7 +87,7 @@ struct ArchiveFeedbackRow: View {
             // Back face: coloured result
             Text("\(guess.digits[index])")
                 .font(.system(size: 18, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .frame(width: 36, height: 42)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
@@ -107,9 +107,9 @@ struct ArchiveFeedbackRow: View {
 
     private func cellColor(for result: DigitResult) -> Color {
         switch result {
-        case .correct:   return Color(red: 0.24, green: 0.65, blue: 0.36)
-        case .misplaced: return Color(red: 0.80, green: 0.65, blue: 0.14)
-        case .absent:    return Color(white: 0.30)
+        case .correct:   return AppTheme.signals
+        case .misplaced: return AppTheme.misplacedWarm
+        case .absent:    return Color.primary.opacity(0.30)
         }
     }
 
@@ -119,17 +119,17 @@ struct ArchiveFeedbackRow: View {
         case .high:
             Image(systemName: "arrow.down.circle.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color(red: 0.80, green: 0.25, blue: 0.25))
+                .foregroundStyle(AppTheme.error)
                 .font(.title3)
         case .low:
             Image(systemName: "arrow.up.circle.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color(red: 0.24, green: 0.52, blue: 0.85))
+                .foregroundStyle(AppTheme.archive)
                 .font(.title3)
         case .exact:
             Image(systemName: "checkmark.circle.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color(red: 0.24, green: 0.65, blue: 0.36))
+                .foregroundStyle(AppTheme.signals)
                 .font(.title3)
         }
     }
@@ -153,5 +153,5 @@ struct ArchiveFeedbackRow: View {
         )
     }
     .padding()
-    .background(Color(red: 0.07, green: 0.07, blue: 0.10))
+    .background(AppTheme.backgroundSecondary)
 }

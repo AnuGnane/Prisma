@@ -26,14 +26,7 @@ struct SignalsGameView: View {
     var body: some View {
         ZStack {
             // Background
-            ZStack {
-                Color(red: 0.05, green: 0.05, blue: 0.08)
-                RadialGradient(
-                    colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
-                    center: .top, startRadius: 50, endRadius: 500
-                )
-            }
-            .ignoresSafeArea()
+            AppTheme.appBackground()
 
             VStack(spacing: 0) {
                 header
@@ -60,13 +53,16 @@ struct SignalsGameView: View {
                                     won: didWin,
                                     score: score,
                                     guessesUsed: viewModel.guessCount,
+                                    durationSeconds: Date.now.timeIntervalSince(viewModel.startDate),
                                     context: modelContext
                                 )
                             }
                             
-                            // Save GameResult for both daily and local games to enable history display
-                            let result = viewModel.buildGameResult()
-                            PersistenceManager.save(result, context: modelContext)
+                            // Save GameResult (prevent duplicate daily saves)
+                            if !viewModel.isDaily || PersistenceManager.fetchDailyResult(for: .signals, on: .now, context: modelContext) == nil {
+                                let result = viewModel.buildGameResult()
+                                PersistenceManager.save(result, context: modelContext)
+                            }
                             
                             // Delayed haptics/flow
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
@@ -109,12 +105,16 @@ struct SignalsGameView: View {
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
                 viewModel.giveUp()
-                let result = viewModel.buildGameResult()
-                PersistenceManager.save(result, context: modelContext)
+                if !viewModel.isDaily || PersistenceManager.fetchDailyResult(for: .signals, on: .now, context: modelContext) == nil {
+                    let result = viewModel.buildGameResult()
+                    PersistenceManager.save(result, context: modelContext)
+                }
                 if let lvl = viewModel.activeLevelId {
                     PersistenceManager.markLevelPlayed(
                         gameType: .signals, levelId: lvl, won: false,
-                        score: 0, guessesUsed: viewModel.guessCount, context: modelContext
+                        score: 0, guessesUsed: viewModel.guessCount,
+                        durationSeconds: Date.now.timeIntervalSince(viewModel.startDate),
+                        context: modelContext
                     )
                 }
                 Haptics.playMediumImpact()
@@ -132,54 +132,29 @@ struct SignalsGameView: View {
     // MARK: - Local Result Overlay
 
     private var localResultOverlay: some View {
-        VStack(spacing: 20) {
-            let didWin = viewModel.gameState.isCompleted
-            
-            HStack(spacing: 12) {
-                Image(systemName: didWin ? "checkmark.circle.fill" : "xmark.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(didWin ? Color(red: 0.24, green: 0.65, blue: 0.36) : Color(red: 0.85, green: 0.30, blue: 0.30))
-                
-                Text(didWin ? "LEVEL \(viewModel.activeLevelId ?? 0) COMPLETED" : "SIGNAL LOST")
-                    .font(.system(size: 15, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.white)
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 20)
-            .background(Capsule().fill(Color.white.opacity(0.08)))
-
+        let didWin = viewModel.gameState.isCompleted
+        
+        return ResultOverlayTemplate(
+            style: .panel,
+            header: .iconTitle(
+                icon: didWin ? "checkmark.circle.fill" : "xmark.circle.fill",
+                color: didWin ? AppTheme.signals : AppTheme.error,
+                title: didWin ? "LEVEL \(viewModel.activeLevelId ?? 0) COMPLETED" : "SIGNAL LOST"
+            ),
+            stats: []
+        ) {
+            EmptyView()
+        } actions: {
             HStack(spacing: 16) {
-                Button {
+                ResultSecondaryButton(title: viewModel.activeLevelId == 100 ? "All Done" : "Done") {
                     dismiss()
-                } label: {
-                    Text(viewModel.activeLevelId == 100 ? "All Done" : "Done")
-                        .font(.system(size: 17, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
-                        .foregroundStyle(.white)
                 }
 
                 if let levelId = viewModel.activeLevelId, levelId < 100 {
-                    Button {
+                    ResultPrimaryButton(title: "Next Level") {
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                             viewModel.loadLevel(levelId + 1)
                         }
-                    } label: {
-                        Text("Next Level")
-                            .font(.system(size: 17, weight: .bold))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                Capsule().fill(
-                                    LinearGradient(
-                                        colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                                 Color(red: 0.4, green: 0.6, blue: 1.0)],
-                                        startPoint: .leading, endPoint: .trailing
-                                    )
-                                )
-                            )
-                            .foregroundStyle(.white)
                     }
                 }
             }
@@ -189,70 +164,39 @@ struct SignalsGameView: View {
     // MARK: - Gave Up Overlay
 
     private var signalsGaveUpOverlay: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
-                Image(systemName: "flag.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(.red.opacity(0.7))
-                Text("GAVE UP")
-                    .font(.system(size: 15, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.white)
-            }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 20)
-            .background(Capsule().fill(Color.white.opacity(0.08)))
-
+        ResultOverlayTemplate(
+            style: .panel,
+            header: .iconTitle(icon: "flag.fill", color: .red.opacity(0.7), title: "GAVE UP"),
+            stats: []
+        ) {
             // Show the secret code
             VStack(spacing: 6) {
                 Text("The code was:")
-                    .font(.system(size: 13)).foregroundStyle(.white.opacity(0.5))
+                    .font(.system(size: 13)).foregroundStyle(.primary.opacity(0.5))
                 HStack(spacing: 8) {
                     ForEach(viewModel.solutionDigits, id: \.self) { digit in
                         Text("\(digit)")
                             .font(.system(size: 26, weight: .bold, design: .monospaced))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.primary)
                             .frame(width: 44, height: 48)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(red: 0.24, green: 0.65, blue: 0.36).opacity(0.3))
+                                    .fill(AppTheme.signals.opacity(0.3))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
-                                            .strokeBorder(Color(red: 0.24, green: 0.65, blue: 0.36).opacity(0.6), lineWidth: 1.5)
+                                            .strokeBorder(AppTheme.signals.opacity(0.6), lineWidth: 1.5)
                                     )
                             )
                     }
                 }
             }
-
+        } actions: {
             HStack(spacing: 16) {
-                Button {
+                ResultSecondaryButton(title: "Try Again") {
                     viewModel.reset()
-                } label: {
-                    Text("Try Again")
-                        .font(.system(size: 17, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.12)))
-                        .foregroundStyle(.white)
                 }
-
-                Button {
+                ResultPrimaryButton(title: "Done") {
                     dismiss()
-                } label: {
-                    Text("Done")
-                        .font(.system(size: 17, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            Capsule().fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                             Color(red: 0.4, green: 0.6, blue: 1.0)],
-                                    startPoint: .leading, endPoint: .trailing
-                                )
-                            )
-                        )
-                        .foregroundStyle(.white)
                 }
             }
         }
@@ -267,8 +211,8 @@ struct SignalsGameView: View {
                     .font(.system(size: 22, weight: .black, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                            colors: [AppTheme.shift,
+                                     AppTheme.cascadeBlue],
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
@@ -279,7 +223,7 @@ struct SignalsGameView: View {
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white.opacity(0.8))
+                            .foregroundStyle(.primary.opacity(0.8))
                             .padding(8)
                     }
                     .padding(.leading, 8)
@@ -303,7 +247,7 @@ struct SignalsGameView: View {
                     } label: {
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.white.opacity(0.4))
+                            .foregroundStyle(.primary.opacity(0.4))
                             .padding(8)
                     }
                     .padding(.trailing, 12)
@@ -321,7 +265,7 @@ struct SignalsGameView: View {
     private var counterPill: some View {
         let label = Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
             .font(.system(size: 13, weight: .semibold, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.7))
+            .foregroundStyle(.primary.opacity(0.7))
             .padding(.horizontal, 14)
             .padding(.vertical, 5)
 
@@ -330,7 +274,7 @@ struct SignalsGameView: View {
                 .glassEffect(.regular, in: Capsule())
         } else {
             label
-                .background(Capsule().fill(Color.white.opacity(0.12)))
+                .background(Capsule().fill(AppTheme.pillFill))
         }
     }
 
@@ -378,7 +322,7 @@ struct SignalsGameView: View {
         HStack(spacing: 8) {
             ForEach(0..<4, id: \.self) { _ in
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(Color.white.opacity(0.10), lineWidth: 2)
+                    .strokeBorder(AppTheme.cellBorder, lineWidth: 2)
                     .frame(width: 58, height: 58)
             }
         }
@@ -395,8 +339,8 @@ struct SignalsGameView: View {
             Image(systemName: didWin ? "checkmark.seal.fill" : "xmark.seal.fill")
                 .font(.system(size: 64))
                 .foregroundStyle(didWin
-                    ? Color(red: 0.24, green: 0.65, blue: 0.36)
-                    : Color(red: 0.85, green: 0.30, blue: 0.30))
+                    ? AppTheme.signals
+                    : AppTheme.error)
                 .symbolEffect(.bounce, value: showResultSheet)
 
             Text(didWin ? "Signal Locked!" : "Signal Lost")
@@ -418,7 +362,7 @@ struct SignalsGameView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(RoundedRectangle(cornerRadius: 14).fill(Color.accentColor))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                 }
                 .padding(.horizontal, 32)
                 .padding(.top, 8)
@@ -432,13 +376,13 @@ struct SignalsGameView: View {
                 .background(
                     Capsule().fill(
                         LinearGradient(
-                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                            colors: [AppTheme.shift,
+                                     AppTheme.cascadeBlue],
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
                 )
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .padding(.horizontal, 32)
                 .padding(.top, 8)
             }
@@ -466,8 +410,8 @@ private struct SignalsActiveCell: View {
             RoundedRectangle(cornerRadius: 10)
                 .strokeBorder(
                     digit != nil
-                        ? Color.white.opacity(0.80)
-                        : (isNextEmpty ? Color.white.opacity(0.50) : Color.white.opacity(0.18)),
+                        ? Color.primary.opacity(0.80)
+                        : (isNextEmpty ? Color.primary.opacity(0.50) : AppTheme.cellBorder),
                     lineWidth: isNextEmpty && digit == nil ? 2.5 : 2
                 )
                 .frame(width: 58, height: 58)
@@ -475,7 +419,7 @@ private struct SignalsActiveCell: View {
             if let d = digit {
                 Text("\(d)")
                     .font(.system(size: 26, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                     .transition(.scale(scale: 0.6).combined(with: .opacity))
             }
         }

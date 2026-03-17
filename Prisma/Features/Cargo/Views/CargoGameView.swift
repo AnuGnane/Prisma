@@ -25,14 +25,7 @@ struct CargoGameView: View {
     var body: some View {
         ZStack {
             // Background
-            ZStack {
-                Color(red: 0.05, green: 0.05, blue: 0.08)
-                RadialGradient(
-                    colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
-                    center: .top, startRadius: 50, endRadius: 500
-                )
-            }
-            .ignoresSafeArea()
+            AppTheme.appBackground()
 
             VStack(spacing: 0) {
                 header
@@ -94,8 +87,8 @@ struct CargoGameView: View {
                     .font(.system(size: 22, weight: .black, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
+                            colors: [AppTheme.shift,
+                                     AppTheme.cascadeBlue],
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
@@ -106,7 +99,7 @@ struct CargoGameView: View {
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white.opacity(0.8))
+                            .foregroundStyle(.primary.opacity(0.8))
                             .padding(8)
                     }
                     .padding(.leading, 8)
@@ -119,7 +112,7 @@ struct CargoGameView: View {
                     } label: {
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.white.opacity(0.4))
+                            .foregroundStyle(.primary.opacity(0.4))
                             .padding(8)
                     }
                     .padding(.trailing, 12)
@@ -139,7 +132,7 @@ struct CargoGameView: View {
             if !viewModel.isGameOver {
                 Text("Undos left: \(CargoGameViewModel.maxUndos - viewModel.undoCount)")
                     .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.3))
+                    .foregroundStyle(.primary.opacity(0.3))
                     .padding(.top, 2)
             }
         }
@@ -153,14 +146,14 @@ struct CargoGameView: View {
         let pct = Int(viewModel.fillPercentage * 100)
         let label = Text("\(viewModel.pieces.count - viewModel.piecesRemaining)/\(viewModel.pieces.count) pieces · \(pct)%")
             .font(.system(size: 13, weight: .semibold, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.7))
+            .foregroundStyle(.primary.opacity(0.7))
             .padding(.horizontal, 12)
             .padding(.vertical, 5)
 
         if #available(iOS 26, *) {
             label.glassEffect(.regular, in: Capsule())
         } else {
-            label.background(Capsule().fill(Color.white.opacity(0.12)))
+            label.background(Capsule().fill(AppTheme.pillFill))
         }
     }
 
@@ -220,11 +213,11 @@ struct CargoGameView: View {
                             Text("Undo")
                         }
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(viewModel.canUndo ? .white : .white.opacity(0.3))
+                        .foregroundStyle(viewModel.canUndo ? .white : .primary.opacity(0.3))
                         .padding(.horizontal, 18)
                         .padding(.vertical, 10)
                         .background(
-                            Capsule().fill(Color.white.opacity(viewModel.canUndo ? 0.12 : 0.05))
+                            Capsule().fill(Color.primary.opacity(viewModel.canUndo ? 0.12 : 0.05))
                         )
                     }
                     .disabled(!viewModel.canUndo)
@@ -239,10 +232,10 @@ struct CargoGameView: View {
                     } label: {
                         Text(viewModel.piecesRemaining == 0 ? "Submit" : "Give Up")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.7))
+                            .foregroundStyle(.primary.opacity(0.7))
                             .padding(.horizontal, 18)
                             .padding(.vertical, 10)
-                            .background(Capsule().fill(Color.white.opacity(0.08)))
+                            .background(Capsule().fill(Color.primary.opacity(0.08)))
                     }
                 }
                 .padding(.horizontal, 20)
@@ -277,9 +270,9 @@ struct CargoGameView: View {
             } label: {
                 Image(systemName: "rotate.right")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                     .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.white.opacity(0.12)))
+                    .background(Circle().fill(Color.primary.opacity(0.12)))
             }
 
             // Flip
@@ -291,9 +284,9 @@ struct CargoGameView: View {
             } label: {
                 Image(systemName: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                     .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.white.opacity(0.12)))
+                    .background(Circle().fill(Color.primary.opacity(0.12)))
             }
 
             Spacer()
@@ -306,9 +299,9 @@ struct CargoGameView: View {
             } label: {
                 Image(systemName: "checkmark")
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(viewModel.ghostIsValid ? Color.green : Color.white.opacity(0.3))
+                    .foregroundStyle(viewModel.ghostIsValid ? Color.green : Color.primary.opacity(0.3))
                     .frame(width: 52, height: 52)
-                    .background(Circle().fill(viewModel.ghostIsValid ? Color.green.opacity(0.25) : Color.white.opacity(0.1)))
+                    .background(Circle().fill(viewModel.ghostIsValid ? Color.green.opacity(0.25) : Color.primary.opacity(0.1)))
             }
             .disabled(!viewModel.ghostIsValid)
         }
@@ -328,74 +321,35 @@ struct CargoGameView: View {
         let pct = Int(viewModel.fillPercentage * 100)
 
         return AnyView(
-            VStack(spacing: 20) {
-                // Result summary
-                VStack(spacing: 6) {
-                    Text(title)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-
-                    HStack(spacing: 16) {
-                        resultStat(label: "FILLED", value: "\(pct)%")
-                        resultStat(label: "SCORE", value: "\(score)")
-                        resultStat(label: "TIME", value: viewModel.timerString)
+            ResultOverlayTemplate(
+                style: .panel,
+                header: .custom(title: title, subtitle: nil),
+                stats: [
+                    ResultStat(label: "Filled", value: "\(pct)%"),
+                    ResultStat(label: "Score", value: "\(score)"),
+                    ResultStat(label: "Time", value: viewModel.timerString)
+                ]
+            ) {
+                EmptyView()
+            } actions: {
+                VStack(spacing: 12) {
+                    if !viewModel.isDaily {
+                        localResultActions
+                    } else {
+                        ResultShareButton(shareString: viewModel.generateShareString())
+                        ResultPrimaryButton(title: "Done") { dismiss() }
                     }
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 20)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.07)))
-                }
 
-                // Actions
-                if !viewModel.isDaily {
-                    localResultActions
-                } else {
-                    VStack(spacing: 12) {
-                        ShareLink(item: viewModel.generateShareString()) {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                                .font(.system(size: 17, weight: .semibold))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(
-                                    Capsule().fill(
-                                        LinearGradient(
-                                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
-                                            startPoint: .leading, endPoint: .trailing
-                                        )
-                                    )
-                                )
-                                .foregroundStyle(.white)
-                        }
+                    if !viewModel.showingSolution {
                         Button {
-                            dismiss()
+                            viewModel.showSolution()
+                            Haptics.playMediumImpact()
                         } label: {
-                            Text("Done")
-                                .font(.system(size: 17, weight: .bold))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(
-                                    Capsule().fill(
-                                        LinearGradient(
-                                            colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                                     Color(red: 0.4, green: 0.6, blue: 1.0)],
-                                            startPoint: .leading, endPoint: .trailing
-                                        )
-                                    )
-                                )
-                                .foregroundStyle(.white)
+                            Text("Show Solution")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(.primary.opacity(0.6))
+                                .padding(.vertical, 8)
                         }
-                    }
-                }
-
-                if !viewModel.showingSolution {
-                    Button {
-                        viewModel.showSolution()
-                        Haptics.playMediumImpact()
-                    } label: {
-                        Text("Show Solution")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.6))
-                            .padding(.vertical, 8)
                     }
                 }
             }
@@ -409,9 +363,9 @@ struct CargoGameView: View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .frame(width: 44, height: 44)
-                .background(Circle().fill(Color.white.opacity(0.12)))
+                .background(Circle().fill(Color.primary.opacity(0.12)))
         }
     }
 
@@ -439,61 +393,19 @@ struct CargoGameView: View {
             ShareLink(item: viewModel.generateShareString()) {
                 Label("Share", systemImage: "square.and.arrow.up")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.7))
+                    .foregroundStyle(.primary.opacity(0.7))
                     .padding(.horizontal, 14).padding(.vertical, 12)
-                    .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.08)))
+                    .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.08)))
             }
 
-            Button { dismiss() } label: {
-                Text("Done")
-                    .font(.system(size: 16, weight: .semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(
-                        Capsule().fill(
-                            LinearGradient(
-                                colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                         Color(red: 0.4, green: 0.6, blue: 1.0)],
-                                startPoint: .leading, endPoint: .trailing
-                            )
-                        )
-                    )
-                    .foregroundStyle(.white)
-            }
+            ResultPrimaryButton(title: "Done") { dismiss() }
 
             if let levelId = viewModel.activeLevelId, levelId < 100 {
-                Button {
+                ResultPrimaryButton(title: "Next Level →") {
                     viewModel.loadLevel(levelId + 1)
                     saveResult()
-                } label: {
-                    Text("Next Level →")
-                        .font(.system(size: 16, weight: .bold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            Capsule().fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                             Color(red: 0.4, green: 0.6, blue: 1.0)],
-                                    startPoint: .leading, endPoint: .trailing
-                                )
-                            )
-                        )
-                        .foregroundStyle(.white)
                 }
             }
-        }
-    }
-
-    private func resultStat(label: String, value: String) -> some View {
-        VStack(spacing: 2) {
-            Text(value)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-            Text(label)
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.5))
-                .kerning(1)
         }
     }
 
@@ -509,6 +421,7 @@ struct CargoGameView: View {
                 won: score >= 700,
                 score: score,
                 guessesUsed: 0,
+                durationSeconds: Double(viewModel.elapsedSeconds),
                 context: modelContext
             )
             // Also save GameResult for local mode to enable history display with user state
@@ -517,7 +430,7 @@ struct CargoGameView: View {
         }
         if viewModel.isDaily {
             let gameDate = Calendar.current.startOfDay(for: Date())
-            if PersistenceManager.fetchResult(for: .cargo, on: gameDate, context: modelContext) == nil {
+            if PersistenceManager.fetchDailyResult(for: .cargo, on: gameDate, context: modelContext) == nil {
                 let result = viewModel.buildGameResult(gameDate: gameDate)
                 PersistenceManager.save(result, context: modelContext)
             }
@@ -537,14 +450,14 @@ struct CargoHeaderTimerView: View {
     var body: some View {
         let label = Text("⏱ \(viewModel.timerString)")
             .font(.system(size: 13, weight: .semibold, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.7))
+            .foregroundStyle(.primary.opacity(0.7))
             .padding(.horizontal, 12)
             .padding(.vertical, 5)
 
         if #available(iOS 26, *) {
             label.glassEffect(.regular, in: Capsule())
         } else {
-            label.background(Capsule().fill(Color.white.opacity(0.12)))
+            label.background(Capsule().fill(AppTheme.pillFill))
         }
     }
 }

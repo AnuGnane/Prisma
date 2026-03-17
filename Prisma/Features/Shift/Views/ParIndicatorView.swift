@@ -40,7 +40,7 @@ struct ParIndicatorView: View {
         .padding(.vertical, 6)
         .background(
             Capsule()
-                .fill(Color(hex: "#1E1E2E"))
+                .fill(Color.primary.opacity(0.12))
         )
     }
     
@@ -67,23 +67,23 @@ struct ParIndicatorView: View {
 #Preview("Excellent Performance") {
     ParIndicatorView(currentMoves: 5, optimalMoves: 5)
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Good Performance") {
     ParIndicatorView(currentMoves: 8, optimalMoves: 5)
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Fair Performance") {
     ParIndicatorView(currentMoves: 10, optimalMoves: 5)
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Poor Performance") {
     ParIndicatorView(currentMoves: 15, optimalMoves: 5)
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
 }

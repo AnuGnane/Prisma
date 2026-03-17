@@ -14,14 +14,15 @@ struct DailyCalendarView: View {
 
     @State private var displayedMonth = Calendar.current.component(.month, from: .now)
     @State private var displayedYear = Calendar.current.component(.year, from: .now)
+    @State private var selectedDay: Int?
 
     private let calendar = Calendar.current
     private let daySymbols = ["M", "T", "W", "T", "F", "S", "S"]
     private let gameColors: [GameType: Color] = [
-        .signals: Color(red: 0.24, green: 0.65, blue: 0.36),
-        .archive: Color(red: 0.24, green: 0.52, blue: 0.85),
-        .cargo:   Color(red: 1.00, green: 0.55, blue: 0.26),
-        .shift:   Color(red: 0.65, green: 0.24, blue: 0.85)
+        .signals: AppTheme.signals,
+        .archive: AppTheme.archive,
+        .cargo:   AppTheme.cargo,
+        .shift:   AppTheme.shift
     ]
 
     private var displayDate: Date {
@@ -41,14 +42,14 @@ struct DailyCalendarView: View {
                 } label: {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(.primary.opacity(0.5))
                         .padding(6)
                 }
 
                 Spacer()
                 Text(monthTitle.uppercased())
                     .font(.system(size: 12, weight: .heavy, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(.primary.opacity(0.6))
                     .kerning(1.5)
                 Spacer()
 
@@ -57,7 +58,7 @@ struct DailyCalendarView: View {
                 } label: {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(.primary.opacity(0.5))
                         .padding(6)
                 }
             }
@@ -67,7 +68,7 @@ struct DailyCalendarView: View {
                 ForEach(daySymbols, id: \.self) { d in
                     Text(d)
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.white.opacity(0.3))
+                        .foregroundStyle(.primary.opacity(0.3))
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -80,15 +81,29 @@ struct DailyCalendarView: View {
                         let day = weeks[weekIdx][dayIdx]
                         if day > 0 {
                             calendarCell(day: day)
+                                .onTapGesture {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        selectedDay = selectedDay == day ? nil : day
+                                    }
+                                }
                         } else {
                             Color.clear.frame(maxWidth: .infinity, minHeight: 36)
                         }
                     }
                 }
             }
+            
+            // Intensity legend
+            intensityLegend
+            
+            // Expanded day detail
+            if let day = selectedDay {
+                dayDetailView(day: day)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.04)))
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.04)))
     }
 
     // MARK: - Cell
@@ -97,11 +112,13 @@ struct DailyCalendarView: View {
         let date = calendar.date(from: DateComponents(year: displayedYear, month: displayedMonth, day: day))!
         let dayResults = dailyResults(for: date)
         let isToday = calendar.isDateInToday(date)
+        let isSelected = selectedDay == day
+        let intensity = intensityLevel(for: dayResults)
 
         return VStack(spacing: 2) {
             Text("\(day)")
                 .font(.system(size: 12, weight: isToday ? .bold : .medium, design: .monospaced))
-                .foregroundStyle(isToday ? .white : .white.opacity(0.5))
+                .foregroundStyle(isToday ? .white : .primary.opacity(0.5))
 
             if dayResults.isEmpty {
                 Circle().fill(Color.clear).frame(width: 4, height: 4)
@@ -117,10 +134,115 @@ struct DailyCalendarView: View {
         }
         .frame(maxWidth: .infinity, minHeight: 36)
         .background(
-            isToday
-                ? RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
-                : RoundedRectangle(cornerRadius: 8).fill(Color.clear)
+            RoundedRectangle(cornerRadius: 8)
+                .fill(intensityFill(level: intensity, isToday: isToday, isSelected: isSelected))
         )
+        .overlay(
+            isSelected
+                ? RoundedRectangle(cornerRadius: 8).strokeBorder(Color.primary.opacity(0.3), lineWidth: 1)
+                : nil
+        )
+    }
+    
+    // MARK: - Intensity
+    
+    /// 0 = no games, 1-4 based on games completed that day
+    private func intensityLevel(for results: [GameResult]) -> Int {
+        min(results.count, 4)
+    }
+    
+    private func intensityFill(level: Int, isToday: Bool, isSelected: Bool) -> Color {
+        if isSelected {
+            return Color.primary.opacity(0.12)
+        }
+        if isToday && level == 0 {
+            return Color.primary.opacity(0.08)
+        }
+        switch level {
+        case 0: return .clear
+        case 1: return AppTheme.signals.opacity(0.10)
+        case 2: return AppTheme.signals.opacity(0.20)
+        case 3: return AppTheme.signals.opacity(0.30)
+        default: return AppTheme.signals.opacity(0.40)
+        }
+    }
+    
+    // MARK: - Intensity Legend
+    
+    private var intensityLegend: some View {
+        HStack(spacing: 6) {
+            Text("Less")
+                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                .foregroundStyle(.primary.opacity(0.3))
+            
+            ForEach(0..<5) { level in
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(level == 0 ? Color.primary.opacity(0.06) : AppTheme.signals.opacity(Double(level) * 0.10))
+                    .frame(width: 10, height: 10)
+            }
+            
+            Text("More")
+                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                .foregroundStyle(.primary.opacity(0.3))
+        }
+        .padding(.top, 4)
+    }
+    
+    // MARK: - Day Detail
+    
+    private func dayDetailView(day: Int) -> some View {
+        let date = calendar.date(from: DateComponents(year: displayedYear, month: displayedMonth, day: day))!
+        let dayResults = dailyResults(for: date)
+        
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundStyle(.primary.opacity(0.7))
+            
+            if dayResults.isEmpty {
+                Text("No games played")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.primary.opacity(0.3))
+            } else {
+                ForEach(dayResults, id: \.persistentModelID) { result in
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(dotColor(for: result))
+                            .frame(width: 6, height: 6)
+                        
+                        Text(result.gameType.displayName)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.primary.opacity(0.8))
+                        
+                        Spacer()
+                        
+                        if result.score > 0 {
+                            Text("Won")
+                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .foregroundStyle(dotColor(for: result))
+                        } else {
+                            Text("Lost")
+                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .foregroundStyle(.primary.opacity(0.3))
+                        }
+                        
+                        if result.durationSeconds > 0 {
+                            Text(formatDuration(result.durationSeconds))
+                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .foregroundStyle(.primary.opacity(0.4))
+                        }
+                    }
+                }
+            }
+        }
+        .padding(12)
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color.primary.opacity(0.06)))
+    }
+    
+    private func formatDuration(_ seconds: Double) -> String {
+        let mins = Int(seconds) / 60
+        let secs = Int(seconds) % 60
+        return mins > 0 ? String(format: "%d:%02d", mins, secs) : "\(secs)s"
     }
 
     // MARK: - Helpers
@@ -133,7 +255,7 @@ struct DailyCalendarView: View {
 
     private func dotColor(for result: GameResult) -> Color {
         let type = GameType(rawValue: result.gameTypeRaw) ?? .signals
-        let base = gameColors[type] ?? .white
+        let base = gameColors[type] ?? .primary
         return result.score > 0 ? base : base.opacity(0.3)
     }
 
@@ -175,6 +297,6 @@ struct DailyCalendarView: View {
 #Preview {
     DailyCalendarView()
         .padding()
-        .background(Color(red: 0.07, green: 0.07, blue: 0.10))
+        .background(AppTheme.backgroundSecondary)
         .modelContainer(for: GameResult.self, inMemory: true)
 }

@@ -20,18 +20,18 @@ struct ControlButton: View {
             ZStack(alignment: .topTrailing) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(isEnabled ? .white : .secondary)
+                    .foregroundStyle(isEnabled ? .primary : .secondary)
                     .frame(width: 48, height: 48)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(hex: "#1E1E2E"))
+                            .fill(Color.primary.opacity(0.12))
                             .opacity(isEnabled ? 1.0 : 0.5)
                     )
                 
                 if let badge = badge {
                     Text(badge)
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                         .padding(4)
                         .background(Circle().fill(Color.red))
                         .offset(x: 4, y: -4)
@@ -51,7 +51,7 @@ struct ControlButton: View {
         action: {}
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Disabled Button") {
@@ -61,7 +61,7 @@ struct ControlButton: View {
         action: {}
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Button with Badge") {
@@ -72,7 +72,7 @@ struct ControlButton: View {
         action: {}
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("All Control Buttons") {
@@ -103,5 +103,5 @@ struct ControlButton: View {
         )
     }
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }

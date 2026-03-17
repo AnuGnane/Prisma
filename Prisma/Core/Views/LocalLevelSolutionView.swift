@@ -25,9 +25,9 @@ struct LocalLevelSolutionView: View {
 
     private var accentColor: Color {
         switch game {
-        case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
-        case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
-        case .cargo:   return Color(red: 1.00, green: 0.55, blue: 0.26)
+        case .signals: return AppTheme.signals
+        case .archive: return AppTheme.archive
+        case .cargo:   return AppTheme.cargo
         default: return .secondary
         }
     }
@@ -72,7 +72,7 @@ struct LocalLevelSolutionView: View {
                 HStack(spacing: 12) {
                     Image(systemName: won ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.system(size: 28))
-                        .foregroundStyle(won ? accentColor : Color(red: 0.85, green: 0.30, blue: 0.30))
+                        .foregroundStyle(won ? accentColor : AppTheme.error)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(won ? "Level \(levelId) completed" : "Level \(levelId) — lost")
                             .font(.system(size: 18, weight: .bold))
@@ -203,7 +203,7 @@ struct LocalLevelSolutionView: View {
             )
             .frame(height: 260)
             .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color(red: 0.07, green: 0.07, blue: 0.10)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
     }
     
@@ -247,7 +247,7 @@ struct LocalLevelSolutionView: View {
             )
             .frame(height: 260)
             .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color(red: 0.07, green: 0.07, blue: 0.10)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
     }
     
@@ -289,7 +289,7 @@ struct LocalLevelSolutionView: View {
                     
                     Text("\(digit)")
                         .font(.system(size: 20, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                         .frame(width: 36, height: 36)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
@@ -312,11 +312,11 @@ struct LocalLevelSolutionView: View {
     private func colorForDigitResult(_ result: DigitResult) -> Color {
         switch result {
         case .correct:
-            return Color(red: 0.24, green: 0.65, blue: 0.36) // Green
+            return AppTheme.signals // Green
         case .misplaced:
-            return Color(red: 0.95, green: 0.77, blue: 0.06) // Yellow
+            return AppTheme.misplacedBright // Yellow
         case .absent:
-            return Color(red: 0.3, green: 0.3, blue: 0.3) // Grey
+            return Color.primary.opacity(0.30) // Grey
         }
     }
     
@@ -394,15 +394,15 @@ struct LocalLevelSolutionView: View {
             case .correct:
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundStyle(Color(red: 0.24, green: 0.65, blue: 0.36))
+                    .foregroundStyle(AppTheme.signals)
             case .misplaced:
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundStyle(Color(red: 0.95, green: 0.77, blue: 0.06))
+                    .foregroundStyle(AppTheme.misplacedBright)
             case .absent:
                 Image(systemName: "arrow.down.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundStyle(Color(red: 0.85, green: 0.30, blue: 0.30))
+                    .foregroundStyle(AppTheme.error)
             }
         }
     }
@@ -517,7 +517,7 @@ struct LocalLevelSolutionView: View {
                 .frame(height: 320)
             }
             .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color(red: 0.07, green: 0.07, blue: 0.10)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
     }
 }

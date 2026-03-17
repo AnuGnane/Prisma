@@ -41,10 +41,10 @@ struct ShiftGridView: View {
             ZStack {
                 // Grid background
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(Color(white: 0.06))
+                    .fill(AppTheme.cellFill)
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .strokeBorder(.white.opacity(0.04), lineWidth: 1)
+                            .strokeBorder(AppTheme.borderSubtle, lineWidth: 1)
                     )
 
                 // Active row/column glow line
@@ -89,15 +89,24 @@ struct ShiftGridView: View {
         .onChange(of: highlightedCells) { oldVal, newVal in
             let fresh = newVal.subtracting(oldVal)
             if !fresh.isEmpty {
-                // Word found — celebrate with shimmer + pop
+                // Word found — celebrate with ripple pop + shimmer
                 Haptics.playSuccess()
                 shimmerCells = fresh
-                cellPops = fresh
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                // Staggered pop for sequential ripple feel
+                let sorted = fresh.sorted()
+                for (delay, idx) in sorted.enumerated() {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay) * 0.05) {
+                        withAnimation(.spring(response: 0.25, dampingFraction: 0.5)) {
+                            _ = cellPops.insert(idx)
+                        }
+                    }
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(sorted.count) * 0.05 + 0.15) {
                     withAnimation { cellPops = [] }
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                     withAnimation(.easeOut(duration: 0.4)) { shimmerCells = [] }
                 }
             }

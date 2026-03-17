@@ -11,20 +11,21 @@ import SwiftData
 struct SettingsView: View {
     @AppStorage("settings.hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("settings.soundEnabled") private var soundEnabled = true
+    @AppStorage("settings.appearanceMode") private var appearanceMode = AppearanceMode.dark.rawValue
     @Environment(\.modelContext) private var modelContext
     @State private var showResetAlert = false
     @State private var resetGameType: GameType?
 
     private let games: [(GameType, String, String, Color)] = [
-        (.signals, "Signals", "antenna.radiowaves.left.and.right", Color(red: 0.24, green: 0.65, blue: 0.36)),
-        (.archive, "Archive", "clock.arrow.circlepath", Color(red: 0.24, green: 0.52, blue: 0.85)),
-        (.cargo,   "Cargo",   "shippingbox.fill", Color(red: 1.00, green: 0.55, blue: 0.26)),
-        (.shift,   "Shift",   "slider.horizontal.3", Color(red: 0.65, green: 0.24, blue: 0.85))
+        (.signals, "Signals", "antenna.radiowaves.left.and.right", AppTheme.signals),
+        (.archive, "Archive", "clock.arrow.circlepath", AppTheme.archive),
+        (.cargo,   "Cargo",   "shippingbox.fill", AppTheme.cargo),
+        (.shift,   "Shift",   "slider.horizontal.3", AppTheme.shift)
     ]
 
     var body: some View {
         ZStack {
-            Color(red: 0.07, green: 0.07, blue: 0.10).ignoresSafeArea()
+            AppTheme.backgroundSecondary.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 24) {
@@ -34,18 +35,46 @@ struct SettingsView: View {
                         Toggle(isOn: $hapticsEnabled) {
                             Label("Haptic Feedback", systemImage: "iphone.radiowaves.left.and.right")
                                 .font(.system(size: 15, weight: .medium))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.primary)
                         }
-                        .tint(Color(red: 0.65, green: 0.24, blue: 0.85))
+                        .tint(AppTheme.shift)
 
-                        Divider().background(Color.white.opacity(0.06))
+                        Divider().background(Color.primary.opacity(0.06))
 
                         Toggle(isOn: $soundEnabled) {
                             Label("Sound Effects", systemImage: "speaker.wave.2.fill")
                                 .font(.system(size: 15, weight: .medium))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.primary)
                         }
-                        .tint(Color(red: 0.65, green: 0.24, blue: 0.85))
+                        .tint(AppTheme.shift)
+                    }
+
+                    sectionLabel("APPEARANCE")
+
+                    settingsCard {
+                        HStack(spacing: 0) {
+                            ForEach(AppearanceMode.allCases) { mode in
+                                Button {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        appearanceMode = mode.rawValue
+                                    }
+                                } label: {
+                                    VStack(spacing: 6) {
+                                        Image(systemName: mode.icon)
+                                            .font(.system(size: 18))
+                                        Text(mode.rawValue)
+                                            .font(.system(size: 12, weight: .semibold))
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(appearanceMode == mode.rawValue ? AppTheme.shift.opacity(0.2) : Color.clear)
+                                    )
+                                    .foregroundStyle(appearanceMode == mode.rawValue ? AppTheme.shift : .secondary)
+                                }
+                            }
+                        }
                     }
 
                     sectionLabel("RESET PROGRESS")
@@ -53,7 +82,7 @@ struct SettingsView: View {
                     settingsCard {
                         ForEach(Array(games.enumerated()), id: \.offset) { index, game in
                             if index > 0 {
-                                Divider().background(Color.white.opacity(0.06))
+                                Divider().background(Color.primary.opacity(0.06))
                             }
                             Button {
                                 resetGameType = game.0
@@ -66,7 +95,7 @@ struct SettingsView: View {
                                         .frame(width: 28)
                                     Text("Reset \(game.1)")
                                         .font(.system(size: 15, weight: .medium))
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(.primary)
                                     Spacer()
                                     Image(systemName: "trash")
                                         .font(.system(size: 12))
@@ -82,11 +111,11 @@ struct SettingsView: View {
                     settingsCard {
                         HStack {
                             Text("Version")
-                                .font(.system(size: 15, weight: .medium)).foregroundStyle(.white)
+                                .font(.system(size: 15, weight: .medium)).foregroundStyle(.primary)
                             Spacer()
                             Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                                 .font(.system(size: 15, weight: .medium, design: .monospaced))
-                                .foregroundStyle(.white.opacity(0.5))
+                                .foregroundStyle(.primary.opacity(0.5))
                         }
                     }
                 }
@@ -96,8 +125,8 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(Color(red: 0.07, green: 0.07, blue: 0.10), for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarBackground(AppTheme.backgroundSecondary, for: .navigationBar)
+        
         .alert("Reset Progress?", isPresented: $showResetAlert) {
             Button("Reset", role: .destructive) {
                 if let type = resetGameType {
@@ -118,14 +147,14 @@ struct SettingsView: View {
             content()
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.04)))
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.04)))
     }
 
     @ViewBuilder
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 11, weight: .heavy, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.3))
+            .foregroundStyle(.primary.opacity(0.3))
             .kerning(2)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 4)

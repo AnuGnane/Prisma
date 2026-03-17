@@ -104,12 +104,12 @@ struct CargoGridView: View {
     private func cellFill(state: CargoCellState, isGhost: Bool) -> Color {
         if isGhost {
             return ghostIsValid
-                ? (selectedPieceColor?.opacity(0.5) ?? Color.white.opacity(0.3))
+                ? (selectedPieceColor?.opacity(0.5) ?? Color.primary.opacity(0.3))
                 : Color.red.opacity(0.3)
         }
         switch state {
         case .empty:
-            return Color.primary.opacity(0.06)
+            return AppTheme.cellFill
         case .blocked:
             return Color.primary.opacity(0.2)
         case .filled(let pid):
@@ -122,11 +122,11 @@ struct CargoGridView: View {
     private func cellBorder(state: CargoCellState, isGhost: Bool) -> Color {
         if isGhost {
             return ghostIsValid
-                ? (selectedPieceColor ?? Color.white).opacity(0.6)
+                ? (selectedPieceColor ?? Color.primary).opacity(0.6)
                 : Color.red.opacity(0.5)
         }
         switch state {
-        case .empty:    return Color.primary.opacity(0.12)
+        case .empty:    return AppTheme.cellBorder
         case .blocked:  return Color.primary.opacity(0.3)
         case .filled(let pid): return colorForPiece(pid).opacity(0.6)
         case .ghost(let pid):  return colorForPiece(pid).opacity(0.5)

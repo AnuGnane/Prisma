@@ -56,7 +56,7 @@ struct SignalsFeedbackRow: View {
         ZStack {
             // ── Front face: unrevealed placeholder ──
             RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(Color.white.opacity(0.18), lineWidth: 2)
+                .strokeBorder(AppTheme.cellBorder, lineWidth: 2)
                 .frame(width: 58, height: 58)
                 // Rotate away (0° → 90°) and fade out
                 .rotation3DEffect(.degrees(isRevealed ? 90 : 0),
@@ -66,7 +66,7 @@ struct SignalsFeedbackRow: View {
             // ── Back face: coloured result cell ──
             Text("\(guess.digits[index])")
                 .font(.system(size: 22, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .frame(width: 58, height: 58)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
@@ -87,9 +87,9 @@ struct SignalsFeedbackRow: View {
 
     private func cellColor(for result: DigitResult) -> Color {
         switch result {
-        case .correct:   return Color(red: 0.24, green: 0.65, blue: 0.36)
-        case .misplaced: return Color(red: 0.80, green: 0.65, blue: 0.14)
-        case .absent:    return Color(white: 0.30)
+        case .correct:   return AppTheme.signals
+        case .misplaced: return AppTheme.misplacedWarm
+        case .absent:    return Color.primary.opacity(0.30)
         }
     }
 
@@ -99,17 +99,17 @@ struct SignalsFeedbackRow: View {
         case .high:
             Image(systemName: "arrow.down.circle.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color(red: 0.80, green: 0.25, blue: 0.25))
+                .foregroundStyle(AppTheme.error)
                 .font(.title2)
         case .low:
             Image(systemName: "arrow.up.circle.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color(red: 0.24, green: 0.52, blue: 0.85))
+                .foregroundStyle(AppTheme.archive)
                 .font(.title2)
         case .exact:
             Image(systemName: "checkmark.circle.fill")
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color(red: 0.24, green: 0.65, blue: 0.36))
+                .foregroundStyle(AppTheme.signals)
                 .font(.title2)
         }
     }

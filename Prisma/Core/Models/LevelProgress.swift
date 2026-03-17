@@ -18,6 +18,7 @@ final class LevelProgress {
     var score: Int              // 0 if lost
     var guessesUsed: Int        // Number of guesses taken
     var playedDate: Date?
+    var durationSeconds: Double // Solve time in seconds
 
     init(
         gameTypeRaw: String,
@@ -26,7 +27,8 @@ final class LevelProgress {
         won: Bool = false,
         score: Int = 0,
         guessesUsed: Int = 0,
-        playedDate: Date? = nil
+        playedDate: Date? = nil,
+        durationSeconds: Double = 0
     ) {
         self.gameTypeRaw = gameTypeRaw
         self.levelId = levelId
@@ -35,5 +37,6 @@ final class LevelProgress {
         self.score = score
         self.guessesUsed = guessesUsed
         self.playedDate = playedDate
+        self.durationSeconds = durationSeconds
     }
 }

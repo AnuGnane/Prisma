@@ -16,9 +16,9 @@ struct PastDailyResultView: View {
 
     private var gameColor: Color {
         switch result.gameType {
-        case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
-        case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
-        case .cargo:   return Color(red: 1.00, green: 0.55, blue: 0.26)
+        case .signals: return AppTheme.signals
+        case .archive: return AppTheme.archive
+        case .cargo:   return AppTheme.cargo
         default: return .secondary
         }
     }
@@ -322,7 +322,7 @@ struct PastDailyResultView: View {
                     
                     Text("\(digit)")
                         .font(.system(size: 20, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                         .frame(width: 36, height: 36)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
@@ -345,11 +345,11 @@ struct PastDailyResultView: View {
     private func colorForDigitResult(_ result: DigitResult) -> Color {
         switch result {
         case .correct:
-            return Color(red: 0.24, green: 0.65, blue: 0.36) // Green
+            return AppTheme.signals // Green
         case .misplaced:
-            return Color(red: 0.95, green: 0.77, blue: 0.06) // Yellow
+            return AppTheme.misplacedBright // Yellow
         case .absent:
-            return Color(red: 0.3, green: 0.3, blue: 0.3) // Grey
+            return Color.primary.opacity(0.30) // Grey
         }
     }
     
@@ -427,15 +427,15 @@ struct PastDailyResultView: View {
             case .correct:
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundStyle(Color(red: 0.24, green: 0.65, blue: 0.36))
+                    .foregroundStyle(AppTheme.signals)
             case .misplaced:
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundStyle(Color(red: 0.95, green: 0.77, blue: 0.06))
+                    .foregroundStyle(AppTheme.misplacedBright)
             case .absent:
                 Image(systemName: "arrow.down.circle.fill")
                     .font(.system(size: 16))
-                    .foregroundStyle(Color(red: 0.85, green: 0.30, blue: 0.30))
+                    .foregroundStyle(AppTheme.error)
             }
         }
     }
@@ -443,9 +443,42 @@ struct PastDailyResultView: View {
     // MARK: - Shift Game Views
     
     private var shiftSolution: some View {
-        Text("Shift solution view not yet implemented")
-            .font(.system(size: 14))
-            .foregroundStyle(.secondary)
+        let puzzle = ShiftPuzzleGenerator.generateDailyPuzzle(for: result.date)
+        return VStack(spacing: 12) {
+            if let solGrid = puzzle.solutionGrid {
+                let solHighlighted: Set<Int> = {
+                    var cells = Set<Int>()
+                    for tw in puzzle.targetWords {
+                        if let loc = solGrid.findWord(tw.word) {
+                            for c in loc.cells { cells.insert(c.row * ShiftGrid.size + c.col) }
+                        }
+                    }
+                    return cells
+                }()
+
+                TargetWordListView(
+                    targetWords: puzzle.targetWords,
+                    completedWords: Set(puzzle.targetWords.map(\.id)),
+                    hintWord: nil
+                )
+
+                ShiftGridView(
+                    grid: .constant(solGrid),
+                    highlightedCells: solHighlighted,
+                    hintCells: [],
+                    interactive: false,
+                    onMove: { _ in }
+                )
+                .frame(maxHeight: 350)
+            } else {
+                Text("Solution unavailable")
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
     }
     
     private var shiftUserState: some View {
@@ -480,7 +513,7 @@ struct PastDailyResultView: View {
         // Determine which words are completed in the final state
         var completedWords: Set<UUID> = []
         for targetWord in targetWords {
-            if grid.containsWord(targetWord.word, at: targetWord.position) {
+            if grid.findWord(targetWord.word) != nil {
                 completedWords.insert(targetWord.id)
             }
         }
@@ -515,7 +548,7 @@ struct PastDailyResultView: View {
                 .frame(height: 280)
             }
             .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color(red: 0.07, green: 0.07, blue: 0.10)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
     }
 }

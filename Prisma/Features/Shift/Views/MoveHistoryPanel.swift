@@ -53,7 +53,7 @@ struct MoveHistoryPanel: View {
                                 // Move description (e.g., "Row 1 ←")
                                 Text(move.description)
                                     .font(.system(size: 14, weight: .medium, design: .rounded))
-                                    .foregroundStyle(index == moves.count - 1 ? .white : .secondary)
+                                    .foregroundStyle(index == moves.count - 1 ? .primary : .secondary)
                             }
                         }
                     }
@@ -65,7 +65,7 @@ struct MoveHistoryPanel: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(hex: "#1E1E2E"))
+                .fill(Color.primary.opacity(0.12))
         )
     }
 }
@@ -75,7 +75,7 @@ struct MoveHistoryPanel: View {
 #Preview("Empty History") {
     MoveHistoryPanel(moves: [])
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Few Moves") {
@@ -85,7 +85,7 @@ struct MoveHistoryPanel: View {
         .rowRight(3)
     ])
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Many Moves") {
@@ -102,7 +102,7 @@ struct MoveHistoryPanel: View {
         .columnDown(4)
     ])
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Expanded State") {
@@ -129,6 +129,6 @@ private struct MoveHistoryPanelPreview: View {
             .padding()
         }
         .padding()
-        .background(Color(hex: "#12121A"))
+        .background(AppTheme.backgroundSecondary)
     }
 }

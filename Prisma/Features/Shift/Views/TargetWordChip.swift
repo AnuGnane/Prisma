@@ -29,7 +29,7 @@ struct TargetWordChip: View {
     var body: some View {
         Text(word)
             .font(.system(size: 16, weight: .semibold, design: .rounded))
-            .foregroundStyle(isCompleted ? .white : .secondary)
+            .foregroundStyle(isCompleted ? .primary : .secondary)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(
@@ -37,7 +37,7 @@ struct TargetWordChip: View {
                     .fill(
                         isCompleted ?
                         Color(hex: "#4A90E2") :
-                        Color(hex: "#1E1E2E")
+                        Color.primary.opacity(0.12)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
@@ -51,7 +51,7 @@ struct TargetWordChip: View {
                 isCompleted ?
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 12))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                     .offset(x: 8, y: -8)
                 : nil,
                 alignment: .topTrailing
@@ -68,7 +68,7 @@ struct TargetWordChip: View {
         isRevealed: false
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Completed") {
@@ -78,7 +78,7 @@ struct TargetWordChip: View {
         isRevealed: false
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Revealed by Hint") {
@@ -88,7 +88,7 @@ struct TargetWordChip: View {
         isRevealed: true
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Completed and Revealed") {
@@ -98,5 +98,5 @@ struct TargetWordChip: View {
         isRevealed: true
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }

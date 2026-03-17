@@ -65,7 +65,7 @@ struct GameControlsView: View {
         onReset: {}
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Undo/Redo Disabled") {
@@ -80,7 +80,7 @@ struct GameControlsView: View {
         onReset: {}
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("No Hints Remaining") {
@@ -95,7 +95,7 @@ struct GameControlsView: View {
         onReset: {}
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }
 
 #Preview("Mid-Game State") {
@@ -110,5 +110,5 @@ struct GameControlsView: View {
         onReset: {}
     )
     .padding()
-    .background(Color(hex: "#12121A"))
+    .background(AppTheme.backgroundSecondary)
 }

@@ -40,14 +40,7 @@ struct LevelSelectorView: View {
     
     var body: some View {
         ZStack {
-            ZStack {
-                Color(red: 0.05, green: 0.05, blue: 0.08)
-                RadialGradient(
-                    colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
-                    center: .top, startRadius: 50, endRadius: 500
-                )
-            }
-            .ignoresSafeArea()
+            AppTheme.appBackground()
             
             ScrollView {
                 VStack(spacing: 20) {
@@ -60,8 +53,8 @@ struct LevelSelectorView: View {
         }
         .navigationTitle(game.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(Color(red: 0.05, green: 0.05, blue: 0.08), for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarBackground(AppTheme.background, for: .navigationBar)
+        
         .toolbar(.hidden, for: .tabBar)
     }
     
@@ -75,7 +68,7 @@ struct LevelSelectorView: View {
             
             Text("LOCAL PUZZLES")
                 .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.4))
+                .foregroundStyle(.primary.opacity(0.4))
                 .kerning(2)
         }
         .padding(.bottom, 4)
@@ -87,13 +80,13 @@ struct LevelSelectorView: View {
         VStack(spacing: 8) {
             Text("\(playedCount)/100 played · \(wonCount) won")
                 .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(.primary.opacity(0.5))
             
             // Progress bar
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.white.opacity(0.08))
+                        .fill(Color.primary.opacity(0.08))
                         .frame(height: 6)
                     
                     RoundedRectangle(cornerRadius: 3)
@@ -147,55 +140,50 @@ struct LevelSelectorView: View {
         VStack(spacing: 12) {
             Text("\(levelId)")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
             
             Text("NEW")
                 .font(.system(size: 10, weight: .bold, design: .monospaced))
-                .foregroundStyle(.white.opacity(0.8))
+                .foregroundStyle(.primary.opacity(0.8))
                 .padding(.horizontal, 6)
                 .padding(.vertical, 2)
-                .background(Capsule().fill(Color.white.opacity(0.2)))
+                .background(Capsule().fill(Color.primary.opacity(0.2)))
         }
         .frame(maxWidth: .infinity)
         .frame(height: 100)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(white: 0.12))
+                .fill(Color.primary.opacity(0.12))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
+                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
         )
     }
     
     @ViewBuilder
     private func playedCell(levelId: Int, won: Bool, score: Int) -> some View {
         let progress = progressList.first(where: { $0.levelId == levelId })
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             Text("\(levelId)")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(won ? .white : .white.opacity(0.35))
+                .foregroundStyle(won ? .white : .primary.opacity(0.35))
             
             if won {
-                if game == .shift {
-                    // Star rating for Shift based on moves
-                    let moves = progress?.guessesUsed ?? 0
-                    let stars = shiftStars(moves: moves, score: score)
-                    HStack(spacing: 2) {
-                        ForEach(0..<3) { i in
-                            Image(systemName: i < stars ? "star.fill" : "star")
-                                .font(.system(size: 11))
-                                .foregroundStyle(i < stars ? colorForGame : .white.opacity(0.2))
-                        }
+                // Star rating for all games based on score
+                let stars = starRating(score: score, guesses: progress?.guessesUsed ?? 0)
+                HStack(spacing: 2) {
+                    ForEach(0..<3) { i in
+                        Image(systemName: i < stars ? "star.fill" : "star")
+                            .font(.system(size: 11))
+                            .foregroundStyle(i < stars ? colorForGame : .primary.opacity(0.2))
                     }
-                } else {
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                            .font(.system(size: 10))
-                        Text("\(score)")
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    }
-                    .foregroundStyle(colorForGame)
+                }
+                // Solve time
+                if let dur = progress?.durationSeconds, dur > 0 {
+                    Text(formatTime(dur))
+                        .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        .foregroundStyle(.primary.opacity(0.4))
                 }
             } else {
                 HStack(spacing: 4) {
@@ -204,27 +192,32 @@ struct LevelSelectorView: View {
                     Text("LOST")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
                 }
-                .foregroundStyle(Color(red: 0.85, green: 0.30, blue: 0.30).opacity(0.7))
+                .foregroundStyle(AppTheme.error.opacity(0.7))
             }
         }
         .frame(maxWidth: .infinity)
         .frame(height: 100)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(won ? Color(white: 0.12) : Color(white: 0.08))
+                .fill(won ? Color.primary.opacity(0.12) : Color.primary.opacity(0.08))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(won ? colorForGame.opacity(0.3) : Color(red: 0.85, green: 0.30, blue: 0.30).opacity(0.15), lineWidth: 1)
+                .strokeBorder(won ? colorForGame.opacity(0.3) : AppTheme.error.opacity(0.15), lineWidth: 1)
         )
     }
 
-    /// Returns 1–3 stars for a Shift level based on move count vs score tier
-    private func shiftStars(moves: Int, score: Int) -> Int {
-        // Score is out of 1000. ≥900 → 3 stars, ≥600 → 2, else 1
+    /// Returns 1–3 stars based on score tier (unified across all games)
+    private func starRating(score: Int, guesses: Int) -> Int {
         if score >= 900 { return 3 }
         if score >= 600 { return 2 }
         return 1
+    }
+    
+    private func formatTime(_ seconds: Double) -> String {
+        let mins = Int(seconds) / 60
+        let secs = Int(seconds) % 60
+        return mins > 0 ? String(format: "%d:%02d", mins, secs) : "\(secs)s"
     }
     
     // MARK: - Helpers
@@ -241,10 +234,10 @@ struct LevelSelectorView: View {
     
     private var colorForGame: Color {
         switch game {
-        case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
-        case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
+        case .signals: return AppTheme.signals
+        case .archive: return AppTheme.archive
         case .cargo:   return Color(red: 0.85, green: 0.52, blue: 0.24)
-        case .shift:   return Color(red: 0.65, green: 0.24, blue: 0.85)
+        case .shift:   return AppTheme.shift
         case .orbit:   return Color(red: 0.85, green: 0.24, blue: 0.52)
         }
     }
@@ -271,11 +264,11 @@ struct LevelSelectorView: View {
                 }
             } else {
                 Text("Failed to load level \(levelId)")
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
             }
         default:
             Text("Coming Soon")
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
         }
     }
 }

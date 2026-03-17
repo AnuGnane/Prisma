@@ -65,6 +65,22 @@ struct PersistenceManager {
         return results.first { date.isSameDay(as: $0.date) }
     }
 
+    // MARK: - Fetch daily result for a game on a given date
+
+    static func fetchDailyResult(
+        for gameType: GameType,
+        on date: Date,
+        context: ModelContext
+    ) -> GameResult? {
+        let raw = gameType.rawValue
+        let descriptor = FetchDescriptor<GameResult>(
+            predicate: #Predicate { $0.gameTypeRaw == raw && $0.isDaily == true },
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+        let results = (try? context.fetch(descriptor)) ?? []
+        return results.first { date.isSameDay(as: $0.date) }
+    }
+
     // MARK: - Fetch all results for a game (most recent first)
 
     static func fetchAll(
@@ -90,7 +106,7 @@ struct PersistenceManager {
         return (try? context.fetch(descriptor)) ?? []
     }
 
-    static func markLevelPlayed(gameType: GameType, levelId: Int, won: Bool, score: Int, guessesUsed: Int, context: ModelContext) {
+    static func markLevelPlayed(gameType: GameType, levelId: Int, won: Bool, score: Int, guessesUsed: Int, durationSeconds: Double = 0, context: ModelContext) {
         let progressList = fetchLevelProgress(for: gameType, context: context)
         
         if let existing = progressList.first(where: { $0.levelId == levelId }) {
@@ -105,7 +121,8 @@ struct PersistenceManager {
             won: won,
             score: score,
             guessesUsed: guessesUsed,
-            playedDate: .now
+            playedDate: .now,
+            durationSeconds: durationSeconds
         )
         context.insert(newProgress)
         try? context.save()

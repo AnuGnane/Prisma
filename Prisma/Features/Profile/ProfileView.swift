@@ -15,6 +15,8 @@ struct ProfileView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @State private var showResetConfirmation = false
+    @State private var badgeInfos: [BadgeInfo] = []
+    @State private var newBadgeToast: Badge?
 
     private var signalsProgress: [LevelProgress] {
         allLevelProgress.filter { $0.gameTypeRaw == GameType.signals.rawValue }
@@ -35,14 +37,7 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                ZStack {
-                    Color(red: 0.05, green: 0.05, blue: 0.08)
-                    RadialGradient(
-                        colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
-                        center: .top, startRadius: 50, endRadius: 500
-                    )
-                }
-                .ignoresSafeArea()
+                AppTheme.appBackground()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
@@ -60,33 +55,43 @@ struct ProfileView: View {
                                 StatCard(
                                     game: .signals,
                                     icon: "antenna.radiowaves.left.and.right",
-                                    accentColor: Color(red: 0.24, green: 0.65, blue: 0.36),
+                                    accentColor: AppTheme.signals,
                                     progress: signalsProgress
                                 )
                                 StatCard(
                                     game: .archive,
                                     icon: "clock.arrow.circlepath",
-                                    accentColor: Color(red: 0.24, green: 0.52, blue: 0.85),
+                                    accentColor: AppTheme.archive,
                                     progress: archiveProgress
                                 )
                             }
-                            StatCard(
-                                game: .cargo,
-                                icon: "shippingbox.fill",
-                                accentColor: Color(red: 1.00, green: 0.55, blue: 0.26),
-                                progress: cargoProgress
-                            )
-                            StatCard(
-                                game: .shift,
-                                icon: "slider.horizontal.3",
-                                accentColor: Color(red: 0.65, green: 0.24, blue: 0.85),
-                                progress: shiftProgress
-                            )
+                            HStack(spacing: 12) {
+                                StatCard(
+                                    game: .cargo,
+                                    icon: "shippingbox.fill",
+                                    accentColor: AppTheme.cargo,
+                                    progress: cargoProgress
+                                )
+                                StatCard(
+                                    game: .shift,
+                                    icon: "slider.horizontal.3",
+                                    accentColor: AppTheme.shift,
+                                    progress: shiftProgress
+                                )
+                            }
                         }
                         .padding(.horizontal, 20)
 
                         // Streak info
                         streakSection
+                        
+                        // Win rate trend chart
+                        WinRateChartView()
+                            .padding(.horizontal, 20)
+                        
+                        // Solve time stats
+                        SolveTimeStatsView()
+                            .padding(.horizontal, 20)
 
                         // Daily history
                         if !dailyResults.isEmpty {
@@ -97,6 +102,14 @@ struct ProfileView: View {
 
                         // Game Center placeholder
                         gameCenterPlaceholder
+                        
+                        // Achievement badges
+                        BadgeGridView(
+                            badges: badgeInfos,
+                            unlockedCount: BadgeManager.shared.unlockedCount,
+                            totalCount: BadgeManager.shared.totalCount
+                        )
+                        .padding(.horizontal, 20)
                         
                         // Reset button (developer tool)
                         resetButton
@@ -113,7 +126,7 @@ struct ProfileView: View {
                     } label: {
                         Image(systemName: "gearshape.fill")
                             .font(.system(size: 15))
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(.primary.opacity(0.5))
                     }
                 }
             }
@@ -129,7 +142,55 @@ struct ProfileView: View {
             } message: {
                 Text("This will delete all local level progress and game history. Daily games will not be affected. This action cannot be undone.")
             }
+            .onAppear {
+                evaluateBadges()
+            }
+            .overlay(alignment: .top) {
+                if let badge = newBadgeToast {
+                    badgeToast(badge)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding(.top, 60)
+                }
+            }
         }
+    }
+    
+    private func evaluateBadges() {
+        let newlyUnlocked = BadgeManager.shared.evaluateAll(context: modelContext)
+        badgeInfos = BadgeManager.shared.allBadges()
+        
+        if let first = newlyUnlocked.first {
+            withAnimation(.spring(response: 0.5)) {
+                newBadgeToast = first
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                withAnimation { newBadgeToast = nil }
+            }
+        }
+    }
+    
+    private func badgeToast(_ badge: Badge) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: badge.iconName)
+                .font(.system(size: 18, weight: .medium))
+                .foregroundStyle(badge.accentColor)
+            
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Badge Unlocked!")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.primary.opacity(0.5))
+                Text(badge.title)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.primary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(
+            Capsule()
+                .fill(Color.primary.opacity(0.12))
+                .overlay(Capsule().strokeBorder(badge.accentColor.opacity(0.3), lineWidth: 1))
+        )
     }
 
     // MARK: - Streak Section
@@ -142,24 +203,24 @@ struct ProfileView: View {
                 StreakPill(
                     label: "Signals",
                     streak: StreakManager.currentStreak(for: "signals"),
-                    color: Color(red: 0.24, green: 0.65, blue: 0.36)
+                    color: AppTheme.signals
                 )
                 StreakPill(
                     label: "Archive",
                     streak: StreakManager.currentStreak(for: "archive"),
-                    color: Color(red: 0.24, green: 0.52, blue: 0.85)
+                    color: AppTheme.archive
                 )
             }
             HStack(spacing: 12) {
                 StreakPill(
                     label: "Cargo",
                     streak: StreakManager.currentStreak(for: "cargo"),
-                    color: Color(red: 1.00, green: 0.55, blue: 0.26)
+                    color: AppTheme.cargo
                 )
                 StreakPill(
                     label: "Shift",
                     streak: StreakManager.currentStreak(for: "shift"),
-                    color: Color(red: 0.65, green: 0.24, blue: 0.85)
+                    color: AppTheme.shift
                 )
             }
         }
@@ -238,7 +299,7 @@ struct ProfileView: View {
                     .background(Capsule().fill(Color.secondary.opacity(0.15)))
             }
             .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color(white: 0.12)))
+            .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.12)))
         }
         .padding(.horizontal, 20)
     }
@@ -272,7 +333,7 @@ struct ProfileView: View {
                 .padding(16)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(white: 0.12))
+                        .fill(Color.primary.opacity(0.12))
                 )
             }
             .buttonStyle(.plain)
@@ -316,29 +377,30 @@ private struct StatCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 10) {
             // Header
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(accentColor)
                 Text(game.displayName)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
             }
 
             // Big stat
             VStack(alignment: .leading, spacing: 2) {
-                HStack(alignment: .lastTextBaseline, spacing: 4) {
+                HStack(alignment: .lastTextBaseline, spacing: 3) {
                     Text("\(won)")
-                        .font(.system(size: 32, weight: .heavy, design: .rounded))
+                        .font(.system(size: 28, weight: .heavy, design: .rounded))
                         .foregroundStyle(accentColor)
                     Text("/ 100")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
                 Text("levels won")
-                    .font(.system(size: 11))
+                    .font(.system(size: 10))
                     .foregroundStyle(.tertiary)
             }
 
@@ -346,32 +408,32 @@ private struct StatCard: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(Color.secondary.opacity(0.15))
-                        .frame(height: 6)
+                        .frame(height: 5)
                     Capsule().fill(accentColor)
-                        .frame(width: max(0, geo.size.width * CGFloat(won) / 100), height: 6)
+                        .frame(width: max(0, geo.size.width * CGFloat(won) / 100), height: 5)
                 }
             }
-            .frame(height: 6)
+            .frame(height: 5)
 
             // Secondary stats
             HStack {
-                miniStat(label: "Win Rate", value: played > 0 ? "\(Int(winRate * 100))%" : "—")
+                miniStat(label: "Win %", value: played > 0 ? "\(Int(winRate * 100))%" : "—")
                 Spacer()
-                miniStat(label: "Avg Guesses", value: avgGuesses > 0 ? String(format: "%.1f", avgGuesses) : "—")
+                miniStat(label: "Avg", value: avgGuesses > 0 ? String(format: "%.1f", avgGuesses) : "—")
             }
         }
-        .padding(16)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 20).fill(Color(white: 0.12)))
+        .background(RoundedRectangle(cornerRadius: 18).fill(Color.primary.opacity(0.12)))
     }
 
     private func miniStat(label: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 1) {
             Text(value)
-                .font(.system(size: 15, weight: .bold))
+                .font(.system(size: 14, weight: .bold))
                 .foregroundStyle(.primary)
             Text(label)
-                .font(.system(size: 10))
+                .font(.system(size: 9))
                 .foregroundStyle(.tertiary)
         }
     }
@@ -384,11 +446,28 @@ private struct StreakPill: View {
     let streak: Int
     let color: Color
 
+    @State private var flamePulse = false
+
     var body: some View {
         HStack(spacing: 10) {
-            Image(systemName: "flame.fill")
-                .font(.system(size: 18))
-                .foregroundStyle(streak > 0 ? color : Color.secondary.opacity(0.4))
+            ZStack {
+                if streak >= 3 {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 24))
+                        .foregroundStyle(color.opacity(0.3))
+                        .blur(radius: 6)
+                        .scaleEffect(flamePulse ? 1.3 : 1.0)
+                }
+
+                Image(systemName: "flame.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(streak > 0 ? color : Color.secondary.opacity(0.4))
+                    .scaleEffect(streak >= 3 && flamePulse ? 1.08 : 1.0)
+            }
+            .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: flamePulse)
+            .onAppear {
+                if streak >= 3 { flamePulse = true }
+            }
 
             VStack(alignment: .leading, spacing: 1) {
                 Text("\(streak)")
@@ -402,7 +481,13 @@ private struct StreakPill: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color(white: 0.12)))
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.12)))
+        .overlay(
+            streak >= 3 ?
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(color.opacity(flamePulse ? 0.2 : 0.05), lineWidth: 1)
+                : nil
+        )
     }
 }
 
@@ -413,10 +498,10 @@ private struct DailyResultRow: View {
 
     private var gameColor: Color {
         switch result.gameType {
-        case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
-        case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
-        case .cargo:   return Color(red: 1.00, green: 0.55, blue: 0.26)
-        case .shift:   return Color(red: 0.65, green: 0.24, blue: 0.85)
+        case .signals: return AppTheme.signals
+        case .archive: return AppTheme.archive
+        case .cargo:   return AppTheme.cargo
+        case .shift:   return AppTheme.shift
         default: return .secondary
         }
     }
@@ -463,7 +548,7 @@ private struct DailyResultRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .background(Color(white: 0.12))
+        .background(Color.primary.opacity(0.12))
     }
 }
 

@@ -10,10 +10,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    // Dark space background matching the game aesthetic
-    private var bgColor: Color {
-        Color(red: 0.05, green: 0.05, blue: 0.08)
-    }
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         TabView {
@@ -29,10 +26,9 @@ struct ContentView: View {
                 ProfileView()
             }
         }
-        .tint(.white)
-        .toolbarBackground(bgColor, for: .tabBar)
+        .tint(.primary)
+        .toolbarBackground(AppTheme.background, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
-        .preferredColorScheme(.dark)
     }
 
     // MARK: - Game List
@@ -41,14 +37,7 @@ struct ContentView: View {
     private func gameList(isDaily: Bool) -> some View {
         NavigationStack {
             ZStack {
-                ZStack {
-                    bgColor
-                    RadialGradient(
-                        colors: [Color(red: 0.15, green: 0.08, blue: 0.3).opacity(0.4), .clear],
-                        center: .top, startRadius: 50, endRadius: 500
-                    )
-                }
-                .ignoresSafeArea()
+                AppTheme.appBackground()
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
@@ -56,7 +45,7 @@ struct ContentView: View {
 
                         Text(isDaily ? "DAILY PUZZLES" : "LOCAL ARCHIVE")
                             .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                            .foregroundStyle(.white.opacity(0.4))
+                            .foregroundStyle(.primary.opacity(0.4))
                             .kerning(1.5)
                             .padding(.horizontal, 24)
 
@@ -64,28 +53,28 @@ struct ContentView: View {
                             GameCard(
                                 game: .signals,
                                 icon: "antenna.radiowaves.left.and.right",
-                                color: Color(red: 0.24, green: 0.65, blue: 0.36),
+                                color: AppTheme.signals,
                                 isDaily: isDaily
                             )
 
                             GameCard(
                                 game: .archive,
                                 icon: "clock.arrow.circlepath",
-                                color: Color(red: 0.24, green: 0.52, blue: 0.85),
+                                color: AppTheme.archive,
                                 isDaily: isDaily
                             )
 
                             GameCard(
                                 game: .cargo,
                                 icon: "shippingbox.fill",
-                                color: Color(red: 1.00, green: 0.55, blue: 0.26),
+                                color: AppTheme.cargo,
                                 isDaily: isDaily
                             )
 
                             GameCard(
                                 game: .shift,
                                 icon: "slider.horizontal.3",
-                                color: Color(red: 0.65, green: 0.24, blue: 0.85),
+                                color: AppTheme.shift,
                                 isDaily: isDaily
                             )
                         }
@@ -97,13 +86,7 @@ struct ContentView: View {
             .navigationBarHidden(true)
             .navigationDestination(for: GameCardValue.self) { value in
                 if value.isDaily {
-                    switch value.game {
-                    case .signals: SignalsGameView()
-                    case .archive: ArchiveGameView()
-                    case .cargo: CargoGameView()
-                    case .shift: ShiftGameView(puzzle: ShiftPuzzleGenerator.generateDailyPuzzle(for: .now), isDaily: true)
-                    case .orbit: Text("Coming Soon")
-                    }
+                    DailyGameDestination(gameType: value.game, modelContext: modelContext)
                 } else {
                     LevelSelectorView(game: value.game)
                 }
@@ -119,15 +102,15 @@ struct ContentView: View {
                 .font(.system(size: 42, weight: .heavy, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [Color(red: 0.65, green: 0.24, blue: 0.85),
-                                 Color(red: 0.4, green: 0.6, blue: 1.0)],
+                        colors: [AppTheme.shift,
+                                 AppTheme.cascadeBlue],
                         startPoint: .leading, endPoint: .trailing
                     )
                 )
 
             Text("Your daily cognitive signal.")
                 .font(.system(size: 17, weight: .medium))
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(.primary.opacity(0.5))
         }
         .padding(.horizontal, 24)
     }
@@ -147,10 +130,23 @@ struct GameCard: View {
     let isDaily: Bool
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var isPressed = false
+    @Query private var progressList: [LevelProgress]
+    
+    init(game: GameType, icon: String, color: Color, isDaily: Bool) {
+        self.game = game
+        self.icon = icon
+        self.color = color
+        self.isDaily = isDaily
+        let raw = game.rawValue
+        _progressList = Query(filter: #Predicate<LevelProgress> { $0.gameTypeRaw == raw })
+    }
 
     private var cardBg: Color {
-        Color(white: 0.12)
+        AppTheme.keyFill
     }
+    
+    private var wonCount: Int { progressList.filter(\.won).count }
 
     var body: some View {
         NavigationLink(value: GameCardValue(game: game, isDaily: isDaily)) {
@@ -174,10 +170,32 @@ struct GameCard: View {
                         .font(.system(size: 14, weight: .regular))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
+                    
+                    if !isDaily {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(Color.primary.opacity(0.08))
+                                    .frame(height: 4)
+                                Capsule()
+                                    .fill(color)
+                                    .frame(width: max(0, geo.size.width * CGFloat(wonCount) / 100), height: 4)
+                            }
+                        }
+                        .frame(height: 4)
+                        .padding(.top, 2)
+                    }
                 }
 
                 Spacer()
 
+                if !isDaily && wonCount > 0 {
+                    Text("\(wonCount)%")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(color)
+                        .padding(.trailing, 4)
+                }
+                
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.tertiary)
@@ -189,10 +207,25 @@ struct GameCard: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
+                    .fill(color.opacity(isPressed ? 0.08 : 0))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .strokeBorder(color.opacity(isPressed ? 0.3 : 0.0), lineWidth: 1.5)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
                     .strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
             )
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
         }
         .buttonStyle(.plain)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in isPressed = false }
+        )
     }
 }
 
@@ -205,7 +238,7 @@ struct DisabledGameCard: View {
     @Environment(\.colorScheme) private var colorScheme
 
     private var cardBg: Color {
-        Color(white: 0.08)
+        Color.primary.opacity(0.08)
     }
 
     var body: some View {
@@ -251,6 +284,27 @@ struct DisabledGameCard: View {
             RoundedRectangle(cornerRadius: 20)
                 .strokeBorder(Color.primary.opacity(0.02), lineWidth: 1)
         )
+    }
+}
+
+// MARK: - Daily Game Destination (checks for already-played)
+
+private struct DailyGameDestination: View {
+    let gameType: GameType
+    let modelContext: ModelContext
+
+    var body: some View {
+        if let existing = PersistenceManager.fetchDailyResult(for: gameType, on: .now, context: modelContext) {
+            DailyCompletedView(result: existing)
+        } else {
+            switch gameType {
+            case .signals: SignalsGameView()
+            case .archive: ArchiveGameView()
+            case .cargo: CargoGameView()
+            case .shift: ShiftGameView(puzzle: ShiftPuzzleGenerator.generateDailyPuzzle(for: .now), isDaily: true)
+            case .orbit: Text("Coming Soon")
+            }
+        }
     }
 }
 

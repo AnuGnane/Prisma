@@ -25,7 +25,7 @@ struct GameTutorialOverlay: View {
 
                 Text("HOW TO PLAY")
                     .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(.primary.opacity(0.5))
                     .kerning(3)
 
                 VStack(alignment: .leading, spacing: 12) {
@@ -37,7 +37,7 @@ struct GameTutorialOverlay: View {
                                 .padding(.top, 6)
                             Text(rule)
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.85))
+                                .foregroundStyle(.primary.opacity(0.85))
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -58,10 +58,10 @@ struct GameTutorialOverlay: View {
             .padding(28)
             .background(
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(Color(red: 0.10, green: 0.10, blue: 0.13))
+                    .fill(AppTheme.backgroundSecondary)
                     .overlay(
                         RoundedRectangle(cornerRadius: 24)
-                            .strokeBorder(.white.opacity(0.06), lineWidth: 1)
+                            .strokeBorder(.primary.opacity(0.06), lineWidth: 1)
                     )
             )
             .padding(.horizontal, 32)
@@ -119,11 +119,11 @@ struct GameTutorialOverlay: View {
 
     private var colorForGame: Color {
         switch gameType {
-        case .signals: return Color(red: 0.24, green: 0.65, blue: 0.36)
-        case .archive: return Color(red: 0.24, green: 0.52, blue: 0.85)
-        case .cargo:   return Color(red: 1.00, green: 0.55, blue: 0.26)
-        case .shift:   return Color(red: 0.65, green: 0.24, blue: 0.85)
-        default:       return .white
+        case .signals: return AppTheme.signals
+        case .archive: return AppTheme.archive
+        case .cargo:   return AppTheme.cargo
+        case .shift:   return AppTheme.shift
+        default:       return .primary
         }
     }
 }

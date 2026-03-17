@@ -10,5 +10,5 @@ import SwiftUI
 struct AppSettings {
     @AppStorage("settings.hapticsEnabled") static var hapticsEnabled: Bool = true
     @AppStorage("settings.soundEnabled") static var soundEnabled: Bool = true
-    @AppStorage("settings.darkMode") static var prefersDarkMode: Bool = true
+    @AppStorage("settings.appearanceMode") static var appearanceMode: String = AppearanceMode.dark.rawValue
 }
