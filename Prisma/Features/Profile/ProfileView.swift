@@ -17,6 +17,8 @@ struct ProfileView: View {
     @State private var showResetConfirmation = false
     @State private var badgeInfos: [BadgeInfo] = []
     @State private var newBadgeToast: Badge?
+    @State private var showCustomize = false
+    private var prefs = ProfileSectionPreferences.shared
 
     private var signalsProgress: [LevelProgress] {
         allLevelProgress.filter { $0.gameTypeRaw == GameType.signals.rawValue }
@@ -50,66 +52,80 @@ struct ProfileView: View {
                             .padding(.top, 8)
 
                         // Game stat cards
-                        VStack(spacing: 12) {
-                            HStack(spacing: 12) {
-                                StatCard(
-                                    game: .signals,
-                                    icon: "antenna.radiowaves.left.and.right",
-                                    accentColor: AppTheme.signals,
-                                    progress: signalsProgress
-                                )
-                                StatCard(
-                                    game: .archive,
-                                    icon: "clock.arrow.circlepath",
-                                    accentColor: AppTheme.archive,
-                                    progress: archiveProgress
-                                )
+                        if prefs.showStatCards {
+                            VStack(spacing: 12) {
+                                HStack(spacing: 12) {
+                                    StatCard(
+                                        game: .signals,
+                                        icon: "antenna.radiowaves.left.and.right",
+                                        accentColor: AppTheme.signals,
+                                        progress: signalsProgress
+                                    )
+                                    StatCard(
+                                        game: .archive,
+                                        icon: "clock.arrow.circlepath",
+                                        accentColor: AppTheme.archive,
+                                        progress: archiveProgress
+                                    )
+                                }
+                                HStack(spacing: 12) {
+                                    StatCard(
+                                        game: .cargo,
+                                        icon: "shippingbox.fill",
+                                        accentColor: AppTheme.cargo,
+                                        progress: cargoProgress
+                                    )
+                                    StatCard(
+                                        game: .shift,
+                                        icon: "slider.horizontal.3",
+                                        accentColor: AppTheme.shift,
+                                        progress: shiftProgress
+                                    )
+                                }
                             }
-                            HStack(spacing: 12) {
-                                StatCard(
-                                    game: .cargo,
-                                    icon: "shippingbox.fill",
-                                    accentColor: AppTheme.cargo,
-                                    progress: cargoProgress
-                                )
-                                StatCard(
-                                    game: .shift,
-                                    icon: "slider.horizontal.3",
-                                    accentColor: AppTheme.shift,
-                                    progress: shiftProgress
-                                )
-                            }
+                            .padding(.horizontal, 20)
                         }
-                        .padding(.horizontal, 20)
 
                         // Streak info
-                        streakSection
+                        if prefs.showStreaks {
+                            streakSection
+                        }
                         
                         // Win rate trend chart
-                        WinRateChartView()
-                            .padding(.horizontal, 20)
+                        if prefs.showWinRateChart {
+                            WinRateChartView()
+                                .padding(.horizontal, 20)
+                        }
                         
                         // Solve time stats
-                        SolveTimeStatsView()
-                            .padding(.horizontal, 20)
+                        if prefs.showSolveTimeStats {
+                            SolveTimeStatsView()
+                                .padding(.horizontal, 20)
+                        }
 
                         // Daily history
-                        if !dailyResults.isEmpty {
-                            dailyHistorySection
-                        } else {
-                            emptyDailySection
+                        if prefs.showDailyHistory {
+                            if !dailyResults.isEmpty {
+                                dailyHistorySection
+                            } else {
+                                emptyDailySection
+                            }
                         }
 
                         // Game Center placeholder
-                        gameCenterPlaceholder
+                        if prefs.showLeaderboards {
+                            gameCenterPlaceholder
+                        }
                         
                         // Achievement badges
-                        BadgeGridView(
-                            badges: badgeInfos,
-                            unlockedCount: BadgeManager.shared.unlockedCount,
-                            totalCount: BadgeManager.shared.totalCount
-                        )
-                        .padding(.horizontal, 20)
+                        if prefs.showBadges {
+                            BadgeGridView(
+                                badges: badgeInfos,
+                                unlockedCount: BadgeManager.shared.unlockedCount,
+                                totalCount: BadgeManager.shared.totalCount
+                            )
+                            .padding(.horizontal, 20)
+                        }
                         
                         // Reset button (developer tool)
                         resetButton
@@ -121,14 +137,26 @@ struct ProfileView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        SettingsView()
-                    } label: {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 15))
-                            .foregroundStyle(.primary.opacity(0.5))
+                    HStack(spacing: 12) {
+                        Button {
+                            showCustomize = true
+                        } label: {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 15))
+                                .foregroundStyle(.primary.opacity(0.5))
+                        }
+                        NavigationLink {
+                            SettingsView()
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .font(.system(size: 15))
+                                .foregroundStyle(.primary.opacity(0.5))
+                        }
                     }
                 }
+            }
+            .sheet(isPresented: $showCustomize) {
+                ProfileCustomizeSheet(prefs: prefs)
             }
             .confirmationDialog(
                 "Reset All Progress",

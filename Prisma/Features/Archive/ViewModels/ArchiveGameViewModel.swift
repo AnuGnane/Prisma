@@ -24,6 +24,31 @@ final class ArchiveGameViewModel: ShareStringGenerator {
     private(set) var maxGuesses: Int
     private(set) var startDate: Date = .now
 
+    // MARK: - Timer
+
+    private(set) var elapsedSeconds: Double = 0
+    private var timerTask: Task<Void, Never>?
+    private var timerStarted = false
+
+    var timerString: String {
+        String(format: "%d:%02d", Int(elapsedSeconds) / 60, Int(elapsedSeconds) % 60)
+    }
+
+    private func startTimer() {
+        let start = Date()
+        timerTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                await MainActor.run { self?.elapsedSeconds = Date().timeIntervalSince(start) }
+            }
+        }
+    }
+
+    private func stopTimer() {
+        timerTask?.cancel()
+        timerTask = nil
+    }
+
     private(set) var isDaily: Bool
     private(set) var activeLevelId: Int?
 
@@ -123,6 +148,9 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         self.isDaily = false
         self.activeLevelId = level
         self.startDate = .now
+        self.elapsedSeconds = 0
+        self.timerStarted = false
+        stopTimer()
     }
 
     // MARK: - Input Handling
@@ -183,6 +211,8 @@ final class ArchiveGameViewModel: ShareStringGenerator {
             return
         }
 
+        if !timerStarted { startTimer(); timerStarted = true }
+
         let feedback = computeFeedback(guess: guess)
         guessHistory.append((guess: guess, feedback: feedback))
         currentInput = Array(repeating: nil, count: 8)
@@ -190,8 +220,10 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         if feedback.isWin {
             let score = calculateScore()
             gameState = .completed(score: score)
+            stopTimer()
         } else if guessHistory.count >= maxGuesses {
             gameState = .failed
+            stopTimer()
         }
     }
 
@@ -322,7 +354,7 @@ final class ArchiveGameViewModel: ShareStringGenerator {
             shareString: generateShareString(),
             guessCount: guessHistory.count,
             isDaily: isDaily,
-            durationSeconds: Date.now.timeIntervalSince(startDate),
+            durationSeconds: elapsedSeconds,
             levelId: activeLevelId,
             archiveStateJSON: serializedState
         )
@@ -344,6 +376,9 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         self.gameState = .inProgress
         self.startDate = .now
         self.showingSolution = false
+        self.elapsedSeconds = 0
+        self.timerStarted = false
+        stopTimer()
     }
 
     // MARK: - Give Up
@@ -353,6 +388,7 @@ final class ArchiveGameViewModel: ShareStringGenerator {
     func giveUp() {
         guard gameState == .inProgress else { return }
         gameState = .gaveUp
+        stopTimer()
     }
 
     func showSolution() { showingSolution = true }

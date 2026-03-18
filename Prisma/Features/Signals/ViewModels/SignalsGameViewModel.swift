@@ -26,6 +26,31 @@ final class SignalsGameViewModel: ShareStringGenerator {
     private(set) var activeLevelId: Int?
     private(set) var startDate: Date = .now
 
+    // MARK: - Timer
+
+    private(set) var elapsedSeconds: Double = 0
+    private var timerTask: Task<Void, Never>?
+    private var timerStarted = false
+
+    var timerString: String {
+        String(format: "%d:%02d", Int(elapsedSeconds) / 60, Int(elapsedSeconds) % 60)
+    }
+
+    private func startTimer() {
+        let start = Date()
+        timerTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 250_000_000)
+                await MainActor.run { self?.elapsedSeconds = Date().timeIntervalSince(start) }
+            }
+        }
+    }
+
+    private func stopTimer() {
+        timerTask?.cancel()
+        timerTask = nil
+    }
+
     /// The 4-slot input buffer. nil means the slot is empty.
     var currentInput: [Int?] = [nil, nil, nil, nil]
 
@@ -48,7 +73,8 @@ final class SignalsGameViewModel: ShareStringGenerator {
     // The random code for progression generates deterministically using the level integer so it's always the same puzzle.
 
     init(level: Int) {
-        let code = SignalsCode(fromSeed: level * 1000)
+        let seed = level &* 73856093 ^ 19349669
+        let code = SignalsCode(fromSeed: seed)
         self.secretCode = code
         self.maxGuesses = 5
         self.gameState = .inProgress
@@ -58,7 +84,8 @@ final class SignalsGameViewModel: ShareStringGenerator {
 
     /// Loads a specific level, resetting all game state.
     func loadLevel(_ level: Int) {
-        let code = SignalsCode(fromSeed: level * 1000)
+        let seed = level &* 73856093 ^ 19349669
+        let code = SignalsCode(fromSeed: seed)
         self.secretCode = code
         self.maxGuesses = 5
         self.gameState = .inProgress
@@ -67,6 +94,9 @@ final class SignalsGameViewModel: ShareStringGenerator {
         self.activeLevelId = level
         self.startDate = .now
         self.isDaily = false
+        self.elapsedSeconds = 0
+        self.timerStarted = false
+        stopTimer()
     }
 
     // MARK: - Init: Progression
@@ -139,6 +169,8 @@ final class SignalsGameViewModel: ShareStringGenerator {
         let digits = currentInput.compactMap { $0 }
         guard digits.count == 4 else { return }
 
+        if !timerStarted { startTimer(); timerStarted = true }
+
         let guess = SignalsGuess(digits: digits)
         let feedback = computeFeedback(guess: guess, secret: secretCode)
 
@@ -149,8 +181,10 @@ final class SignalsGameViewModel: ShareStringGenerator {
         if feedback.isWin {
             let score = calculateScore()
             gameState = .completed(score: score)
+            stopTimer()
         } else if guessHistory.count >= maxGuesses {
             gameState = .failed
+            stopTimer()
         }
         // else stays .inProgress
     }
@@ -285,7 +319,7 @@ final class SignalsGameViewModel: ShareStringGenerator {
             shareString: generateShareString(),
             guessCount: guessHistory.count,
             isDaily: isDaily,
-            durationSeconds: Date.now.timeIntervalSince(startDate),
+            durationSeconds: elapsedSeconds,
             levelId: activeLevelId,
             signalsStateJSON: serializedState
         )
@@ -294,7 +328,8 @@ final class SignalsGameViewModel: ShareStringGenerator {
         if isDaily {
             self.secretCode = SignalsCode(fromSeed: Int(Date().dailySeed))
         } else if let levelId = activeLevelId {
-            self.secretCode = SignalsCode(fromSeed: levelId * 1000)
+            let seed = levelId &* 73856093 ^ 19349669
+            self.secretCode = SignalsCode(fromSeed: seed)
         }
         
         self.guessHistory = []
@@ -302,6 +337,9 @@ final class SignalsGameViewModel: ShareStringGenerator {
         self.gameState = .inProgress
         self.startDate = Date.now
         self.showingSolution = false
+        self.elapsedSeconds = 0
+        self.timerStarted = false
+        stopTimer()
     }
 
     // MARK: - Give Up
@@ -311,6 +349,7 @@ final class SignalsGameViewModel: ShareStringGenerator {
     func giveUp() {
         guard gameState == .inProgress else { return }
         gameState = .gaveUp
+        stopTimer()
     }
 
     func showSolution() { showingSolution = true }

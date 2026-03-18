@@ -121,7 +121,9 @@ struct CargoGameView: View {
 
             HStack(spacing: 12) {
                 // Timer pill
-                CargoHeaderTimerView(viewModel: viewModel)
+                if AppSettings.showGameTimer {
+                    CargoHeaderTimerView(viewModel: viewModel)
+                }
 
                 // Progress pill
                 progressPill

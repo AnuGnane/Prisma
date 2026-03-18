@@ -87,6 +87,7 @@ struct ShiftGameView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
                 viewModel.giveUp()
@@ -156,7 +157,9 @@ struct ShiftGameView: View {
                     pill(icon: "arrow.left.arrow.right", value: "\(viewModel.moveCount)")
                         .scaleEffect(moveCountBounce ? 1.15 : 1.0)
                         .animation(.spring(response: 0.25, dampingFraction: 0.4), value: moveCountBounce)
-                    pill(icon: "clock", value: viewModel.timerString)
+                    if AppSettings.showGameTimer {
+                        pill(icon: "clock", value: viewModel.timerString)
+                    }
                 }
                 .padding(.top, 2)
             }

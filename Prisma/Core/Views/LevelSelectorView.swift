@@ -21,7 +21,7 @@ struct LevelSelectorView: View {
         self.game = game
         let raw = game.rawValue
         _progressList = Query(filter: #Predicate<LevelProgress> { $0.gameTypeRaw == raw })
-        _gameResults = Query(filter: #Predicate<GameResult> { $0.gameTypeRaw == raw && !$0.isDaily })
+        _gameResults = Query(filter: #Predicate<GameResult> { $0.gameTypeRaw == raw && $0.isDaily == false })
     }
     
     // MARK: - Aggregate Stats
@@ -100,6 +100,13 @@ struct LevelSelectorView: View {
         }
     }
     
+    // MARK: - Navigation Routes
+
+    enum LevelSelectorRoute: Hashable {
+        case play(Int)
+        case solution(Int)
+    }
+    
     // MARK: - Grid
     
     private var levelGrid: some View {
@@ -111,26 +118,33 @@ struct LevelSelectorView: View {
                 let isPlayed = progress?.isPlayed ?? false
                 
                 if isPlayed {
-                    NavigationLink {
-                        LocalLevelSolutionView(
-                            game: game,
-                            levelId: levelId,
-                            won: progress?.won ?? false,
-                            score: progress?.score ?? 0,
-                            gameResult: gameResult(for: levelId)
-                        )
-                    } label: {
+                    NavigationLink(value: LevelSelectorRoute.solution(levelId)) {
                         playedCell(levelId: levelId, won: progress?.won ?? false, score: progress?.score ?? 0)
                     }
                     .buttonStyle(.plain)
                 } else {
-                    NavigationLink(destination: destination(for: levelId)) {
+                    NavigationLink(value: LevelSelectorRoute.play(levelId)) {
                         unplayedCell(levelId: levelId)
                     }
                 }
             }
         }
         .padding(.horizontal, 24)
+        .navigationDestination(for: LevelSelectorRoute.self) { route in
+            switch route {
+            case .play(let levelId):
+                destination(for: levelId)
+            case .solution(let levelId):
+                let progress = progressList.first(where: { $0.levelId == levelId })
+                LocalLevelSolutionView(
+                    game: game,
+                    levelId: levelId,
+                    won: progress?.won ?? false,
+                    score: progress?.score ?? 0,
+                    gameResult: gameResult(for: levelId)
+                )
+            }
+        }
     }
     
     // MARK: - Cells

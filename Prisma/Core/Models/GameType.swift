@@ -33,4 +33,14 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         case .archive: return "Guess the historic date"
         }
     }
+
+    var iconName: String {
+        switch self {
+        case .signals: return "antenna.radiowaves.left.and.right"
+        case .archive: return "clock.arrow.circlepath"
+        case .cargo:   return "shippingbox.fill"
+        case .shift:   return "slider.horizontal.3"
+        case .orbit:   return "circle.dotted.circle"
+        }
+    }
 }

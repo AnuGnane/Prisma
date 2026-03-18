@@ -14,12 +14,12 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            Tab("Daily", systemImage: "sun.max.fill") {
-                gameList(isDaily: true)
+            Tab("Games", systemImage: "house.fill") {
+                GamesHomeView()
             }
 
-            Tab("Local", systemImage: "folder.fill") {
-                gameList(isDaily: false)
+            Tab("Friends", systemImage: "person.2.fill") {
+                FriendsPlaceholderView()
             }
 
             Tab("You", systemImage: "person.fill") {
@@ -30,11 +30,14 @@ struct ContentView: View {
         .toolbarBackground(AppTheme.background, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
     }
+}
 
-    // MARK: - Game List
+// MARK: - Games Home (Unified Feed)
 
-    @ViewBuilder
-    private func gameList(isDaily: Bool) -> some View {
+struct GamesHomeView: View {
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
         NavigationStack {
             ZStack {
                 AppTheme.appBackground()
@@ -43,58 +46,36 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         headerSection
 
-                        Text(isDaily ? "DAILY PUZZLES" : "LOCAL ARCHIVE")
+                        Text("TODAY'S PUZZLES")
                             .font(.system(size: 13, weight: .heavy, design: .monospaced))
                             .foregroundStyle(.primary.opacity(0.4))
                             .kerning(1.5)
                             .padding(.horizontal, 24)
 
                         VStack(spacing: 16) {
-                            GameCard(
-                                game: .signals,
-                                icon: "antenna.radiowaves.left.and.right",
-                                color: AppTheme.signals,
-                                isDaily: isDaily
-                            )
-
-                            GameCard(
-                                game: .archive,
-                                icon: "clock.arrow.circlepath",
-                                color: AppTheme.archive,
-                                isDaily: isDaily
-                            )
-
-                            GameCard(
-                                game: .cargo,
-                                icon: "shippingbox.fill",
-                                color: AppTheme.cargo,
-                                isDaily: isDaily
-                            )
-
-                            GameCard(
-                                game: .shift,
-                                icon: "slider.horizontal.3",
-                                color: AppTheme.shift,
-                                isDaily: isDaily
-                            )
+                            ForEach([GameType.signals, .archive, .cargo, .shift], id: \.self) { game in
+                                GameHeroCard(game: game)
+                            }
                         }
                         .padding(.horizontal, 24)
+
+                        // Footer tagline
+                        Text("Life is more fun with puzzles. ✨")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(.primary.opacity(0.25))
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 8)
+                            .padding(.bottom, 24)
                     }
                     .padding(.vertical, 32)
                 }
             }
             .navigationBarHidden(true)
-            .navigationDestination(for: GameCardValue.self) { value in
-                if value.isDaily {
-                    DailyGameDestination(gameType: value.game, modelContext: modelContext)
-                } else {
-                    LevelSelectorView(game: value.game)
-                }
+            .navigationDestination(for: GameDetailDestination.self) { dest in
+                GameDetailView(game: dest.game, modelContext: modelContext)
             }
         }
     }
-
-    // MARK: - Subviews
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -102,192 +83,326 @@ struct ContentView: View {
                 .font(.system(size: 42, weight: .heavy, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [AppTheme.shift,
-                                 AppTheme.cascadeBlue],
+                        colors: AppTheme.brandGradient,
                         startPoint: .leading, endPoint: .trailing
                     )
                 )
 
+            Text(greetingText)
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.primary.opacity(0.8))
+
             Text("Your daily cognitive signal.")
-                .font(.system(size: 17, weight: .medium))
-                .foregroundStyle(.primary.opacity(0.5))
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(.primary.opacity(0.4))
         }
         .padding(.horizontal, 24)
     }
+
+    private var greetingText: String {
+        let hour = Calendar.current.component(.hour, from: .now)
+        switch hour {
+        case 5..<12: return "Good morning."
+        case 12..<17: return "Good afternoon."
+        case 17..<22: return "Good evening."
+        default: return "Good night."
+        }
+    }
 }
 
-// MARK: - Game Card
+// MARK: - Game Detail Destination
 
-struct GameCardValue: Hashable {
+struct GameDetailDestination: Hashable {
     let game: GameType
-    let isDaily: Bool
 }
 
-struct GameCard: View {
-    let game: GameType
-    let icon: String
-    let color: Color
-    let isDaily: Bool
+// MARK: - Game Hero Card (NYT-Style)
 
-    @Environment(\.colorScheme) private var colorScheme
+struct GameHeroCard: View {
+    let game: GameType
     @State private var isPressed = false
-    @Query private var progressList: [LevelProgress]
-    
-    init(game: GameType, icon: String, color: Color, isDaily: Bool) {
-        self.game = game
-        self.icon = icon
-        self.color = color
-        self.isDaily = isDaily
-        let raw = game.rawValue
-        _progressList = Query(filter: #Predicate<LevelProgress> { $0.gameTypeRaw == raw })
-    }
 
-    private var cardBg: Color {
-        AppTheme.keyFill
+    private var gameGradient: [Color] { AppTheme.gradient(for: game) }
+    private var gameColor: Color { AppTheme.accent(for: game) }
+
+    private var todayString: String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "EEEE d MMM"
+        return fmt.string(from: .now)
     }
-    
-    private var wonCount: Int { progressList.filter(\.won).count }
 
     var body: some View {
-        NavigationLink(value: GameCardValue(game: game, isDaily: isDaily)) {
-            HStack(spacing: 16) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(color.opacity(0.15))
-                        .frame(width: 54, height: 54)
+        NavigationLink(value: GameDetailDestination(game: game)) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(game.displayName)
+                            .font(.system(size: 28, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.white)
 
-                    Image(systemName: icon)
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundStyle(color)
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(game.displayName)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(.primary)
-
-                    Text(game.description)
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                    
-                    if !isDaily {
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                Capsule()
-                                    .fill(Color.primary.opacity(0.08))
-                                    .frame(height: 4)
-                                Capsule()
-                                    .fill(color)
-                                    .frame(width: max(0, geo.size.width * CGFloat(wonCount) / 100), height: 4)
-                            }
-                        }
-                        .frame(height: 4)
-                        .padding(.top, 2)
+                        Text(game.description)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .lineLimit(2)
                     }
+
+                    Spacer()
+
+                    GameCardGraphic(game: game)
+                        .frame(width: 72, height: 72)
+                        .padding(.top, 4)
                 }
 
-                Spacer()
+                Spacer(minLength: 20)
 
-                if !isDaily && wonCount > 0 {
-                    Text("\(wonCount)%")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(color)
-                        .padding(.trailing, 4)
-                }
-                
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.tertiary)
+                Text(todayString)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.6))
             }
-            .padding(16)
+            .padding(20)
+            .frame(maxWidth: .infinity, minHeight: 140, alignment: .topLeading)
             .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(cardBg)
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(
+                        LinearGradient(
+                            colors: gameGradient,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(color.opacity(isPressed ? 0.08 : 0))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(color.opacity(isPressed ? 0.3 : 0.0), lineWidth: 1.5)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 24)
+                    .strokeBorder(.white.opacity(isPressed ? 0.3 : 0.1), lineWidth: 1)
             )
             .scaleEffect(isPressed ? 0.97 : 1.0)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
         }
-        .buttonStyle(.plain)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in isPressed = true }
-                .onEnded { _ in isPressed = false }
-        )
+        .buttonStyle(CardPressStyle(isPressed: $isPressed))
     }
 }
 
-// MARK: - Disabled Game Card
+// MARK: - Card Press Button Style (scroll-friendly)
 
-struct DisabledGameCard: View {
-    let game: GameType
-    let icon: String
+struct CardPressStyle: ButtonStyle {
+    @Binding var isPressed: Bool
 
-    @Environment(\.colorScheme) private var colorScheme
-
-    private var cardBg: Color {
-        Color.primary.opacity(0.08)
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .onChange(of: configuration.isPressed) { _, newValue in
+                isPressed = newValue
+            }
     }
+}
+
+// MARK: - Game Card Graphic (mini game illustration)
+
+struct GameCardGraphic: View {
+    let game: GameType
 
     var body: some View {
-        HStack(spacing: 16) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.secondary.opacity(0.12))
-                    .frame(width: 54, height: 54)
-
-                Image(systemName: icon)
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundStyle(Color.secondary.opacity(0.4))
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 8) {
-                    Text(game.displayName)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(.secondary.opacity(0.6))
-
-                    Text("SOON")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(Color.secondary.opacity(0.2)))
-                }
-
-                Text(game.description)
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-            }
-
-            Spacer()
+        switch game {
+        case .signals:  SignalsGraphic()
+        case .archive:  ArchiveGraphic()
+        case .cargo:    CargoGraphic()
+        case .shift:    ShiftGraphic()
+        case .orbit:    Image(systemName: "circle.dotted.circle")
+                            .font(.system(size: 36, weight: .light))
+                            .foregroundStyle(.white.opacity(0.7))
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(cardBg)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(Color.primary.opacity(0.02), lineWidth: 1)
-        )
     }
 }
 
-// MARK: - Daily Game Destination (checks for already-played)
+// Signals: Mastermind code-guess board
+private struct SignalsGraphic: View {
+    // 5 rows of guesses: each row has 4 circle dots
+    let rows: [[Color?]] = [
+        [.green, .green, .green, .green],
+        [.green, .green, .yellow, nil],
+        [.green, .yellow, nil, nil],
+        [.green, nil, nil, nil],
+        [nil, nil, nil, nil],
+    ]
+
+    var body: some View {
+        VStack(spacing: 5) {
+            ForEach(rows.indices, id: \.self) { r in
+                HStack(spacing: 5) {
+                    ForEach(0..<4, id: \.self) { c in
+                        let color = rows[r][c]
+                        Circle()
+                            .fill(color ?? Color.white.opacity(0.2))
+                            .overlay(Circle().strokeBorder(.white.opacity(0.5), lineWidth: 1))
+                            .frame(width: 12, height: 12)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Archive: Calendar grid with a circled date
+private struct ArchiveGraphic: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            // Day headers
+            HStack(spacing: 0) {
+                ForEach(["S","M","T","W","T"], id: \.self) { d in
+                    Text(d)
+                        .font(.system(size: 6, weight: .bold))
+                        .foregroundStyle(.white.opacity(0.6))
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.bottom, 3)
+
+            // Date grid — 4 rows, 5 cols
+            let dates: [[Int?]] = [
+                [1,2,3,4,5],
+                [6,7,8,9,10],
+                [11,12,13,14,15],
+                [16,17,18,19,20],
+            ]
+            let highlighted = 10
+
+            VStack(spacing: 3) {
+                ForEach(dates.indices, id: \.self) { r in
+                    HStack(spacing: 3) {
+                        ForEach(dates[r].indices, id: \.self) { c in
+                            let d = dates[r][c]!
+                            ZStack {
+                                if d == highlighted {
+                                    Circle()
+                                        .strokeBorder(.white, lineWidth: 1.5)
+                                }
+                                Text("\(d)")
+                                    .font(.system(size: 7, weight: d == highlighted ? .bold : .regular))
+                                    .foregroundStyle(.white.opacity(d == highlighted ? 1.0 : 0.55))
+                            }
+                            .frame(width: 12, height: 12)
+                        }
+                    }
+                }
+            }
+        }
+        .frame(width: 72, height: 72)
+    }
+}
+
+// Cargo: Tetromino grid
+private struct CargoGraphic: View {
+    // 4x4 grid, each cell has a colour index (0 = empty, 1-4 = piece)
+    let grid: [[Int]] = [
+        [1, 1, 2, 2],
+        [1, 3, 3, 2],
+        [4, 3, 4, 4],
+        [4, 3, 4, 0],
+    ]
+    let colours: [Color] = [
+        .clear,
+        .white.opacity(0.9),
+        .white.opacity(0.6),
+        .white.opacity(0.75),
+        .white.opacity(0.45),
+    ]
+
+    var body: some View {
+        VStack(spacing: 2) {
+            ForEach(grid.indices, id: \.self) { r in
+                HStack(spacing: 2) {
+                    ForEach(grid[r].indices, id: \.self) { c in
+                        let idx = grid[r][c]
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(colours[idx])
+                            .frame(width: 14, height: 14)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Shift: Sliding letter-tile grid (3x4, one tile shifted)
+private struct ShiftGraphic: View {
+    let letters: [[String]] = [
+        ["S","H","I","F"],
+        ["T","E","R","M"],
+        ["W","O","R","D"],
+    ]
+    let highlightRow = 0
+
+    var body: some View {
+        VStack(spacing: 3) {
+            ForEach(letters.indices, id: \.self) { r in
+                HStack(spacing: 3) {
+                    ForEach(letters[r].indices, id: \.self) { c in
+                        let letter = letters[r][c]
+                        let isHighlighted = (r == highlightRow)
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(.white.opacity(isHighlighted ? 0.3 : 0.12))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .strokeBorder(.white.opacity(isHighlighted ? 0.6 : 0.25), lineWidth: 1)
+                                )
+                            Text(letter)
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                        .frame(width: 15, height: 15)
+                    }
+                    // Arrow on the right of highlighted row
+                    if r == highlightRow {
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Friends Placeholder
+
+struct FriendsPlaceholderView: View {
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.appBackground()
+
+                VStack(spacing: 20) {
+                    Image(systemName: "person.2.fill")
+                        .font(.system(size: 48, weight: .light))
+                        .foregroundStyle(.primary.opacity(0.25))
+
+                    Text("Follow your friends'\ndaily results.")
+                        .font(.system(size: 28, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.center)
+
+                    Text("Track scores, streaks, and solve times\nacross all Prisma games.")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(.primary.opacity(0.5))
+                        .multilineTextAlignment(.center)
+
+                    Text("COMING SOON")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.primary.opacity(0.4))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 6)
+                        .background(Capsule().fill(Color.primary.opacity(0.08)))
+                        .padding(.top, 8)
+                }
+                .padding(.horizontal, 40)
+            }
+            .navigationTitle("Friends")
+            .navigationBarTitleDisplayMode(.large)
+        }
+    }
+}
+
+// MARK: - Keep DailyGameDestination for routing
 
 private struct DailyGameDestination: View {
     let gameType: GameType

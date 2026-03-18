@@ -56,6 +56,35 @@ enum AppTheme {
     static let cargo   = Color(red: 1.00, green: 0.55, blue: 0.26)
     static let shift   = Color(red: 0.65, green: 0.24, blue: 0.85)
 
+    // MARK: Per-Game Gradient Pairs
+
+    static let signalsGradient: [Color] = [
+        Color(red: 0.12, green: 0.50, blue: 0.30),
+        Color(red: 0.20, green: 0.72, blue: 0.50)
+    ]
+    static let archiveGradient: [Color] = [
+        Color(red: 0.16, green: 0.38, blue: 0.72),
+        Color(red: 0.30, green: 0.58, blue: 0.92)
+    ]
+    static let cargoGradient: [Color] = [
+        Color(red: 0.85, green: 0.42, blue: 0.12),
+        Color(red: 1.00, green: 0.62, blue: 0.30)
+    ]
+    static let shiftGradient: [Color] = [
+        Color(red: 0.50, green: 0.16, blue: 0.72),
+        Color(red: 0.72, green: 0.34, blue: 0.92)
+    ]
+
+    static func gradient(for game: GameType) -> [Color] {
+        switch game {
+        case .signals: signalsGradient
+        case .archive: archiveGradient
+        case .cargo:   cargoGradient
+        case .shift:   shiftGradient
+        case .orbit:   shiftGradient
+        }
+    }
+
     static func accent(for game: GameType) -> Color {
         switch game {
         case .signals: signals

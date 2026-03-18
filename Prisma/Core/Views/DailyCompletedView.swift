@@ -9,7 +9,6 @@ import SwiftUI
 
 struct DailyCompletedView: View {
     let result: GameResult
-    @Environment(\.dismiss) private var dismiss
     @State private var displayMode: HistoryDisplayMode = .userState
 
     private var gameColor: Color {
@@ -101,18 +100,10 @@ struct DailyCompletedView: View {
                         gameContent
                     }
 
-                    // Done
-                    Button { dismiss() } label: {
-                        Text("Done")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundStyle(gameColor)
-                    }
-                    .padding(.bottom, 24)
                 }
                 .padding(.horizontal, 20)
             }
         }
-        .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
     }
 

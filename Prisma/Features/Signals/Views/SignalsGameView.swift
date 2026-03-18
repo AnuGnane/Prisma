@@ -256,6 +256,11 @@ struct SignalsGameView: View {
 
             counterPill
                 .padding(.top, 2)
+
+            if AppSettings.showGameTimer {
+                timerPill
+                    .padding(.top, 2)
+            }
         }
         .frame(maxWidth: .infinity)
     }
@@ -275,6 +280,23 @@ struct SignalsGameView: View {
         } else {
             label
                 .background(Capsule().fill(AppTheme.pillFill))
+        }
+    }
+
+    @ViewBuilder
+    private var timerPill: some View {
+        let label = HStack(spacing: 4) {
+            Image(systemName: "clock").font(.system(size: 10, weight: .bold))
+            Text(viewModel.timerString).font(.system(size: 12, weight: .bold, design: .monospaced))
+        }
+            .foregroundStyle(.primary.opacity(0.7))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+
+        if #available(iOS 26, *) {
+            label.glassEffect(.regular, in: Capsule())
+        } else {
+            label.background(Capsule().fill(AppTheme.pillFill))
         }
     }
 

@@ -11,6 +11,7 @@ import SwiftData
 struct SettingsView: View {
     @AppStorage("settings.hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("settings.soundEnabled") private var soundEnabled = true
+    @AppStorage("settings.showGameTimer") private var showGameTimer = true
     @AppStorage("settings.appearanceMode") private var appearanceMode = AppearanceMode.dark.rawValue
     @Environment(\.modelContext) private var modelContext
     @State private var showResetAlert = false
@@ -43,6 +44,15 @@ struct SettingsView: View {
 
                         Toggle(isOn: $soundEnabled) {
                             Label("Sound Effects", systemImage: "speaker.wave.2.fill")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundStyle(.primary)
+                        }
+                        .tint(AppTheme.shift)
+
+                        Divider().background(Color.primary.opacity(0.06))
+
+                        Toggle(isOn: $showGameTimer) {
+                            Label("Show Game Timer", systemImage: "timer")
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(.primary)
                         }
