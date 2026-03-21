@@ -13,7 +13,7 @@
 import Foundation
 import Observation
 
-@Observable
+@Observable @MainActor
 final class ArchiveGameViewModel: ShareStringGenerator {
 
     // MARK: - Game State
@@ -31,15 +31,18 @@ final class ArchiveGameViewModel: ShareStringGenerator {
     private var timerStarted = false
 
     var timerString: String {
-        String(format: "%d:%02d", Int(elapsedSeconds) / 60, Int(elapsedSeconds) % 60)
+        let minutes = Int(elapsedSeconds) / 60
+        let seconds = Int(elapsedSeconds) % 60
+        return "\(minutes):\(seconds.formatted(.number.precision(.integerLength(2))))"
     }
 
     private func startTimer() {
         let start = Date()
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 250_000_000)
-                await MainActor.run { self?.elapsedSeconds = Date().timeIntervalSince(start) }
+                try? await Task.sleep(for: .nanoseconds(250_000_000))
+                guard let self = self else { break }
+                await MainActor.run { self.elapsedSeconds = Date().timeIntervalSince(start) }
             }
         }
     }

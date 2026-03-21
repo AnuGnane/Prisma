@@ -13,8 +13,11 @@ struct ConfettiView: View {
     var particleCount: Int = 50
     var accentColor: Color? = nil
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     @State private var particles: [ConfettiParticle] = []
     @State private var animationPhase = false
+    @State private var resetTask: Task<Void, Never>? = nil
 
     var body: some View {
         GeometryReader { geo in
@@ -40,18 +43,48 @@ struct ConfettiView: View {
             .frame(width: geo.size.width, height: geo.size.height)
             .onChange(of: isActive) { _, active in
                 if active {
-                    spawnParticles(in: geo.size)
-                    withAnimation(.spring(response: 1.2, dampingFraction: 0.7)) {
-                        animationPhase = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                        animationPhase = false
-                        particles = []
-                    }
+                    triggerBurst(in: geo.size)
+                } else {
+                    resetAnimation()
                 }
+            }
+            .onDisappear {
+                resetAnimation()
             }
         }
         .allowsHitTesting(false)
+    }
+
+    private func triggerBurst(in size: CGSize) {
+        resetTask?.cancel()
+
+        guard !reduceMotion else {
+            resetAnimation()
+            return
+        }
+
+        spawnParticles(in: size)
+
+        withAnimation(.spring(response: 1.2, dampingFraction: 0.7)) {
+            animationPhase = true
+        }
+
+        resetTask = Task {
+            try? await Task.sleep(for: .seconds(1.8))
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                animationPhase = false
+                particles = []
+                resetTask = nil
+            }
+        }
+    }
+
+    private func resetAnimation() {
+        resetTask?.cancel()
+        resetTask = nil
+        animationPhase = false
+        particles = []
     }
 
     private func spawnParticles(in size: CGSize) {

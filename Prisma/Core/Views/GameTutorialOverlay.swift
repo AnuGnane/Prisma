@@ -17,6 +17,9 @@ struct GameTutorialOverlay: View {
             Color.black.opacity(0.7)
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Dismiss tutorial")
+                .accessibilityAddTraits(.isButton)
 
             VStack(spacing: 20) {
                 Image(systemName: iconForGame)
@@ -131,6 +134,7 @@ struct GameTutorialOverlay: View {
 /// Helper view modifier to show tutorial on first play.
 struct TutorialOverlayModifier: ViewModifier {
     let gameType: GameType
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage private var hasSeenTutorial: Bool
 
     init(gameType: GameType) {
@@ -142,8 +146,12 @@ struct TutorialOverlayModifier: ViewModifier {
         content.overlay {
             if !hasSeenTutorial {
                 GameTutorialOverlay(gameType: gameType) {
-                    withAnimation(.easeOut(duration: 0.3)) {
+                    if reduceMotion {
                         hasSeenTutorial = true
+                    } else {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            hasSeenTutorial = true
+                        }
                     }
                 }
                 .transition(.opacity)

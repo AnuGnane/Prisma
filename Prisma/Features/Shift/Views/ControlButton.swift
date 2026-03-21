@@ -10,6 +10,7 @@ import SwiftUI
 /// A control button component for game actions (undo, redo, hint, reset)
 /// Follows the Liquid Glass design aesthetic with optional badge overlay
 struct ControlButton: View {
+    let label: String
     let icon: String
     var badge: String?
     let isEnabled: Bool
@@ -18,15 +19,19 @@ struct ControlButton: View {
     var body: some View {
         Button(action: action) {
             ZStack(alignment: .topTrailing) {
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(isEnabled ? .primary : .secondary)
-                    .frame(width: 48, height: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.primary.opacity(0.12))
-                            .opacity(isEnabled ? 1.0 : 0.5)
-                    )
+                VStack(spacing: 3) {
+                    Image(systemName: icon)
+                        .font(.system(size: 16, weight: .semibold))
+                    Text(label)
+                        .font(.system(size: 9, weight: .medium))
+                }
+                .foregroundStyle(isEnabled ? .primary : .secondary)
+                .frame(width: 56, height: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.primary.opacity(0.12))
+                        .opacity(isEnabled ? 1.0 : 0.5)
+                )
                 
                 if let badge = badge {
                     Text(badge)
@@ -46,6 +51,7 @@ struct ControlButton: View {
 
 #Preview("Enabled Button") {
     ControlButton(
+        label: "Undo",
         icon: "arrow.uturn.backward",
         isEnabled: true,
         action: {}
@@ -56,6 +62,7 @@ struct ControlButton: View {
 
 #Preview("Disabled Button") {
     ControlButton(
+        label: "Redo",
         icon: "arrow.uturn.forward",
         isEnabled: false,
         action: {}
@@ -66,6 +73,7 @@ struct ControlButton: View {
 
 #Preview("Button with Badge") {
     ControlButton(
+        label: "Hint",
         icon: "lightbulb",
         badge: "3",
         isEnabled: true,
@@ -78,18 +86,21 @@ struct ControlButton: View {
 #Preview("All Control Buttons") {
     HStack(spacing: 16) {
         ControlButton(
+            label: "Undo",
             icon: "arrow.uturn.backward",
             isEnabled: true,
             action: {}
         )
         
         ControlButton(
+            label: "Redo",
             icon: "arrow.uturn.forward",
             isEnabled: false,
             action: {}
         )
         
         ControlButton(
+            label: "Hint",
             icon: "lightbulb",
             badge: "2",
             isEnabled: true,
@@ -97,6 +108,7 @@ struct ControlButton: View {
         )
         
         ControlButton(
+            label: "Reset",
             icon: "arrow.clockwise",
             isEnabled: true,
             action: {}

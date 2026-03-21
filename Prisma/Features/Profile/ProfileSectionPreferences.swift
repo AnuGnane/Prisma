@@ -9,7 +9,7 @@
 import SwiftUI
 
 /// Keys and defaults for each togglable section on the Profile/You tab.
-@Observable
+@Observable @MainActor
 final class ProfileSectionPreferences {
     static let shared = ProfileSectionPreferences()
 

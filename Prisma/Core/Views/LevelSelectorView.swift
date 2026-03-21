@@ -14,6 +14,7 @@ struct LevelSelectorView: View {
     let game: GameType
     
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query private var progressList: [LevelProgress]
     @Query private var gameResults: [GameResult]
     
@@ -44,8 +45,12 @@ struct LevelSelectorView: View {
             
             ScrollView {
                 VStack(spacing: 20) {
-                    header
-                    statsBar
+                    LevelSelectorHeader(iconForGame: iconForGame, colorForGame: colorForGame)
+                    LevelSelectorStatsBar(
+                        playedCount: playedCount,
+                        wonCount: wonCount,
+                        colorForGame: colorForGame
+                    )
                     levelGrid
                 }
                 .padding(.vertical, 24)
@@ -56,48 +61,6 @@ struct LevelSelectorView: View {
         .toolbarBackground(AppTheme.background, for: .navigationBar)
         
         .toolbar(.hidden, for: .tabBar)
-    }
-    
-    // MARK: - Header
-    
-    private var header: some View {
-        VStack(spacing: 8) {
-            Image(systemName: iconForGame)
-                .font(.system(size: 42))
-                .foregroundStyle(colorForGame)
-            
-            Text("LOCAL PUZZLES")
-                .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                .foregroundStyle(.primary.opacity(0.4))
-                .kerning(2)
-        }
-        .padding(.bottom, 4)
-    }
-    
-    // MARK: - Stats Bar
-    
-    private var statsBar: some View {
-        VStack(spacing: 8) {
-            Text("\(playedCount)/100 played · \(wonCount) won")
-                .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                .foregroundStyle(.primary.opacity(0.5))
-            
-            // Progress bar
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.primary.opacity(0.08))
-                        .frame(height: 6)
-                    
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(colorForGame)
-                        .frame(width: geo.size.width * CGFloat(playedCount) / 100.0, height: 6)
-                        .animation(.easeInOut(duration: 0.3), value: playedCount)
-                }
-            }
-            .frame(height: 6)
-            .padding(.horizontal, 60)
-        }
     }
     
     // MARK: - Navigation Routes
@@ -119,12 +82,19 @@ struct LevelSelectorView: View {
                 
                 if isPlayed {
                     NavigationLink(value: LevelSelectorRoute.solution(levelId)) {
-                        playedCell(levelId: levelId, won: progress?.won ?? false, score: progress?.score ?? 0)
+                        LevelSelectorPlayedCell(
+                            levelId: levelId,
+                            won: progress?.won ?? false,
+                            score: progress?.score ?? 0,
+                            guessesUsed: progress?.guessesUsed ?? 0,
+                            durationSeconds: progress?.durationSeconds ?? 0,
+                            colorForGame: colorForGame
+                        )
                     }
                     .buttonStyle(.plain)
                 } else {
                     NavigationLink(value: LevelSelectorRoute.play(levelId)) {
-                        unplayedCell(levelId: levelId)
+                        LevelSelectorUnplayedCell(levelId: levelId)
                     }
                 }
             }
@@ -145,93 +115,6 @@ struct LevelSelectorView: View {
                 )
             }
         }
-    }
-    
-    // MARK: - Cells
-    
-    @ViewBuilder
-    private func unplayedCell(levelId: Int) -> some View {
-        VStack(spacing: 12) {
-            Text("\(levelId)")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(.primary)
-            
-            Text("NEW")
-                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                .foregroundStyle(.primary.opacity(0.8))
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(Capsule().fill(Color.primary.opacity(0.2)))
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 100)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.primary.opacity(0.12))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
-        )
-    }
-    
-    @ViewBuilder
-    private func playedCell(levelId: Int, won: Bool, score: Int) -> some View {
-        let progress = progressList.first(where: { $0.levelId == levelId })
-        VStack(spacing: 6) {
-            Text("\(levelId)")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundStyle(won ? .white : .primary.opacity(0.35))
-            
-            if won {
-                // Star rating for all games based on score
-                let stars = starRating(score: score, guesses: progress?.guessesUsed ?? 0)
-                HStack(spacing: 2) {
-                    ForEach(0..<3) { i in
-                        Image(systemName: i < stars ? "star.fill" : "star")
-                            .font(.system(size: 11))
-                            .foregroundStyle(i < stars ? colorForGame : .primary.opacity(0.2))
-                    }
-                }
-                // Solve time
-                if let dur = progress?.durationSeconds, dur > 0 {
-                    Text(formatTime(dur))
-                        .font(.system(size: 9, weight: .medium, design: .monospaced))
-                        .foregroundStyle(.primary.opacity(0.4))
-                }
-            } else {
-                HStack(spacing: 4) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .bold))
-                    Text("LOST")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                }
-                .foregroundStyle(AppTheme.error.opacity(0.7))
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 100)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(won ? Color.primary.opacity(0.12) : Color.primary.opacity(0.08))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(won ? colorForGame.opacity(0.3) : AppTheme.error.opacity(0.15), lineWidth: 1)
-        )
-    }
-
-    /// Returns 1–3 stars based on score tier (unified across all games)
-    private func starRating(score: Int, guesses: Int) -> Int {
-        if score >= 900 { return 3 }
-        if score >= 600 { return 2 }
-        return 1
-    }
-    
-    private func formatTime(_ seconds: Double) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        return mins > 0 ? String(format: "%d:%02d", mins, secs) : "\(secs)s"
     }
     
     // MARK: - Helpers
@@ -284,6 +167,155 @@ struct LevelSelectorView: View {
             Text("Coming Soon")
                 .foregroundStyle(.primary)
         }
+    }
+}
+
+// MARK: - Subviews
+
+struct LevelSelectorHeader: View {
+    let iconForGame: String
+    let colorForGame: Color
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: iconForGame)
+                .font(.system(size: 42))
+                .foregroundStyle(colorForGame)
+            
+            Text("LOCAL PUZZLES")
+                .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                .foregroundStyle(.primary.opacity(0.4))
+                .kerning(2)
+        }
+        .padding(.bottom, 4)
+    }
+}
+
+struct LevelSelectorStatsBar: View {
+    let playedCount: Int
+    let wonCount: Int
+    let colorForGame: Color
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("\(playedCount)/100 played · \(wonCount) won")
+                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .foregroundStyle(.primary.opacity(0.5))
+            
+            // Progress bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.primary.opacity(0.08))
+                        .frame(height: 6)
+                    
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(colorForGame)
+                        .frame(width: geo.size.width * CGFloat(playedCount) / 100.0, height: 6)
+                        .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: playedCount)
+                }
+            }
+            .frame(height: 6)
+            .padding(.horizontal, 60)
+        }
+    }
+}
+
+struct LevelSelectorUnplayedCell: View {
+    let levelId: Int
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("\(levelId)")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
+            
+            Text("NEW")
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .foregroundStyle(.primary.opacity(0.8))
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Capsule().fill(Color.primary.opacity(0.2)))
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 100)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.primary.opacity(0.12))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+        )
+    }
+}
+
+struct LevelSelectorPlayedCell: View {
+    let levelId: Int
+    let won: Bool
+    let score: Int
+    let guessesUsed: Int
+    let durationSeconds: Double
+    let colorForGame: Color
+    
+    var body: some View {
+        VStack(spacing: 6) {
+            Text("\(levelId)")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundStyle(won ? .white : .primary.opacity(0.35))
+            
+            if won {
+                // Star rating for all games based on score
+                let stars = starRating(score: score, guesses: guessesUsed)
+                HStack(spacing: 2) {
+                    ForEach(0..<3, id: \.self) { i in
+                        Image(systemName: i < stars ? "star.fill" : "star")
+                            .font(.system(size: 11))
+                            .foregroundStyle(i < stars ? colorForGame : .primary.opacity(0.2))
+                    }
+                }
+                // Solve time
+                if durationSeconds > 0 {
+                    Text(formatTime(durationSeconds))
+                        .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        .foregroundStyle(.primary.opacity(0.4))
+                }
+            } else {
+                HStack(spacing: 4) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
+                    Text("LOST")
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                }
+                .foregroundStyle(AppTheme.error.opacity(0.7))
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 100)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(won ? Color.primary.opacity(0.12) : Color.primary.opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(won ? colorForGame.opacity(0.3) : AppTheme.error.opacity(0.15), lineWidth: 1)
+        )
+    }
+    
+    /// Returns 1–3 stars based on score tier (unified across all games)
+    private func starRating(score: Int, guesses: Int) -> Int {
+        if score >= 900 { return 3 }
+        if score >= 600 { return 2 }
+        return 1
+    }
+    
+    private func formatTime(_ seconds: Double) -> String {
+        let mins = Int(seconds) / 60
+        let secs = Int(seconds) % 60
+        return mins > 0
+            ? "\(mins):\(secs.formatted(.number.precision(.integerLength(2))))"
+            : "\(secs)s"
     }
 }
 

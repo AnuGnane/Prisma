@@ -11,6 +11,7 @@ import SwiftUI
 struct ArchiveFeedbackRow: View {
     let guess: ArchiveGuess
     let feedback: ArchiveFeedback
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var revealed = Array(repeating: false, count: 8)
 
@@ -30,19 +31,25 @@ struct ArchiveFeedbackRow: View {
             valueHintLabel
                 .frame(width: 32)
                 .opacity(revealed[7] ? 1 : 0)
-                .animation(.easeIn(duration: 0.2), value: revealed[7])
+                .animation(reduceMotion ? nil : .easeIn(duration: 0.2), value: revealed[7])
         }
         .onAppear {
-            for i in 0..<8 {
-                let delay = Double(i) * 0.12
-                withAnimation(
-                    .easeInOut(duration: 0.35)
-                    .delay(delay)
-                ) {
+            if reduceMotion {
+                for i in 0..<8 {
                     revealed[i] = true
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay + 0.15) {
-                    Haptics.playRigidImpact()
+            } else {
+                for i in 0..<8 {
+                    let delay = Double(i) * 0.12
+                    withAnimation(
+                        .easeInOut(duration: 0.35)
+                        .delay(delay)
+                    ) {
+                        revealed[i] = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay + 0.15) {
+                        Haptics.playRigidImpact()
+                    }
                 }
             }
         }

@@ -11,15 +11,21 @@
 import SwiftUI
 import SwiftData
 
+@MainActor
 struct ArchiveGameView: View {
     @State private var viewModel: ArchiveGameViewModel
     @State private var showResultSheet = false
     @State private var showGiveUpAlert = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    init(viewModel: ArchiveGameViewModel = ArchiveGameViewModel(date: .now)) {
+    init(viewModel: ArchiveGameViewModel) {
         _viewModel = State(initialValue: viewModel)
+    }
+
+    init() {
+        _viewModel = State(initialValue: ArchiveGameViewModel(date: .now))
     }
 
     var body: some View {
@@ -28,11 +34,11 @@ struct ArchiveGameView: View {
             AppTheme.appBackground()
 
             VStack(spacing: 0) {
-                header
+                ArchiveHeader(viewModel: viewModel, dismiss: dismiss, showGiveUpAlert: $showGiveUpAlert)
                     .padding(.top, 4)
                     .padding(.bottom, 10)
 
-                board
+                ArchiveBoard(viewModel: viewModel)
                     .padding(.horizontal, 16)
 
                 Spacer(minLength: 8)
@@ -67,8 +73,12 @@ struct ArchiveGameView: View {
                                 else { Haptics.playMediumImpact() }
                                 
                                 if viewModel.isDaily {
-                                    withAnimation(.spring(response: 0.4)) {
+                                    if reduceMotion {
                                         showResultSheet = true
+                                    } else {
+                                        withAnimation(.spring(response: 0.4)) {
+                                            showResultSheet = true
+                                        }
                                     }
                                 }
                             }
@@ -84,12 +94,12 @@ struct ArchiveGameView: View {
                         removal: .opacity
                     ))
                 } else if viewModel.gameState == .gaveUp {
-                    archiveGaveUpOverlay
+                    ArchiveGaveUpOverlay(viewModel: viewModel, dismiss: dismiss)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 32)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else if !viewModel.isDaily {
-                    localResultOverlay
+                    ArchiveLocalResultOverlay(viewModel: viewModel, dismiss: dismiss)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 32)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -97,7 +107,7 @@ struct ArchiveGameView: View {
             }
         }
         .sheet(isPresented: $showResultSheet) {
-            resultSheet
+            ArchiveResultSheet(viewModel: viewModel, showResultSheet: $showResultSheet)
         }
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
@@ -127,10 +137,16 @@ struct ArchiveGameView: View {
             if new { Haptics.playError() }
         }
     }
+    }
+    
+// MARK: - Subviews
 
-    // MARK: - Local Result Overlay
+struct ArchiveLocalResultOverlay: View {
+    let viewModel: ArchiveGameViewModel
+    let dismiss: DismissAction
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private var localResultOverlay: some View {
+    var body: some View {
         let didWin = viewModel.gameState.isCompleted
         
         return ResultOverlayTemplate(
@@ -150,18 +166,25 @@ struct ArchiveGameView: View {
 
                 if let levelId = viewModel.activeLevelId, levelId < 100 {
                     ResultPrimaryButton(title: "Next Level") {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                        if reduceMotion {
                             viewModel.loadLevel(levelId + 1)
+                        } else {
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                viewModel.loadLevel(levelId + 1)
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
 
-    // MARK: - Gave Up Overlay
+struct ArchiveGaveUpOverlay: View {
+    let viewModel: ArchiveGameViewModel
+    let dismiss: DismissAction
 
-    private var archiveGaveUpOverlay: some View {
+    var body: some View {
         ResultOverlayTemplate(
             style: .panel,
             header: .iconTitle(icon: "flag.fill", color: .red.opacity(0.7), title: "GAVE UP"),
@@ -190,10 +213,14 @@ struct ArchiveGameView: View {
             }
         }
     }
+}
 
-    // MARK: - Header
+struct ArchiveHeader: View {
+    let viewModel: ArchiveGameViewModel
+    let dismiss: DismissAction
+    @Binding var showGiveUpAlert: Bool
 
-    private var header: some View {
+    var body: some View {
         VStack(spacing: 4) {
             ZStack {
                 Text("ARCHIVE")
@@ -210,10 +237,11 @@ struct ArchiveGameView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .bold))
+                        Label("Back", systemImage: "chevron.left")
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.primary.opacity(0.8))
-                            .padding(8)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
                     }
                     .padding(.leading, 8)
                     
@@ -223,10 +251,11 @@ struct ArchiveGameView: View {
                         Button {
                             showGiveUpAlert = true
                         } label: {
-                            Image(systemName: "flag.fill")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(.red.opacity(0.5))
-                                .padding(8)
+                            Label("Give Up", systemImage: "flag.fill")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.red.opacity(0.7))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 6)
                         }
                     }
                     
@@ -234,20 +263,21 @@ struct ArchiveGameView: View {
                         viewModel.reset()
                         Haptics.playMediumImpact()
                     } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.primary.opacity(0.4))
-                            .padding(8)
+                        Label("Reset", systemImage: "arrow.clockwise")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.primary.opacity(0.6))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
                     }
                     .padding(.trailing, 12)
                 }
             }
 
-            counterPill
+            ArchiveCounterPill(guessCount: viewModel.guessCount, maxGuesses: viewModel.maxGuesses)
                 .padding(.top, 2)
 
             if AppSettings.showGameTimer {
-                timerPill
+                ArchiveTimerPill(timerString: viewModel.timerString)
                     .padding(.top, 2)
             }
 
@@ -264,10 +294,14 @@ struct ArchiveGameView: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
 
-    @ViewBuilder
-    private var counterPill: some View {
-        let label = Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
+struct ArchiveCounterPill: View {
+    let guessCount: Int
+    let maxGuesses: Int
+
+    var body: some View {
+        let label = Text("\(guessCount) / \(maxGuesses)")
             .font(.system(size: 13, weight: .semibold, design: .monospaced))
             .foregroundStyle(.primary.opacity(0.7))
             .padding(.horizontal, 14)
@@ -281,12 +315,15 @@ struct ArchiveGameView: View {
                 .background(Capsule().fill(AppTheme.pillFill))
         }
     }
+}
 
-    @ViewBuilder
-    private var timerPill: some View {
+struct ArchiveTimerPill: View {
+    let timerString: String
+
+    var body: some View {
         let label = HStack(spacing: 4) {
             Image(systemName: "clock").font(.system(size: 10, weight: .bold))
-            Text(viewModel.timerString).font(.system(size: 12, weight: .bold, design: .monospaced))
+            Text(timerString).font(.system(size: 12, weight: .bold, design: .monospaced))
         }
             .foregroundStyle(.primary.opacity(0.7))
             .padding(.horizontal, 10)
@@ -298,10 +335,12 @@ struct ArchiveGameView: View {
             label.background(Capsule().fill(AppTheme.pillFill))
         }
     }
+}
 
-    // MARK: - Board
+struct ArchiveBoard: View {
+    let viewModel: ArchiveGameViewModel
 
-    private var board: some View {
+    var body: some View {
         VStack(spacing: 6) {
             ForEach(0..<viewModel.maxGuesses, id: \.self) { rowIndex in
                 if rowIndex < viewModel.guessHistory.count {
@@ -309,70 +348,81 @@ struct ArchiveGameView: View {
                     ArchiveFeedbackRow(guess: entry.guess, feedback: entry.feedback)
                         .id(rowIndex)
                 } else if rowIndex == viewModel.guessHistory.count && !viewModel.gameState.isOver {
-                    activeInputRow
+                    ArchiveActiveInputRow(currentInput: viewModel.currentInput)
                         .modifier(ShakeEffect(shakes: viewModel.showInvalidShake ? 3 : 0))
                         .animation(.easeInOut(duration: 0.4), value: viewModel.showInvalidShake)
                 } else {
-                    emptyRow
+                    ArchiveEmptyRow()
                 }
             }
         }
         .animation(.easeInOut(duration: 0.2), value: viewModel.guessCount)
     }
+}
 
-    // MARK: - Active Input Row
+struct ArchiveActiveInputRow: View {
+    let currentInput: [Int?]
 
-    private var activeInputRow: some View {
-        HStack(spacing: 0) {
-            digitInputGroup(range: 0..<2)
-            inputSeparator
-            digitInputGroup(range: 2..<4)
-            inputSeparator
-            digitInputGroup(range: 4..<8)
-        }
-        .frame(maxWidth: .infinity)
-        .animation(.easeInOut(duration: 0.12), value: viewModel.currentInput.map { $0 ?? -1 })
+    private var firstEmptyInputSlot: Int {
+        currentInput.firstIndex(of: nil) ?? 8
     }
 
-    @ViewBuilder
-    private func digitInputGroup(range: Range<Int>) -> some View {
+    var body: some View {
+        HStack(spacing: 0) {
+            ArchiveDigitInputGroup(currentInput: currentInput, firstEmptyInputSlot: firstEmptyInputSlot, range: 0..<2)
+            ArchiveInputSeparator()
+            ArchiveDigitInputGroup(currentInput: currentInput, firstEmptyInputSlot: firstEmptyInputSlot, range: 2..<4)
+            ArchiveInputSeparator()
+            ArchiveDigitInputGroup(currentInput: currentInput, firstEmptyInputSlot: firstEmptyInputSlot, range: 4..<8)
+        }
+        .frame(maxWidth: .infinity)
+        .animation(.easeInOut(duration: 0.12), value: currentInput.map { $0 ?? -1 })
+    }
+}
+
+struct ArchiveDigitInputGroup: View {
+    let currentInput: [Int?]
+    let firstEmptyInputSlot: Int
+    let range: Range<Int>
+
+    var body: some View {
         HStack(spacing: 4) {
             ForEach(range, id: \.self) { index in
                 ArchiveActiveCell(
-                    digit: viewModel.currentInput[index],
-                    isNextEmpty: viewModel.currentInput[index] == nil
-                        && index == firstEmptyInputSlot
+                    digit: currentInput[index],
+                    isNextEmpty: currentInput[index] == nil && index == firstEmptyInputSlot
                 )
             }
         }
     }
+}
 
-    private var inputSeparator: some View {
+struct ArchiveInputSeparator: View {
+    var body: some View {
         Text("/")
             .font(.system(size: 16, weight: .semibold, design: .monospaced))
             .foregroundStyle(.primary.opacity(0.25))
             .frame(width: 14)
     }
+}
 
-    private var firstEmptyInputSlot: Int {
-        viewModel.currentInput.firstIndex(of: nil) ?? 8
-    }
-
-    // MARK: - Empty Row
-
-    private var emptyRow: some View {
+struct ArchiveEmptyRow: View {
+    var body: some View {
         HStack(spacing: 0) {
-            emptyGroup(count: 2)
-            emptySeparator
-            emptyGroup(count: 2)
-            emptySeparator
-            emptyGroup(count: 4)
+            ArchiveEmptyGroup(count: 2)
+            ArchiveEmptySeparator()
+            ArchiveEmptyGroup(count: 2)
+            ArchiveEmptySeparator()
+            ArchiveEmptyGroup(count: 4)
         }
         .frame(maxWidth: .infinity)
     }
+}
 
-    @ViewBuilder
-    private func emptyGroup(count: Int) -> some View {
+struct ArchiveEmptyGroup: View {
+    let count: Int
+
+    var body: some View {
         HStack(spacing: 4) {
             ForEach(0..<count, id: \.self) { _ in
                 RoundedRectangle(cornerRadius: 8)
@@ -381,17 +431,22 @@ struct ArchiveGameView: View {
             }
         }
     }
+}
 
-    private var emptySeparator: some View {
+struct ArchiveEmptySeparator: View {
+    var body: some View {
         Text("/")
             .font(.system(size: 16, weight: .semibold, design: .monospaced))
             .foregroundStyle(AppTheme.dimText)
             .frame(width: 14)
     }
+}
 
-    // MARK: - Result Sheet
+struct ArchiveResultSheet: View {
+    let viewModel: ArchiveGameViewModel
+    @Binding var showResultSheet: Bool
 
-    private var resultSheet: some View {
+    var body: some View {
         VStack(spacing: 20) {
             Spacer()
 
@@ -466,6 +521,7 @@ private struct ArchiveActiveCell: View {
     let isNextEmpty: Bool
 
     @State private var scale: CGFloat = 1.0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -488,6 +544,10 @@ private struct ArchiveActiveCell: View {
         .scaleEffect(scale)
         .onChange(of: digit) { old, new in
             guard old == nil, new != nil else { return }
+            guard !reduceMotion else {
+                scale = 1.0
+                return
+            }
             withAnimation(.spring(response: 0.12, dampingFraction: 0.45)) {
                 scale = 1.12
             }

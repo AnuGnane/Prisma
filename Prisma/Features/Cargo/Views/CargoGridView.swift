@@ -22,6 +22,7 @@ struct CargoGridView: View {
     var onTapCell: ((CellCoord) -> Void)? = nil
     var onHoverGrid: (CellCoord?) -> Void
     var onDropGrid: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Dynamic cell size — fits grid within available width
     private let minCellSize: CGFloat = 36
@@ -62,6 +63,10 @@ struct CargoGridView: View {
                                         EmptyView()
                                     }
                                 }
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel("Grid cell row \(row + 1), column \(col + 1)")
+                                .accessibilityValue(stateDescription(for: grid[row, col]))
+                                .accessibilityAddTraits(.isButton)
                         }
                     }
                 }
@@ -96,7 +101,7 @@ struct CargoGridView: View {
             )
             .frame(width: size, height: size)
             .scaleEffect(isGhost ? (ghostIsValid ? 0.96 : 0.88) : 1.0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isGhost)
+            .animation(reduceMotion ? nil : .spring(response: 0.2, dampingFraction: 0.7), value: isGhost)
     }
 
     // MARK: - Colours
@@ -145,6 +150,15 @@ struct CargoGridView: View {
         let usableWidth = availableWidth - 32
         let rawSize = (usableWidth - CGFloat(grid.cols - 1) * cellSpacing) / CGFloat(grid.cols)
         return min(max(rawSize, minCellSize), maxCellSize)
+    }
+
+    private func stateDescription(for state: CargoCellState) -> String {
+        switch state {
+        case .empty: return "Empty"
+        case .blocked: return "Blocked"
+        case .filled(let pid): return "Filled with piece \(pid)"
+        case .ghost: return "Previewing piece"
+        }
     }
 }
 

@@ -13,13 +13,19 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
+@MainActor
 struct CargoGameView: View {
     @State private var viewModel: CargoGameViewModel
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    init(viewModel: CargoGameViewModel = CargoGameViewModel(date: .now)) {
+    init(viewModel: CargoGameViewModel) {
         _viewModel = State(initialValue: viewModel)
+    }
+
+    init() {
+        _viewModel = State(initialValue: CargoGameViewModel(date: .now))
     }
 
     var body: some View {
@@ -28,7 +34,7 @@ struct CargoGameView: View {
             AppTheme.appBackground()
 
             VStack(spacing: 0) {
-                header
+                CargoHeader(viewModel: viewModel, dismiss: dismiss)
                     .padding(.top, 4)
                     .padding(.bottom, 12)
 
@@ -36,7 +42,7 @@ struct CargoGameView: View {
                 // Grid or Solution
                 if viewModel.showingSolution {
                     // Show the perfect solution grid
-                    solutionGrid
+                    CargoSolutionGrid(viewModel: viewModel)
                         .padding(.horizontal, 20)
                         .frame(maxHeight: .infinity)
                 } else {
@@ -59,17 +65,17 @@ struct CargoGameView: View {
 
                 // Result overlay or piece tray
                 if viewModel.isGameOver {
-                    resultOverlay
+                    CargoResultOverlay(viewModel: viewModel, dismiss: dismiss, saveResult: saveResult)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 16)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else {
-                    bottomControls
+                    CargoBottomControls(viewModel: viewModel, reduceMotion: reduceMotion, saveResult: saveResult)
                         .padding(.bottom, 16)
                 }
             }
         }
-        .animation(.default, value: viewModel.showingSolution)
+        .animation(reduceMotion ? nil : .default, value: viewModel.showingSolution)
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .showTutorialOnFirstPlay(for: .cargo)
@@ -78,9 +84,46 @@ struct CargoGameView: View {
         }
     }
 
-    // MARK: - Header
+    // MARK: - Persistence
 
-    private var header: some View {
+    private func saveResult() {
+        guard case .completed(let score, _) = viewModel.gameState else { return }
+
+        if let levelId = viewModel.activeLevelId {
+            PersistenceManager.markLevelPlayed(
+                gameType: .cargo,
+                levelId: levelId,
+                won: score >= 700,
+                score: score,
+                guessesUsed: 0,
+                durationSeconds: Double(viewModel.elapsedSeconds),
+                context: modelContext
+            )
+            // Also save GameResult for local mode to enable history display with user state
+            let result = viewModel.buildLocalGameResult()
+            PersistenceManager.save(result, context: modelContext)
+        }
+        if viewModel.isDaily {
+            let gameDate = Calendar.current.startOfDay(for: Date())
+            if PersistenceManager.fetchDailyResult(for: .cargo, on: gameDate, context: modelContext) == nil {
+                let result = viewModel.buildGameResult(gameDate: gameDate)
+                PersistenceManager.save(result, context: modelContext)
+            }
+            // Record daily streak
+            if score >= 700 {
+                _ = StreakManager.recordDailyWin(game: "cargo")
+            }
+        }
+    }
+}
+
+// MARK: - Subviews
+
+struct CargoHeader: View {
+    let viewModel: CargoGameViewModel
+    let dismiss: DismissAction
+
+    var body: some View {
         VStack(spacing: 4) {
             ZStack {
                 Text("CARGO")
@@ -97,10 +140,11 @@ struct CargoGameView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .bold))
+                        Label("Back", systemImage: "chevron.left")
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.primary.opacity(0.8))
-                            .padding(8)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
                     }
                     .padding(.leading, 8)
                     
@@ -110,10 +154,11 @@ struct CargoGameView: View {
                         viewModel.reset()
                         Haptics.playMediumImpact()
                     } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.primary.opacity(0.4))
-                            .padding(8)
+                        Label("Reset", systemImage: "arrow.clockwise")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.primary.opacity(0.6))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
                     }
                     .padding(.trailing, 12)
                 }
@@ -126,7 +171,7 @@ struct CargoGameView: View {
                 }
 
                 // Progress pill
-                progressPill
+                CargoProgressPill(viewModel: viewModel)
             }
             .padding(.top, 2)
 
@@ -140,11 +185,12 @@ struct CargoGameView: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
 
+struct CargoProgressPill: View {
+    let viewModel: CargoGameViewModel
 
-
-    @ViewBuilder
-    private var progressPill: some View {
+    var body: some View {
         let pct = Int(viewModel.fillPercentage * 100)
         let label = Text("\(viewModel.pieces.count - viewModel.piecesRemaining)/\(viewModel.pieces.count) pieces · \(pct)%")
             .font(.system(size: 13, weight: .semibold, design: .monospaced))
@@ -158,32 +204,44 @@ struct CargoGameView: View {
             label.background(Capsule().fill(AppTheme.pillFill))
         }
     }
+}
 
-    // MARK: - Bottom Controls
+struct CargoBottomControls: View {
+    let viewModel: CargoGameViewModel
+    let reduceMotion: Bool
+    let saveResult: () -> Void
 
-    private var bottomControls: some View {
+    var body: some View {
         VStack(spacing: 4) {
             if viewModel.isAwaitingSubmit {
                 // Pending Placement Action Bar
-                pendingActionBar
+                CargoPendingActionBar(viewModel: viewModel, reduceMotion: reduceMotion, saveResult: saveResult)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             } else {
                 // Fixed height container for Rotate/Flip buttons to prevent squeezing
                 ZStack {
                     if viewModel.selectedPieceIndex != nil && !viewModel.isGameOver {
                         HStack(spacing: 12) {
-                            transformButton(icon: "rotate.right", action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            transformButton(icon: "rotate.right") {
+                                if reduceMotion {
                                     viewModel.rotateSelectedPiece()
+                                } else {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        viewModel.rotateSelectedPiece()
+                                    }
                                 }
                                 Haptics.playMediumImpact()
-                            })
-                            transformButton(icon: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill", action: {
-                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            }
+                            transformButton(icon: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill") {
+                                if reduceMotion {
                                     viewModel.flipSelectedPiece()
+                                } else {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                        viewModel.flipSelectedPiece()
+                                    }
                                 }
                                 Haptics.playMediumImpact()
-                            })
+                            }
                         }
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
@@ -244,51 +302,78 @@ struct CargoGameView: View {
                 .padding(.top, 4)
             }
         }
-        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.isAwaitingSubmit)
+        .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.8), value: viewModel.isAwaitingSubmit)
     }
 
-    private var pendingActionBar: some View {
+    private func transformButton(icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.primary)
+                .frame(width: 44, height: 44)
+                .background(Circle().fill(Color.primary.opacity(0.12)))
+        }
+    }
+}
+
+struct CargoPendingActionBar: View {
+    let viewModel: CargoGameViewModel
+    let reduceMotion: Bool
+    let saveResult: () -> Void
+
+    var body: some View {
         HStack(spacing: 12) {
             // Remove
             Button {
                 viewModel.cancelPendingPiece()
                 Haptics.playMediumImpact()
             } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 16, weight: .bold))
+                Label("Remove", systemImage: "xmark")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.red.opacity(0.9))
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.red.opacity(0.15)))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Color.red.opacity(0.15)))
             }
 
             Spacer()
 
             // Rotate
             Button {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                if reduceMotion {
                     viewModel.rotatePendingPiece()
+                } else {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        viewModel.rotatePendingPiece()
+                    }
                 }
                 Haptics.playMediumImpact()
             } label: {
-                Image(systemName: "rotate.right")
-                    .font(.system(size: 16, weight: .semibold))
+                Label("Rotate", systemImage: "rotate.right")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.primary)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.primary.opacity(0.12)))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Color.primary.opacity(0.12)))
             }
 
             // Flip
             Button {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                if reduceMotion {
                     viewModel.flipPendingPiece()
+                } else {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        viewModel.flipPendingPiece()
+                    }
                 }
                 Haptics.playMediumImpact()
             } label: {
-                Image(systemName: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill")
-                    .font(.system(size: 16, weight: .semibold))
+                Label("Flip", systemImage: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.primary)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(Color.primary.opacity(0.12)))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Color.primary.opacity(0.12)))
             }
 
             Spacer()
@@ -299,11 +384,12 @@ struct CargoGameView: View {
                 Haptics.playMediumImpact()
                 if viewModel.isGameOver { saveResult() }
             } label: {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 18, weight: .bold))
+                Label("Place", systemImage: "checkmark")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(viewModel.ghostIsValid ? Color.green : Color.primary.opacity(0.3))
-                    .frame(width: 52, height: 52)
-                    .background(Circle().fill(viewModel.ghostIsValid ? Color.green.opacity(0.25) : Color.primary.opacity(0.1)))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(Capsule().fill(viewModel.ghostIsValid ? Color.green.opacity(0.25) : Color.primary.opacity(0.1)))
             }
             .disabled(!viewModel.ghostIsValid)
         }
@@ -311,10 +397,14 @@ struct CargoGameView: View {
         .padding(.top, 16)
         .padding(.bottom, 24)
     }
+}
 
-    // MARK: - Result Overlay
+struct CargoResultOverlay: View {
+    let viewModel: CargoGameViewModel
+    let dismiss: DismissAction
+    let saveResult: () -> Void
 
-    private var resultOverlay: some View {
+    var body: some View {
         guard case .completed(let score, let isPerfect) = viewModel.gameState else {
             return AnyView(EmptyView())
         }
@@ -336,7 +426,7 @@ struct CargoGameView: View {
             } actions: {
                 VStack(spacing: 12) {
                     if !viewModel.isDaily {
-                        localResultActions
+                        CargoLocalResultActions(viewModel: viewModel, dismiss: dismiss, saveResult: saveResult)
                     } else {
                         ResultShareButton(shareString: viewModel.generateShareString())
                         ResultPrimaryButton(title: "Done") { dismiss() }
@@ -360,20 +450,12 @@ struct CargoGameView: View {
             }
         )
     }
+}
 
-    private func transformButton(icon: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(.primary)
-                .frame(width: 44, height: 44)
-                .background(Circle().fill(Color.primary.opacity(0.12)))
-        }
-    }
+struct CargoSolutionGrid: View {
+    let viewModel: CargoGameViewModel
 
-    // MARK: - Solution Grid
-
-    private var solutionGrid: some View {
+    var body: some View {
         var tempGrid = CargoGrid(rows: viewModel.grid.rows, cols: viewModel.grid.cols, blockedCells: viewModel.puzzle.blockedCells)
         tempGrid.populateSolutionMode(with: viewModel.puzzle.pieces)
         
@@ -387,10 +469,15 @@ struct CargoGameView: View {
             onHoverGrid: { _ in },
             onDropGrid: {}
         )
-        // Note: we'll overlay the actual solution colors manually or just use the grid.
     }
+}
 
-    private var localResultActions: some View {
+struct CargoLocalResultActions: View {
+    let viewModel: CargoGameViewModel
+    let dismiss: DismissAction
+    let saveResult: () -> Void
+
+    var body: some View {
         HStack(spacing: 12) {
             ShareLink(item: viewModel.generateShareString()) {
                 Label("Share", systemImage: "square.and.arrow.up")
@@ -407,38 +494,6 @@ struct CargoGameView: View {
                     viewModel.loadLevel(levelId + 1)
                     saveResult()
                 }
-            }
-        }
-    }
-
-    // MARK: - Persistence
-
-    private func saveResult() {
-        guard case .completed(let score, _) = viewModel.gameState else { return }
-
-        if let levelId = viewModel.activeLevelId {
-            PersistenceManager.markLevelPlayed(
-                gameType: .cargo,
-                levelId: levelId,
-                won: score >= 700,
-                score: score,
-                guessesUsed: 0,
-                durationSeconds: Double(viewModel.elapsedSeconds),
-                context: modelContext
-            )
-            // Also save GameResult for local mode to enable history display with user state
-            let result = viewModel.buildLocalGameResult()
-            PersistenceManager.save(result, context: modelContext)
-        }
-        if viewModel.isDaily {
-            let gameDate = Calendar.current.startOfDay(for: Date())
-            if PersistenceManager.fetchDailyResult(for: .cargo, on: gameDate, context: modelContext) == nil {
-                let result = viewModel.buildGameResult(gameDate: gameDate)
-                PersistenceManager.save(result, context: modelContext)
-            }
-            // Record daily streak
-            if score >= 700 {
-                _ = StreakManager.recordDailyWin(game: "cargo")
             }
         }
     }

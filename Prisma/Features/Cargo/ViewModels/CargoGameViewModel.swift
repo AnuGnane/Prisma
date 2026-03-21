@@ -23,7 +23,7 @@ enum CargoGameState: Equatable {
 
 // MARK: - ViewModel
 
-@Observable
+@Observable @MainActor
 final class CargoGameViewModel {
 
     // MARK: - Game Data
@@ -90,7 +90,6 @@ final class CargoGameViewModel {
         startTimer()
     }
 
-    deinit { timerTask?.cancel() }
 
     // MARK: - Helpers
 
@@ -330,7 +329,8 @@ final class CargoGameViewModel {
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
-                await MainActor.run { self?.elapsedSeconds += 1 }
+                guard let self = self else { break }
+                await MainActor.run { self.elapsedSeconds += 1 }
             }
         }
     }
@@ -340,7 +340,7 @@ final class CargoGameViewModel {
     var timerString: String {
         let m = elapsedSeconds / 60
         let s = elapsedSeconds % 60
-        return String(format: "%d:%02d", m, s)
+        return "\(m):\(s.formatted(.number.precision(.integerLength(2))))"
     }
 
     // MARK: - Computed Stats

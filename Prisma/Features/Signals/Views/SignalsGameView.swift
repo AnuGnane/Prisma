@@ -12,15 +12,21 @@
 import SwiftUI
 import SwiftData
 
+@MainActor
 struct SignalsGameView: View {
     @State private var viewModel: SignalsGameViewModel
     @State private var showResultSheet = false
     @State private var showGiveUpAlert = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    init(viewModel: SignalsGameViewModel = SignalsGameViewModel(date: .now)) {
+    init(viewModel: SignalsGameViewModel) {
         _viewModel = State(initialValue: viewModel)
+    }
+
+    init() {
+        _viewModel = State(initialValue: SignalsGameViewModel(date: .now))
     }
 
     var body: some View {
@@ -29,11 +35,11 @@ struct SignalsGameView: View {
             AppTheme.appBackground()
 
             VStack(spacing: 0) {
-                header
+                SignalsHeader(viewModel: viewModel, showGiveUpAlert: $showGiveUpAlert)
                     .padding(.top, 4)
                     .padding(.bottom, 14)
 
-                board
+                SignalsBoard(viewModel: viewModel)
                     .padding(.horizontal, 24)
 
                 Spacer(minLength: 8)
@@ -70,8 +76,12 @@ struct SignalsGameView: View {
                                 else { Haptics.playMediumImpact() }
                                 
                                 if viewModel.isDaily {
-                                    withAnimation(.spring(response: 0.4)) {
+                                    if reduceMotion {
                                         showResultSheet = true
+                                    } else {
+                                        withAnimation(.spring(response: 0.4)) {
+                                            showResultSheet = true
+                                        }
                                     }
                                 }
                             }
@@ -87,12 +97,12 @@ struct SignalsGameView: View {
                         removal: .opacity
                     ))
                 } else if viewModel.gameState == .gaveUp {
-                    signalsGaveUpOverlay
+                    SignalsGaveUpOverlay(viewModel: viewModel, dismiss: { dismiss() })
                         .padding(.horizontal, 24)
                         .padding(.bottom, 32)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 } else if !viewModel.isDaily {
-                    localResultOverlay
+                    SignalsLocalResultOverlay(viewModel: viewModel, reduceMotion: reduceMotion, dismiss: { dismiss() })
                         .padding(.horizontal, 24)
                         .padding(.bottom, 32)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -100,7 +110,7 @@ struct SignalsGameView: View {
             }
         }
         .sheet(isPresented: $showResultSheet) {
-            resultSheet
+            SignalsResultSheet(viewModel: viewModel, showResultSheet: $showResultSheet)
         }
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
@@ -129,82 +139,18 @@ struct SignalsGameView: View {
         .showTutorialOnFirstPlay(for: .signals)
     }
 
-    // MARK: - Local Result Overlay
+    // MARK: - Game Center Reporting
 
-    private var localResultOverlay: some View {
-        let didWin = viewModel.gameState.isCompleted
-        
-        return ResultOverlayTemplate(
-            style: .panel,
-            header: .iconTitle(
-                icon: didWin ? "checkmark.circle.fill" : "xmark.circle.fill",
-                color: didWin ? AppTheme.signals : AppTheme.error,
-                title: didWin ? "LEVEL \(viewModel.activeLevelId ?? 0) COMPLETED" : "SIGNAL LOST"
-            ),
-            stats: []
-        ) {
-            EmptyView()
-        } actions: {
-            HStack(spacing: 16) {
-                ResultSecondaryButton(title: viewModel.activeLevelId == 100 ? "All Done" : "Done") {
-                    dismiss()
-                }
+}
 
-                if let levelId = viewModel.activeLevelId, levelId < 100 {
-                    ResultPrimaryButton(title: "Next Level") {
-                        withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                            viewModel.loadLevel(levelId + 1)
-                        }
-                    }
-                }
-            }
-        }
-    }
+// MARK: - Subviews
 
-    // MARK: - Gave Up Overlay
+struct SignalsHeader: View {
+    let viewModel: SignalsGameViewModel
+    @Binding var showGiveUpAlert: Bool
+    @Environment(\.dismiss) private var dismiss
 
-    private var signalsGaveUpOverlay: some View {
-        ResultOverlayTemplate(
-            style: .panel,
-            header: .iconTitle(icon: "flag.fill", color: .red.opacity(0.7), title: "GAVE UP"),
-            stats: []
-        ) {
-            // Show the secret code
-            VStack(spacing: 6) {
-                Text("The code was:")
-                    .font(.system(size: 13)).foregroundStyle(.primary.opacity(0.5))
-                HStack(spacing: 8) {
-                    ForEach(viewModel.solutionDigits, id: \.self) { digit in
-                        Text("\(digit)")
-                            .font(.system(size: 26, weight: .bold, design: .monospaced))
-                            .foregroundStyle(.primary)
-                            .frame(width: 44, height: 48)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(AppTheme.signals.opacity(0.3))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .strokeBorder(AppTheme.signals.opacity(0.6), lineWidth: 1.5)
-                                    )
-                            )
-                    }
-                }
-            }
-        } actions: {
-            HStack(spacing: 16) {
-                ResultSecondaryButton(title: "Try Again") {
-                    viewModel.reset()
-                }
-                ResultPrimaryButton(title: "Done") {
-                    dismiss()
-                }
-            }
-        }
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
+    var body: some View {
         VStack(spacing: 4) {
             ZStack {
                 Text("SIGNALS")
@@ -221,10 +167,11 @@ struct SignalsGameView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .bold))
+                        Label("Back", systemImage: "chevron.left")
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.primary.opacity(0.8))
-                            .padding(8)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
                     }
                     .padding(.leading, 8)
                     
@@ -234,10 +181,11 @@ struct SignalsGameView: View {
                         Button {
                             showGiveUpAlert = true
                         } label: {
-                            Image(systemName: "flag.fill")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(.red.opacity(0.5))
-                                .padding(8)
+                            Label("Give Up", systemImage: "flag.fill")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.red.opacity(0.7))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 6)
                         }
                     }
                     
@@ -245,29 +193,32 @@ struct SignalsGameView: View {
                         viewModel.reset()
                         Haptics.playMediumImpact()
                     } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.primary.opacity(0.4))
-                            .padding(8)
+                        Label("Reset", systemImage: "arrow.clockwise")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.primary.opacity(0.6))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
                     }
                     .padding(.trailing, 12)
                 }
             }
 
-            counterPill
+            SignalsCounterPill(viewModel: viewModel)
                 .padding(.top, 2)
 
             if AppSettings.showGameTimer {
-                timerPill
+                SignalsTimerPill(viewModel: viewModel)
                     .padding(.top, 2)
             }
         }
         .frame(maxWidth: .infinity)
     }
+}
 
-    /// Guess counter pill — liquid glass on iOS 26, frosted capsule on iOS 18.
-    @ViewBuilder
-    private var counterPill: some View {
+struct SignalsCounterPill: View {
+    let viewModel: SignalsGameViewModel
+
+    var body: some View {
         let label = Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
             .font(.system(size: 13, weight: .semibold, design: .monospaced))
             .foregroundStyle(.primary.opacity(0.7))
@@ -282,9 +233,12 @@ struct SignalsGameView: View {
                 .background(Capsule().fill(AppTheme.pillFill))
         }
     }
+}
 
-    @ViewBuilder
-    private var timerPill: some View {
+struct SignalsTimerPill: View {
+    let viewModel: SignalsGameViewModel
+
+    var body: some View {
         let label = HStack(spacing: 4) {
             Image(systemName: "clock").font(.system(size: 10, weight: .bold))
             Text(viewModel.timerString).font(.system(size: 12, weight: .bold, design: .monospaced))
@@ -299,10 +253,12 @@ struct SignalsGameView: View {
             label.background(Capsule().fill(AppTheme.pillFill))
         }
     }
+}
 
-    // MARK: - Board
+struct SignalsBoard: View {
+    let viewModel: SignalsGameViewModel
 
-    private var board: some View {
+    var body: some View {
         VStack(spacing: 8) {
             ForEach(0..<viewModel.maxGuesses, id: \.self) { rowIndex in
                 if rowIndex < viewModel.guessHistory.count {
@@ -310,18 +266,20 @@ struct SignalsGameView: View {
                     SignalsFeedbackRow(guess: entry.guess, feedback: entry.feedback)
                         .id(rowIndex) // stable identity so flip triggers once per guess
                 } else if rowIndex == viewModel.guessHistory.count && !viewModel.gameState.isOver {
-                    activeInputRow
+                    SignalsActiveInputRow(viewModel: viewModel)
                 } else {
-                    emptyRow
+                    SignalsEmptyRow()
                 }
             }
         }
         .animation(.easeInOut(duration: 0.2), value: viewModel.guessCount)
     }
+}
 
-    // MARK: - Active Input Row
+struct SignalsActiveInputRow: View {
+    let viewModel: SignalsGameViewModel
 
-    private var activeInputRow: some View {
+    var body: some View {
         HStack(spacing: 8) {
             ForEach(0..<4, id: \.self) { index in
                 SignalsActiveCell(
@@ -337,10 +295,10 @@ struct SignalsGameView: View {
     private var firstEmptyInputSlot: Int {
         viewModel.currentInput.firstIndex(of: nil) ?? 4
     }
+}
 
-    // MARK: - Empty Row
-
-    private var emptyRow: some View {
+struct SignalsEmptyRow: View {
+    var body: some View {
         HStack(spacing: 8) {
             ForEach(0..<4, id: \.self) { _ in
                 RoundedRectangle(cornerRadius: 10)
@@ -350,10 +308,13 @@ struct SignalsGameView: View {
         }
         .frame(maxWidth: .infinity)
     }
+}
 
-    // MARK: - Result Sheet
+struct SignalsResultSheet: View {
+    let viewModel: SignalsGameViewModel
+    @Binding var showResultSheet: Bool
 
-    private var resultSheet: some View {
+    var body: some View {
         VStack(spacing: 20) {
             Spacer()
 
@@ -417,7 +378,91 @@ struct SignalsGameView: View {
     }
 }
 
-// MARK: - Active Cell with Bounce
+struct SignalsLocalResultOverlay: View {
+    let viewModel: SignalsGameViewModel
+    let reduceMotion: Bool
+    let dismiss: () -> Void
+
+    var body: some View {
+        let didWin = viewModel.gameState.isCompleted
+        
+        return ResultOverlayTemplate(
+            style: .panel,
+            header: .iconTitle(
+                icon: didWin ? "checkmark.circle.fill" : "xmark.circle.fill",
+                color: didWin ? AppTheme.signals : AppTheme.error,
+                title: didWin ? "LEVEL \(viewModel.activeLevelId ?? 0) COMPLETED" : "SIGNAL LOST"
+            ),
+            stats: []
+        ) {
+            EmptyView()
+        } actions: {
+            HStack(spacing: 16) {
+                ResultSecondaryButton(title: viewModel.activeLevelId == 100 ? "All Done" : "Done") {
+                    dismiss()
+                }
+
+                if let levelId = viewModel.activeLevelId, levelId < 100 {
+                    ResultPrimaryButton(title: "Next Level") {
+                        if reduceMotion {
+                            viewModel.loadLevel(levelId + 1)
+                        } else {
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                viewModel.loadLevel(levelId + 1)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SignalsGaveUpOverlay: View {
+    let viewModel: SignalsGameViewModel
+    let dismiss: () -> Void
+
+    var body: some View {
+        ResultOverlayTemplate(
+            style: .panel,
+            header: .iconTitle(icon: "flag.fill", color: .red.opacity(0.7), title: "GAVE UP"),
+            stats: []
+        ) {
+            // Show the secret code
+            VStack(spacing: 6) {
+                Text("The code was:")
+                    .font(.system(size: 13)).foregroundStyle(.primary.opacity(0.5))
+                HStack(spacing: 8) {
+                    ForEach(viewModel.solutionDigits, id: \.self) { digit in
+                        Text("\(digit)")
+                            .font(.system(size: 26, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.primary)
+                            .frame(width: 44, height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(AppTheme.signals.opacity(0.3))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .strokeBorder(AppTheme.signals.opacity(0.6), lineWidth: 1.5)
+                                    )
+                            )
+                    }
+                }
+            }
+        } actions: {
+            HStack(spacing: 16) {
+                ResultSecondaryButton(title: "Try Again") {
+                    viewModel.reset()
+                }
+                ResultPrimaryButton(title: "Done") {
+                    dismiss()
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Game Center Reporting
 
 /// A single input slot in the active guess row.
 /// Springs to 1.12× scale when a digit lands, then settles back to 1.0.
@@ -426,6 +471,7 @@ private struct SignalsActiveCell: View {
     let isNextEmpty: Bool
 
     @State private var scale: CGFloat = 1.0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -448,6 +494,10 @@ private struct SignalsActiveCell: View {
         .scaleEffect(scale)
         .onChange(of: digit) { old, new in
             guard old == nil, new != nil else { return }
+            guard !reduceMotion else {
+                scale = 1.0
+                return
+            }
             // Spring pop: scale up then settle back
             withAnimation(.spring(response: 0.12, dampingFraction: 0.45)) {
                 scale = 1.12
@@ -460,8 +510,6 @@ private struct SignalsActiveCell: View {
         }
     }
 }
-
-// MARK: - Game Center Reporting
 
 extension SignalsGameView {
     private func reportToGameCenter() {

@@ -36,42 +36,63 @@ struct WinRateChartView: View {
         }
     }
     
-    private var filteredResults: [GameResult] {
-        guard let days = timeWindow.days else { return allResults }
-        let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: .now)!
-        return allResults.filter { $0.date >= cutoff }
+    @State private var chartData: [ChartDataPoint] = []
+    private struct BasicResult: Sendable {
+        let date: Date
+        let score: Int
+        let gameTypeRaw: String
     }
     
-    private var chartData: [ChartDataPoint] {
-        let calendar = Calendar.current
-        let games: [GameType] = [.signals, .archive, .cargo, .shift]
-        var points: [ChartDataPoint] = []
+    private func updateChartData() {
+        let snapshot = allResults.map { BasicResult(date: $0.date, score: $0.score, gameTypeRaw: $0.gameTypeRaw) }
+        let currentDays = timeWindow.days
         
-        for game in games {
-            let gameResults = filteredResults.filter { $0.gameTypeRaw == game.rawValue }
+        Task.detached(priority: .userInitiated) {
+            let calendar = Calendar.current
+            let games: [GameType] = [.signals, .archive, .cargo, .shift]
+            var points: [ChartDataPoint] = []
             
-            // Group by week
-            let grouped = Dictionary(grouping: gameResults) { result -> Date in
-                let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: result.date)
-                return calendar.date(from: comps)!
+            // Perform filtering off main thread
+            var currentFiltered: [BasicResult] = []
+            if let days = currentDays {
+                if let cutoff = calendar.date(byAdding: .day, value: -days, to: .now) {
+                    currentFiltered = snapshot.filter { $0.date >= cutoff }
+                } else {
+                    currentFiltered = snapshot
+                }
+            } else {
+                currentFiltered = snapshot
             }
             
-            for (weekStart, results) in grouped {
-                let wins = results.filter { $0.score > 0 }.count
-                let total = results.count
-                let rate = total > 0 ? Double(wins) / Double(total) * 100 : 0
-                points.append(ChartDataPoint(game: game, weekStart: weekStart, winRate: rate))
+            for game in games {
+                let gameResults = currentFiltered.filter { $0.gameTypeRaw == game.rawValue }
+                
+                let grouped = Dictionary(grouping: gameResults) { result -> Date in
+                    let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: result.date)
+                    return calendar.date(from: comps)!
+                }
+                
+                for (weekStart, results) in grouped {
+                    let wins = results.filter { $0.score > 0 }.count
+                    let total = results.count
+                    let rate = total > 0 ? Double(wins) / Double(total) * 100 : 0
+                    points.append(ChartDataPoint(game: game, weekStart: weekStart, winRate: rate))
+                }
+            }
+            
+            let sortedPoints = points.sorted { $0.weekStart < $1.weekStart }
+            
+            await MainActor.run {
+                self.chartData = sortedPoints
             }
         }
-        
-        return points.sorted { $0.weekStart < $1.weekStart }
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("WIN RATE")
-                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    .font(.caption2.weight(.heavy).monospaced())
                     .foregroundStyle(.secondary)
                     .kerning(1.5)
                 
@@ -92,6 +113,12 @@ struct WinRateChartView: View {
                 chart
                 legend
             }
+        }
+        .task(id: allResults) {
+            updateChartData()
+        }
+        .task(id: timeWindow) {
+            updateChartData()
         }
     }
     
@@ -125,7 +152,7 @@ struct WinRateChartView: View {
                     .foregroundStyle(Color.primary.opacity(0.1))
                 AxisValueLabel {
                     Text("\(value.as(Int.self) ?? 0)%")
-                        .font(.system(size: 9, design: .monospaced))
+                        .font(.caption2.monospaced())
                         .foregroundStyle(.primary.opacity(0.4))
                 }
             }
@@ -136,7 +163,7 @@ struct WinRateChartView: View {
                     .foregroundStyle(Color.primary.opacity(0.05))
                 AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                     .foregroundStyle(.primary.opacity(0.4))
-                    .font(.system(size: 9, design: .monospaced))
+                    .font(.caption2.monospaced())
             }
         }
         .chartLegend(.hidden)
@@ -153,7 +180,7 @@ struct WinRateChartView: View {
                         .fill(gameColors[game]!)
                         .frame(width: 6, height: 6)
                     Text(game.displayName)
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.caption2.weight(.medium))
                         .foregroundStyle(.primary.opacity(0.5))
                 }
             }
@@ -163,10 +190,10 @@ struct WinRateChartView: View {
     private var emptyState: some View {
         VStack(spacing: 8) {
             Image(systemName: "chart.line.uptrend.xyaxis")
-                .font(.system(size: 28))
+                .font(.largeTitle)
                 .foregroundStyle(.secondary.opacity(0.5))
             Text("Play some games to see your win rate trend")
-                .font(.system(size: 13))
+                .font(.callout)
                 .foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity)

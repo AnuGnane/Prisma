@@ -10,6 +10,7 @@ import SwiftUI
 struct DailyCompletedView: View {
     let result: GameResult
     @State private var displayMode: HistoryDisplayMode = .userState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var gameColor: Color {
         AppTheme.accent(for: result.gameType)
@@ -53,14 +54,14 @@ struct DailyCompletedView: View {
                     // Stats
                     HStack(spacing: 24) {
                         if result.score > 0 {
-                            statItem("SCORE", value: "\(result.score)")
+                            DailyCompletedStatItem(label: "SCORE", value: "\(result.score)")
                         }
                         if result.guessCount > 0 {
-                            statItem(result.gameType == .shift ? "MOVES" : "GUESSES",
+                            DailyCompletedStatItem(label: result.gameType == .shift ? "MOVES" : "GUESSES",
                                      value: "\(result.guessCount)")
                         }
                         if result.durationSeconds > 0 {
-                            statItem("TIME", value: formatDuration(result.durationSeconds))
+                            DailyCompletedStatItem(label: "TIME", value: formatDuration(result.durationSeconds))
                         }
                     }
                     .padding(.vertical, 16)
@@ -88,7 +89,7 @@ struct DailyCompletedView: View {
                         Divider()
                             .padding(.horizontal, 12)
 
-                        toggleControl
+                        DailyCompletedToggleControl(displayMode: $displayMode, gameColor: gameColor)
                         
                         Text(displayMode == .userState ? "Your Game" : "Solution")
                             .font(.system(size: 13, weight: .heavy, design: .monospaced))
@@ -97,7 +98,11 @@ struct DailyCompletedView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 4)
 
-                        gameContent
+                        if displayMode == .userState {
+                            userStateContent
+                        } else {
+                            solutionContent
+                        }
                     }
 
                 }
@@ -107,11 +112,47 @@ struct DailyCompletedView: View {
         .toolbar(.hidden, for: .tabBar)
     }
 
-    // MARK: - Toggle
+    // MARK: - User State Views
     
-    private var toggleControl: some View {
+    @ViewBuilder
+    private var userStateContent: some View {
+        switch result.gameType {
+        case .signals: DailyCompletedSignalsUserState(result: result, won: won, gameColor: gameColor)
+        case .archive: DailyCompletedArchiveUserState(result: result, won: won, gameColor: gameColor)
+        case .cargo: DailyCompletedCargoUserState(result: result)
+        case .shift: DailyCompletedShiftUserState(result: result)
+        default: EmptyView()
+        }
+    }
+    
+    @ViewBuilder
+    private var solutionContent: some View {
+        switch result.gameType {
+        case .signals: DailyCompletedSignalsSolution(result: result)
+        case .archive: DailyCompletedArchiveSolution(result: result)
+        case .cargo: DailyCompletedCargoSolution(result: result)
+        case .shift: DailyCompletedShiftSolution(result: result)
+        default: EmptyView()
+        }
+    }
+    
+    private func formatDuration(_ seconds: Double) -> String {
+        let m = Int(seconds) / 60
+        let s = Int(seconds) % 60
+        return "\(m):\(s.formatted(.number.precision(.integerLength(2))))"
+    }
+}
+
+// MARK: - Subviews
+
+struct DailyCompletedToggleControl: View {
+    @Binding var displayMode: HistoryDisplayMode
+    let gameColor: Color
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
         Button {
-            withAnimation(.spring(response: 0.3)) {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.3)) {
                 displayMode = displayMode == .userState ? .solution : .userState
             }
         } label: {
@@ -130,48 +171,17 @@ struct DailyCompletedView: View {
         }
         .buttonStyle(.plain)
     }
+}
 
-    // MARK: - Game Content
+struct DailyCompletedSignalsUserState: View {
+    let result: GameResult
+    let won: Bool
+    let gameColor: Color
     
-    @ViewBuilder
-    private var gameContent: some View {
-        if displayMode == .userState {
-            userStateContent
-        } else {
-            solutionContent
-        }
-    }
-    
-    // MARK: - User State Views
-    
-    @ViewBuilder
-    private var userStateContent: some View {
-        switch result.gameType {
-        case .signals: signalsUserState
-        case .archive: archiveUserState
-        case .cargo: cargoUserState
-        case .shift: shiftUserState
-        default: EmptyView()
-        }
-    }
-    
-    @ViewBuilder
-    private var solutionContent: some View {
-        switch result.gameType {
-        case .signals: signalsSolution
-        case .archive: archiveSolution
-        case .cargo: cargoSolution
-        case .shift: shiftSolution
-        default: EmptyView()
-        }
-    }
-    
-    // MARK: - Signals
-    
-    private var signalsUserState: some View {
+    var body: some View {
         guard let json = result.signalsStateJSON,
               let guesses = SignalsStateSerializer.deserialize(json) else {
-            return AnyView(unavailableView)
+            return AnyView(DailyCompletedUnavailableView())
         }
         
         return AnyView(
@@ -204,7 +214,19 @@ struct DailyCompletedView: View {
         )
     }
     
-    private var signalsSolution: some View {
+    private func colorForDigitResult(_ result: DigitResult) -> Color {
+        switch result {
+        case .correct: return AppTheme.signals
+        case .misplaced: return AppTheme.misplacedBright
+        case .absent: return Color.primary.opacity(0.30)
+        }
+    }
+}
+
+struct DailyCompletedSignalsSolution: View {
+    let result: GameResult
+    
+    var body: some View {
         let code = SignalsCode(fromSeed: result.date.dailySeed)
         let digits = code.digits.map { "\($0)" }.joined(separator: " ")
         return VStack(alignment: .leading, spacing: 8) {
@@ -219,13 +241,17 @@ struct DailyCompletedView: View {
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.07)))
     }
+}
+
+struct DailyCompletedArchiveUserState: View {
+    let result: GameResult
+    let won: Bool
+    let gameColor: Color
     
-    // MARK: - Archive
-    
-    private var archiveUserState: some View {
+    var body: some View {
         guard let json = result.archiveStateJSON,
               let guesses = ArchiveStateSerializer.deserialize(json) else {
-            return AnyView(unavailableView)
+            return AnyView(DailyCompletedUnavailableView())
         }
         
         return AnyView(
@@ -244,9 +270,9 @@ struct DailyCompletedView: View {
                         }
                         Spacer()
                         HStack(spacing: 8) {
-                            arrowIndicator(for: guess.feedback.digitResults[0])
-                            arrowIndicator(for: guess.feedback.digitResults[2])
-                            arrowIndicator(for: guess.feedback.digitResults[4])
+                            DailyCompletedArrowIndicator(result: guess.feedback.digitResults[0])
+                            DailyCompletedArrowIndicator(result: guess.feedback.digitResults[2])
+                            DailyCompletedArrowIndicator(result: guess.feedback.digitResults[4])
                         }
                         if won && index == guesses.count - 1 {
                             Image(systemName: "checkmark.circle.fill")
@@ -261,8 +287,12 @@ struct DailyCompletedView: View {
             .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.07)))
         )
     }
+}
+
+struct DailyCompletedArchiveSolution: View {
+    let result: GameResult
     
-    private var archiveSolution: some View {
+    var body: some View {
         let event = ArchiveGameViewModel.dailyEvent(for: result.date)
         return VStack(alignment: .leading, spacing: 8) {
             Text(event.hint)
@@ -279,14 +309,16 @@ struct DailyCompletedView: View {
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.07)))
     }
+}
+
+struct DailyCompletedCargoUserState: View {
+    let result: GameResult
     
-    // MARK: - Cargo
-    
-    private var cargoUserState: some View {
+    var body: some View {
         guard let json = result.cargoStateJSON,
               let puzzle = CargoPuzzleLoader.dailyPuzzle(for: result.date),
               let grid = CargoStateSerializer.deserialize(json, originalPieces: puzzle.pieces) else {
-            return AnyView(unavailableView)
+            return AnyView(DailyCompletedUnavailableView())
         }
         
         return AnyView(
@@ -305,8 +337,12 @@ struct DailyCompletedView: View {
             .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
     }
+}
+
+struct DailyCompletedCargoSolution: View {
+    let result: GameResult
     
-    private var cargoSolution: some View {
+    var body: some View {
         guard let puzzle = CargoPuzzleLoader.dailyPuzzle(for: result.date) else {
             return AnyView(Text("Puzzle unavailable").foregroundStyle(.secondary).padding())
         }
@@ -328,14 +364,16 @@ struct DailyCompletedView: View {
             .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
     }
+}
+
+struct DailyCompletedShiftUserState: View {
+    let result: GameResult
     
-    // MARK: - Shift
-    
-    private var shiftUserState: some View {
+    var body: some View {
         guard let json = result.shiftStateJSON,
               let state = ShiftStateSerializer.deserialize(json),
               let grid = state.toShiftGrid() else {
-            return AnyView(unavailableView)
+            return AnyView(DailyCompletedUnavailableView())
         }
         
         let targetWords = state.targetWords.map { sw in
@@ -386,8 +424,12 @@ struct DailyCompletedView: View {
             .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
     }
+}
+
+struct DailyCompletedShiftSolution: View {
+    let result: GameResult
     
-    private var shiftSolution: some View {
+    var body: some View {
         let puzzle = ShiftPuzzleGenerator.generateDailyPuzzle(for: result.date)
         return VStack(spacing: 12) {
             if let solGrid = puzzle.solutionGrid {
@@ -424,10 +466,10 @@ struct DailyCompletedView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.07)))
     }
+}
 
-    // MARK: - Helpers
-
-    private var unavailableView: some View {
+struct DailyCompletedUnavailableView: View {
+    var body: some View {
         VStack(spacing: 8) {
             Text("Game history unavailable")
                 .font(.system(size: 14))
@@ -438,8 +480,13 @@ struct DailyCompletedView: View {
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.07)))
     }
+}
 
-    private func statItem(_ label: String, value: String) -> some View {
+struct DailyCompletedStatItem: View {
+    let label: String
+    let value: String
+    
+    var body: some View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 24, weight: .bold, design: .rounded))
@@ -450,22 +497,12 @@ struct DailyCompletedView: View {
                 .kerning(1)
         }
     }
+}
 
-    private func formatDuration(_ seconds: Double) -> String {
-        let m = Int(seconds) / 60
-        let s = Int(seconds) % 60
-        return String(format: "%d:%02d", m, s)
-    }
+struct DailyCompletedArrowIndicator: View {
+    let result: DigitResult
     
-    private func colorForDigitResult(_ result: DigitResult) -> Color {
-        switch result {
-        case .correct: return AppTheme.signals
-        case .misplaced: return AppTheme.misplacedBright
-        case .absent: return Color.primary.opacity(0.30)
-        }
-    }
-    
-    private func arrowIndicator(for result: DigitResult) -> some View {
+    var body: some View {
         Group {
             switch result {
             case .correct:

@@ -13,6 +13,7 @@ struct SettingsView: View {
     @AppStorage("settings.soundEnabled") private var soundEnabled = true
     @AppStorage("settings.showGameTimer") private var showGameTimer = true
     @AppStorage("settings.appearanceMode") private var appearanceMode = AppearanceMode.dark.rawValue
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.modelContext) private var modelContext
     @State private var showResetAlert = false
     @State private var resetGameType: GameType?
@@ -35,7 +36,7 @@ struct SettingsView: View {
                     settingsCard {
                         Toggle(isOn: $hapticsEnabled) {
                             Label("Haptic Feedback", systemImage: "iphone.radiowaves.left.and.right")
-                                .font(.system(size: 15, weight: .medium))
+                                .font(.body.weight(.medium))
                                 .foregroundStyle(.primary)
                         }
                         .tint(AppTheme.shift)
@@ -44,7 +45,7 @@ struct SettingsView: View {
 
                         Toggle(isOn: $soundEnabled) {
                             Label("Sound Effects", systemImage: "speaker.wave.2.fill")
-                                .font(.system(size: 15, weight: .medium))
+                                .font(.body.weight(.medium))
                                 .foregroundStyle(.primary)
                         }
                         .tint(AppTheme.shift)
@@ -53,7 +54,7 @@ struct SettingsView: View {
 
                         Toggle(isOn: $showGameTimer) {
                             Label("Show Game Timer", systemImage: "timer")
-                                .font(.system(size: 15, weight: .medium))
+                                .font(.body.weight(.medium))
                                 .foregroundStyle(.primary)
                         }
                         .tint(AppTheme.shift)
@@ -65,15 +66,21 @@ struct SettingsView: View {
                         HStack(spacing: 0) {
                             ForEach(AppearanceMode.allCases) { mode in
                                 Button {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    let updateAppearance = {
                                         appearanceMode = mode.rawValue
+                                    }
+
+                                    if reduceMotion {
+                                        updateAppearance()
+                                    } else {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8), updateAppearance)
                                     }
                                 } label: {
                                     VStack(spacing: 6) {
                                         Image(systemName: mode.icon)
-                                            .font(.system(size: 18))
+                                            .font(.title3)
                                         Text(mode.rawValue)
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .font(.caption.weight(.semibold))
                                     }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
@@ -100,15 +107,15 @@ struct SettingsView: View {
                             } label: {
                                 HStack {
                                     Image(systemName: game.2)
-                                        .font(.system(size: 14))
+                                        .font(.body)
                                         .foregroundStyle(game.3)
                                         .frame(width: 28)
                                     Text("Reset \(game.1)")
-                                        .font(.system(size: 15, weight: .medium))
+                                        .font(.body.weight(.medium))
                                         .foregroundStyle(.primary)
                                     Spacer()
                                     Image(systemName: "trash")
-                                        .font(.system(size: 12))
+                                        .font(.caption)
                                         .foregroundStyle(.red.opacity(0.5))
                                 }
                                 .padding(.vertical, 4)
@@ -121,10 +128,10 @@ struct SettingsView: View {
                     settingsCard {
                         HStack {
                             Text("Version")
-                                .font(.system(size: 15, weight: .medium)).foregroundStyle(.primary)
+                                .font(.body.weight(.medium)).foregroundStyle(.primary)
                             Spacer()
                             Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                                .font(.system(size: 15, weight: .medium, design: .monospaced))
+                                .font(.body.weight(.medium).monospaced())
                                 .foregroundStyle(.primary.opacity(0.5))
                         }
                     }
@@ -163,7 +170,7 @@ struct SettingsView: View {
     @ViewBuilder
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+            .font(.caption2.weight(.heavy).monospaced())
             .foregroundStyle(.primary.opacity(0.3))
             .kerning(2)
             .frame(maxWidth: .infinity, alignment: .leading)

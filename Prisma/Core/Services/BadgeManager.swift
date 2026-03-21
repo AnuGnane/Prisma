@@ -9,7 +9,7 @@
 import Foundation
 import SwiftData
 
-@Observable
+@Observable @MainActor
 final class BadgeManager {
     static let shared = BadgeManager()
     

@@ -22,12 +22,14 @@ struct GameControlsView: View {
     var body: some View {
         HStack(spacing: 16) {
             ControlButton(
+                label: "Undo",
                 icon: "arrow.uturn.backward",
                 isEnabled: canUndo,
                 action: onUndo
             )
             
             ControlButton(
+                label: "Redo",
                 icon: "arrow.uturn.forward",
                 isEnabled: canRedo,
                 action: onRedo
@@ -36,6 +38,7 @@ struct GameControlsView: View {
             Spacer()
             
             ControlButton(
+                label: "Hint",
                 icon: "lightbulb",
                 badge: hintsRemaining > 0 ? "\(hintsRemaining)" : nil,
                 isEnabled: canHint,
@@ -43,6 +46,7 @@ struct GameControlsView: View {
             )
             
             ControlButton(
+                label: "Reset",
                 icon: "arrow.clockwise",
                 isEnabled: true,
                 action: onReset

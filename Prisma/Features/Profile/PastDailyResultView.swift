@@ -13,6 +13,7 @@ struct PastDailyResultView: View {
     @State private var showSolution = false
     @State private var displayMode: HistoryDisplayMode = .userState
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var gameColor: Color {
         switch result.gameType {
@@ -34,22 +35,19 @@ struct PastDailyResultView: View {
     }
 
     private var formattedDate: String {
-        let fmt = DateFormatter()
-        fmt.dateStyle = .medium
-        fmt.timeStyle = .none
-        return fmt.string(from: result.date)
+        result.date.formatted(date: .abbreviated, time: .omitted)
     }
     
     private var toggleControl: some View {
         Button {
-            withAnimation(.spring(response: 0.3)) {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.3)) {
                 displayMode = displayMode == .userState ? .solution : .userState
             }
         } label: {
             HStack {
                 Image(systemName: displayMode == .userState ? "person.fill" : "checkmark.seal.fill")
                 Text(displayMode == .userState ? "Show Solution" : "Show Your Game")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.body.weight(.semibold))
             }
             .foregroundStyle(gameColor)
             .padding(.horizontal, 16)
@@ -69,11 +67,11 @@ struct PastDailyResultView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Text(result.gameType.displayName)
-                            .font(.system(size: 22, weight: .bold))
+                            .font(.title2.weight(.bold))
                             .foregroundStyle(gameColor)
                         Spacer()
                         Text(formattedDate)
-                            .font(.system(size: 15))
+                            .font(.body)
                             .foregroundStyle(.secondary)
                     }
                     HStack(spacing: 20) {
@@ -84,12 +82,12 @@ struct PastDailyResultView: View {
                         if result.durationSeconds > 0 {
                             let m = Int(result.durationSeconds) / 60
                             let s = Int(result.durationSeconds) % 60
-                            statBadge("Time", value: String(format: "%d:%02d", m, s))
+                            statBadge("Time", value: "\(m):\(s.formatted(.number.precision(.integerLength(2))))")
                         }
                     }
                     if !result.shareString.isEmpty {
                         Text(result.shareString)
-                            .font(.system(size: 14, design: .monospaced))
+                            .font(.caption.weight(.semibold).monospaced())
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -98,13 +96,13 @@ struct PastDailyResultView: View {
 
                 // Show solution toggle
                 Button {
-                    withAnimation(.spring(response: 0.3)) { showSolution.toggle() }
+                    withAnimation(reduceMotion ? nil : .spring(response: 0.3)) { showSolution.toggle() }
                 } label: {
                     HStack {
                         Image(systemName: showSolution ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
-                            .font(.system(size: 20))
+                            .font(.title2)
                         Text(showSolution ? "Hide solution" : "Show solution")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.body.weight(.semibold))
                         Spacer()
                     }
                     .foregroundStyle(gameColor)
@@ -125,7 +123,7 @@ struct PastDailyResultView: View {
                         
                         // Display mode label
                         Text(displayMode == .userState && hasUserState ? "Your Game" : "Solution")
-                            .font(.system(size: 13, weight: .heavy, design: .monospaced))
+                            .font(.caption2.weight(.heavy).monospaced())
                             .foregroundStyle(.secondary)
                             .kerning(1)
                         
@@ -145,10 +143,10 @@ struct PastDailyResultView: View {
     private func statBadge(_ label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(value)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(.title3.weight(.bold))
                 .foregroundStyle(.primary)
             Text(label)
-                .font(.system(size: 11))
+                .font(.caption2)
                 .foregroundStyle(.secondary)
         }
     }
@@ -203,10 +201,10 @@ struct PastDailyResultView: View {
         let digits = code.digits.map { "\($0)" }.joined(separator: " ")
         return VStack(alignment: .leading, spacing: 8) {
             Text("The code was:")
-                .font(.system(size: 14))
+                .font(.callout)
                 .foregroundStyle(.secondary)
             Text(digits)
-                .font(.system(size: 24, weight: .bold, design: .monospaced))
+                .font(.title.weight(.bold).monospaced())
                 .foregroundStyle(.primary)
         }
     }
@@ -215,13 +213,13 @@ struct PastDailyResultView: View {
         let event = ArchiveGameViewModel.dailyEvent(for: result.date)
         return VStack(alignment: .leading, spacing: 8) {
             Text(event.hint)
-                .font(.system(size: 14))
+                .font(.callout)
                 .foregroundStyle(.secondary)
             Text(event.event)
-                .font(.system(size: 17, weight: .semibold))
+                .font(.body.weight(.semibold))
                 .foregroundStyle(.primary)
             Text(event.dateString)
-                .font(.system(size: 15, weight: .medium, design: .monospaced))
+                .font(.body.weight(.medium).monospaced())
                 .foregroundStyle(.secondary)
         }
     }
@@ -255,7 +253,7 @@ struct PastDailyResultView: View {
             return AnyView(
                 VStack(spacing: 8) {
                     Text("Game history unavailable for games before this feature")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -290,7 +288,7 @@ struct PastDailyResultView: View {
             return AnyView(
                 VStack(spacing: 8) {
                     Text("Game history unavailable for games before this feature")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -321,7 +319,7 @@ struct PastDailyResultView: View {
                     let result = guessWithFeedback.feedback.digitResults[index]
                     
                     Text("\(digit)")
-                        .font(.system(size: 20, weight: .bold, design: .monospaced))
+                        .font(.title3.weight(.bold).monospaced())
                         .foregroundStyle(.primary)
                         .frame(width: 36, height: 36)
                         .background(
@@ -336,7 +334,7 @@ struct PastDailyResultView: View {
             // Show winning indicator if this is the winning guess
             if isWinning {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 20))
+                    .font(.title2)
                     .foregroundStyle(gameColor)
             }
         }
@@ -359,7 +357,7 @@ struct PastDailyResultView: View {
             return AnyView(
                 VStack(spacing: 8) {
                     Text("Game history unavailable for games before this feature")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -387,19 +385,19 @@ struct PastDailyResultView: View {
             HStack(spacing: 2) {
                 // Day
                 Text("\(guessWithFeedback.guess.digits[0])\(guessWithFeedback.guess.digits[1])")
-                    .font(.system(size: 18, weight: .semibold, design: .monospaced))
+                    .font(.title3.weight(.semibold).monospaced())
                 Text("/")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(.secondary)
                 // Month
                 Text("\(guessWithFeedback.guess.digits[2])\(guessWithFeedback.guess.digits[3])")
-                    .font(.system(size: 18, weight: .semibold, design: .monospaced))
+                    .font(.title3.weight(.semibold).monospaced())
                 Text("/")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(.secondary)
                 // Year
                 Text("\(guessWithFeedback.guess.digits[4])\(guessWithFeedback.guess.digits[5])\(guessWithFeedback.guess.digits[6])\(guessWithFeedback.guess.digits[7])")
-                    .font(.system(size: 18, weight: .semibold, design: .monospaced))
+                    .font(.title3.weight(.semibold).monospaced())
             }
             
             Spacer()
@@ -414,7 +412,7 @@ struct PastDailyResultView: View {
             // Show winning indicator if this is the winning guess
             if isWinning {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 20))
+                    .font(.title2)
                     .foregroundStyle(gameColor)
             }
         }
@@ -426,15 +424,15 @@ struct PastDailyResultView: View {
             switch result {
             case .correct:
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .foregroundStyle(AppTheme.signals)
             case .misplaced:
                 Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .foregroundStyle(AppTheme.misplacedBright)
             case .absent:
                 Image(systemName: "arrow.down.circle.fill")
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .foregroundStyle(AppTheme.error)
             }
         }
@@ -472,7 +470,7 @@ struct PastDailyResultView: View {
                 .frame(maxHeight: 350)
             } else {
                 Text("Solution unavailable")
-                    .font(.system(size: 14))
+                    .font(.callout)
                     .foregroundStyle(.secondary)
             }
         }
@@ -488,7 +486,7 @@ struct PastDailyResultView: View {
             return AnyView(
                 VStack(spacing: 8) {
                     Text("Game history unavailable for games before this feature")
-                        .font(.system(size: 14))
+                        .font(.callout)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }

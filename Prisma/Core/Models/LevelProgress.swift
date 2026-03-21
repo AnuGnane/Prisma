@@ -11,14 +11,14 @@ import SwiftData
 
 @Model
 final class LevelProgress {
-    var gameTypeRaw: String
-    var levelId: Int
-    var isPlayed: Bool          // Has the player attempted this level?
-    var won: Bool               // Did they win?
-    var score: Int              // 0 if lost
-    var guessesUsed: Int        // Number of guesses taken
-    var playedDate: Date?
-    var durationSeconds: Double // Solve time in seconds
+    var gameTypeRaw: String = ""
+    var levelId: Int = 0
+    var isPlayed: Bool = false          // Has the player attempted this level?
+    var won: Bool = false               // Did they win?
+    var score: Int = 0              // 0 if lost
+    var guessesUsed: Int = 0        // Number of guesses taken
+    var playedDate: Date? = nil
+    var durationSeconds: Double = 0.0 // Solve time in seconds
 
     init(
         gameTypeRaw: String,

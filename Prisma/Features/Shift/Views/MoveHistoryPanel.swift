@@ -14,12 +14,13 @@ import SwiftUI
 struct MoveHistoryPanel: View {
     let moves: [ShiftMove]
     @State private var isExpanded: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Header button with chevron
             Button {
-                withAnimation(.spring(response: 0.3)) {
+                withAnimation(reduceMotion ? nil : .spring(response: 0.3)) {
                     isExpanded.toggle()
                 }
             } label: {

@@ -25,7 +25,7 @@ struct ArchiveGuess: Equatable {
 
     /// Formatted display string
     var dateString: String {
-        String(format: "%02d/%02d/%04d", day, month, year)
+        "\(day.formatted(.number.precision(.integerLength(2))))/\(month.formatted(.number.precision(.integerLength(2))))/\(year.formatted(.number.precision(.integerLength(4))))"
     }
 
     /// Returns true if this guess represents a valid calendar date.

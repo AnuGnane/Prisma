@@ -21,6 +21,7 @@ struct ShiftGridView: View {
     @State private var appliedSteps: Int = 0
     @State private var cellPops: Set<Int> = []
     @State private var shimmerCells: Set<Int> = []
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let spacing: CGFloat = 3
 
@@ -74,9 +75,9 @@ struct ShiftGridView: View {
                             x: inset + CGFloat(col) * step + cellSize / 2,
                             y: inset + CGFloat(row) * step + cellSize / 2
                         )
-                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: popping)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: shimmering)
-                        .animation(.interpolatingSpring(stiffness: 200, damping: 18), value: highlighted)
+                        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: popping)
+                        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6), value: shimmering)
+                        .animation(reduceMotion ? nil : .interpolatingSpring(stiffness: 200, damping: 18), value: highlighted)
                     }
                 }
             }
@@ -84,6 +85,9 @@ struct ShiftGridView: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .contentShape(Rectangle())
             .gesture(interactive ? dragGesture(step: step) : nil)
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Shift Game Board")
+            .accessibilityHint("Swipe horizontally to shift rows, or vertically to shift columns.")
         }
         .aspectRatio(1, contentMode: .fit)
         .onChange(of: highlightedCells) { oldVal, newVal in
@@ -93,21 +97,23 @@ struct ShiftGridView: View {
                 Haptics.playSuccess()
                 shimmerCells = fresh
 
-                // Staggered pop for sequential ripple feel
-                let sorted = fresh.sorted()
-                for (delay, idx) in sorted.enumerated() {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay) * 0.05) {
-                        withAnimation(.spring(response: 0.25, dampingFraction: 0.5)) {
-                            _ = cellPops.insert(idx)
+                if !reduceMotion {
+                    // Staggered pop for sequential ripple feel
+                    let sorted = fresh.sorted()
+                    for (delay, idx) in sorted.enumerated() {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + Double(delay) * 0.05) {
+                            withAnimation(.spring(response: 0.25, dampingFraction: 0.5)) {
+                                _ = cellPops.insert(idx)
+                            }
                         }
                     }
-                }
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + Double(sorted.count) * 0.05 + 0.15) {
-                    withAnimation { cellPops = [] }
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                    withAnimation(.easeOut(duration: 0.4)) { shimmerCells = [] }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(sorted.count) * 0.05 + 0.15) {
+                        withAnimation { cellPops = [] }
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                        withAnimation(.easeOut(duration: 0.4)) { shimmerCells = [] }
+                    }
                 }
             }
         }
@@ -166,9 +172,11 @@ struct ShiftGridView: View {
             appliedSteps = 0
         }
 
+        let dragMultiplier: CGFloat = 0.75 // Adds resistance to prevent overshoot 
+
         switch activeDrag {
         case .row(let r):
-            let raw = value.translation.width
+            let raw = value.translation.width * dragMultiplier
             let stepsNow = Int(raw / step)
             let delta = stepsNow - appliedSteps
 
@@ -184,7 +192,7 @@ struct ShiftGridView: View {
             rowOffsets[r] = raw - CGFloat(stepsNow) * step
 
         case .column(let c):
-            let raw = value.translation.height
+            let raw = value.translation.height * dragMultiplier
             let stepsNow = Int(raw / step)
             let delta = stepsNow - appliedSteps
 
@@ -212,7 +220,7 @@ struct ShiftGridView: View {
                 onMove(move)
                 Haptics.playLightImpact()
             }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) { rowOffsets[r] = 0 }
+            withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.65)) { rowOffsets[r] = 0 }
 
         case .column(let c):
             let fraction = colOffsets[c]
@@ -221,12 +229,12 @@ struct ShiftGridView: View {
                 onMove(move)
                 Haptics.playLightImpact()
             }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) { colOffsets[c] = 0 }
+            withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.65)) { colOffsets[c] = 0 }
 
         case .none: break
         }
 
-        withAnimation(.easeOut(duration: 0.15)) { activeDrag = nil }
+        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.15)) { activeDrag = nil }
         totalDragTranslation = 0
         appliedSteps = 0
     }

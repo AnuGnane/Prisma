@@ -11,6 +11,7 @@ import SwiftData
 @main
 struct PrismaApp: App {
     @AppStorage("settings.appearanceMode") private var appearanceMode = AppearanceMode.dark.rawValue
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showSplash = true
 
     init() {
@@ -31,8 +32,14 @@ struct PrismaApp: App {
             .preferredColorScheme(AppearanceMode(rawValue: appearanceMode)?.colorScheme)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                    withAnimation(.easeInOut(duration: 0.5)) {
+                    let hideSplash = {
                         showSplash = false
+                    }
+
+                    if reduceMotion {
+                        hideSplash()
+                    } else {
+                        withAnimation(.easeInOut(duration: 0.5), hideSplash)
                     }
                 }
             }

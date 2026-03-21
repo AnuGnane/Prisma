@@ -11,6 +11,7 @@ import SwiftUI
 struct ArchiveInputView: View {
     @Bindable var viewModel: ArchiveGameViewModel
     var onSubmit: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let numericRows: [[Int]] = [
         [1, 2, 3],
@@ -28,12 +29,13 @@ struct ArchiveInputView: View {
                 }
             }
             HStack(spacing: 8) {
-                specialKey(label: "⌫", color: AppTheme.deleteRed) {
+                specialKey(title: "Delete", systemImage: "delete.left.fill", color: AppTheme.deleteRed) {
                     viewModel.deleteLastDigit()
                 }
                 numberKey(0)
                 specialKey(
-                    label: "✓",
+                    title: "Submit",
+                    systemImage: "checkmark",
                     color: viewModel.isInputComplete
                         ? AppTheme.signals
                         : AppTheme.dimText,
@@ -50,7 +52,7 @@ struct ArchiveInputView: View {
     private func numberKey(_ digit: Int) -> some View {
         let keyState = viewModel.digitKeyStates[digit] ?? .unknown
         Button {
-            withAnimation(.easeIn(duration: 0.08)) {
+            withAnimation(reduceMotion ? nil : .easeIn(duration: 0.08)) {
                 Haptics.playLightImpact()
                 viewModel.inputDigit(digit)
             }
@@ -66,12 +68,13 @@ struct ArchiveInputView: View {
                 )
         }
         .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.25), value: keyState)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: keyState)
     }
 
     @ViewBuilder
     private func specialKey(
-        label: String,
+        title: String,
+        systemImage: String,
         color: Color,
         disabled: Bool = false,
         action: @escaping () -> Void
@@ -80,8 +83,8 @@ struct ArchiveInputView: View {
             Haptics.playLightImpact()
             action()
         } label: {
-            Text(label)
-                .font(.system(size: 22, weight: .semibold))
+            Label(title, systemImage: systemImage)
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(disabled ? AppTheme.dimText : .white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 54)
@@ -92,7 +95,7 @@ struct ArchiveInputView: View {
         }
         .buttonStyle(.plain)
         .disabled(disabled)
-        .animation(.easeInOut(duration: 0.2), value: disabled)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: disabled)
     }
 }
 

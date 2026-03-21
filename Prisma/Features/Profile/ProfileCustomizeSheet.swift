@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileCustomizeSheet: View {
-    let prefs: ProfileSectionPreferences
+    @Bindable var prefs: ProfileSectionPreferences
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -23,34 +23,25 @@ struct ProfileCustomizeSheet: View {
                             subtitle: "Win counts, progress bars, and averages",
                             icon: "chart.bar.fill",
                             color: .blue,
-                            isOn: Binding(
-                                get: { prefs.showStatCards },
-                                set: { prefs.showStatCards = $0 }
-                            )
+                            isOn: $prefs.showStatCards
                         )
                         SectionToggle(
                             title: "Daily Streaks",
                             subtitle: "Consecutive days played per game",
                             icon: "flame.fill",
                             color: .orange,
-                            isOn: Binding(
-                                get: { prefs.showStreaks },
-                                set: { prefs.showStreaks = $0 }
-                            )
+                            isOn: $prefs.showStreaks
                         )
                         SectionToggle(
                             title: "Daily History",
                             subtitle: "Calendar and list of past daily results",
                             icon: "calendar",
                             color: .purple,
-                            isOn: Binding(
-                                get: { prefs.showDailyHistory },
-                                set: { prefs.showDailyHistory = $0 }
-                            )
+                            isOn: $prefs.showDailyHistory
                         )
                     } header: {
                         Text("ESSENTIALS")
-                            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            .font(.caption2.weight(.heavy).monospaced())
                             .kerning(1)
                     }
 
@@ -60,48 +51,36 @@ struct ProfileCustomizeSheet: View {
                             subtitle: "Trend chart of your win percentage",
                             icon: "chart.line.uptrend.xyaxis",
                             color: .green,
-                            isOn: Binding(
-                                get: { prefs.showWinRateChart },
-                                set: { prefs.showWinRateChart = $0 }
-                            )
+                            isOn: $prefs.showWinRateChart
                         )
                         SectionToggle(
                             title: "Solve Times",
                             subtitle: "Average solve duration per game",
                             icon: "stopwatch.fill",
                             color: .cyan,
-                            isOn: Binding(
-                                get: { prefs.showSolveTimeStats },
-                                set: { prefs.showSolveTimeStats = $0 }
-                            )
+                            isOn: $prefs.showSolveTimeStats
                         )
                         SectionToggle(
                             title: "Leaderboards",
                             subtitle: "Game Center leaderboard preview",
                             icon: "trophy.fill",
                             color: .yellow,
-                            isOn: Binding(
-                                get: { prefs.showLeaderboards },
-                                set: { prefs.showLeaderboards = $0 }
-                            )
+                            isOn: $prefs.showLeaderboards
                         )
                         SectionToggle(
                             title: "Badges",
                             subtitle: "Achievement badge collection",
                             icon: "star.circle.fill",
                             color: .pink,
-                            isOn: Binding(
-                                get: { prefs.showBadges },
-                                set: { prefs.showBadges = $0 }
-                            )
+                            isOn: $prefs.showBadges
                         )
                     } header: {
                         Text("EXTRAS")
-                            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                            .font(.caption2.weight(.heavy).monospaced())
                             .kerning(1)
                     } footer: {
                         Text("These sections are hidden by default. Turn them on when you're ready for more detail.")
-                            .font(.system(size: 12))
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -112,7 +91,7 @@ struct ProfileCustomizeSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.body.weight(.semibold))
                 }
             }
         }
@@ -132,16 +111,16 @@ private struct SectionToggle: View {
         Toggle(isOn: $isOn) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.body.weight(.medium))
                     .foregroundStyle(color)
                     .frame(width: 28)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .foregroundStyle(.primary)
                     Text(subtitle)
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }

@@ -97,7 +97,7 @@ struct ShiftPuzzleGenerator {
         pool.shuffle(using: &rng)
 
         var picked: [String] = []
-        var usedChars = Set<Character>() // Avoid too many overlapping first letters
+
 
         for word in pool {
             guard picked.count < count else { break }

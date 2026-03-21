@@ -11,6 +11,7 @@ import SwiftData
 
 struct DailyCalendarView: View {
     @Query(sort: \GameResult.date, order: .reverse) private var allResults: [GameResult]
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var displayedMonth = Calendar.current.component(.month, from: .now)
     @State private var displayedYear = Calendar.current.component(.year, from: .now)
@@ -40,15 +41,16 @@ struct DailyCalendarView: View {
                 Button {
                     stepMonth(-1)
                 } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .bold))
+                    Label("Previous", systemImage: "chevron.left")
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.primary.opacity(0.5))
                         .padding(6)
                 }
+                .accessibilityLabel("Previous month")
 
                 Spacer()
                 Text(monthTitle.uppercased())
-                    .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                    .font(.caption.weight(.heavy).monospaced())
                     .foregroundStyle(.primary.opacity(0.6))
                     .kerning(1.5)
                 Spacer()
@@ -56,18 +58,19 @@ struct DailyCalendarView: View {
                 Button {
                     stepMonth(1)
                 } label: {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .bold))
+                    Label("Next", systemImage: "chevron.right")
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.primary.opacity(0.5))
                         .padding(6)
                 }
+                .accessibilityLabel("Next month")
             }
 
             // Day headers
             HStack(spacing: 0) {
                 ForEach(daySymbols, id: \.self) { d in
                     Text(d)
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .font(.caption2.weight(.bold).monospaced())
                         .foregroundStyle(.primary.opacity(0.3))
                         .frame(maxWidth: .infinity)
                 }
@@ -82,10 +85,20 @@ struct DailyCalendarView: View {
                         if day > 0 {
                             calendarCell(day: day)
                                 .onTapGesture {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                    let updateSelection = {
                                         selectedDay = selectedDay == day ? nil : day
                                     }
+                                    if reduceMotion {
+                                        updateSelection()
+                                    } else {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            updateSelection()
+                                        }
+                                    }
                                 }
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel(accessibilityDayLabel(day: day))
+                                .accessibilityHint("Double tap to view day results")
                         } else {
                             Color.clear.frame(maxWidth: .infinity, minHeight: 36)
                         }
@@ -117,7 +130,7 @@ struct DailyCalendarView: View {
 
         return VStack(spacing: 2) {
             Text("\(day)")
-                .font(.system(size: 12, weight: isToday ? .bold : .medium, design: .monospaced))
+                .font(.caption.weight(isToday ? .bold : .medium).monospaced())
                 .foregroundStyle(isToday ? .white : .primary.opacity(0.5))
 
             if dayResults.isEmpty {
@@ -172,7 +185,7 @@ struct DailyCalendarView: View {
     private var intensityLegend: some View {
         HStack(spacing: 6) {
             Text("Less")
-                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                .font(.caption2.weight(.medium).monospaced())
                 .foregroundStyle(.primary.opacity(0.3))
             
             ForEach(0..<5) { level in
@@ -182,7 +195,7 @@ struct DailyCalendarView: View {
             }
             
             Text("More")
-                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                .font(.caption2.weight(.medium).monospaced())
                 .foregroundStyle(.primary.opacity(0.3))
         }
         .padding(.top, 4)
@@ -196,12 +209,12 @@ struct DailyCalendarView: View {
         
         return VStack(alignment: .leading, spacing: 8) {
             Text(date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .font(.caption.weight(.bold).monospaced())
                 .foregroundStyle(.primary.opacity(0.7))
             
             if dayResults.isEmpty {
                 Text("No games played")
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(.primary.opacity(0.3))
             } else {
                 ForEach(dayResults, id: \.persistentModelID) { result in
@@ -211,24 +224,24 @@ struct DailyCalendarView: View {
                             .frame(width: 6, height: 6)
                         
                         Text(result.gameType.displayName)
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(.primary.opacity(0.8))
                         
                         Spacer()
                         
                         if result.score > 0 {
                             Text("Won")
-                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .font(.caption2.weight(.medium).monospaced())
                                 .foregroundStyle(dotColor(for: result))
                         } else {
                             Text("Lost")
-                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .font(.caption2.weight(.medium).monospaced())
                                 .foregroundStyle(.primary.opacity(0.3))
                         }
                         
                         if result.durationSeconds > 0 {
                             Text(formatDuration(result.durationSeconds))
-                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .font(.caption2.weight(.medium).monospaced())
                                 .foregroundStyle(.primary.opacity(0.4))
                         }
                     }
@@ -242,7 +255,9 @@ struct DailyCalendarView: View {
     private func formatDuration(_ seconds: Double) -> String {
         let mins = Int(seconds) / 60
         let secs = Int(seconds) % 60
-        return mins > 0 ? String(format: "%d:%02d", mins, secs) : "\(secs)s"
+        return mins > 0
+            ? "\(mins):\(secs.formatted(.number.precision(.integerLength(2))))"
+            : "\(secs)s"
     }
 
     // MARK: - Helpers
@@ -266,6 +281,18 @@ struct DailyCalendarView: View {
             displayedMonth = calendar.component(.month, from: newDate)
             displayedYear = calendar.component(.year, from: newDate)
         }
+    }
+
+    private func accessibilityDayLabel(day: Int) -> String {
+        guard let date = calendar.date(from: DateComponents(year: displayedYear, month: displayedMonth, day: day)) else {
+            return "Day \(day)"
+        }
+        let resultsCount = dailyResults(for: date).count
+        if resultsCount == 0 {
+            return "\(date.formatted(.dateTime.weekday(.wide).month(.wide).day())), no games played"
+        }
+        let gamesWord = resultsCount == 1 ? "game" : "games"
+        return "\(date.formatted(.dateTime.weekday(.wide).month(.wide).day())), \(resultsCount) \(gamesWord) played"
     }
 
     private func weeksInMonth() -> [[Int]] {

@@ -21,6 +21,7 @@ struct LocalLevelSolutionView: View {
     let gameResult: GameResult?
     
     @State private var displayMode: HistoryDisplayMode = .userState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
 
     private var accentColor: Color {
@@ -45,8 +46,14 @@ struct LocalLevelSolutionView: View {
     
     private var toggleControl: some View {
         Button {
-            withAnimation(.spring(response: 0.3)) {
+            let updateMode = {
                 displayMode = displayMode == .userState ? .solution : .userState
+            }
+
+            if reduceMotion {
+                updateMode()
+            } else {
+                withAnimation(.spring(response: 0.3), updateMode)
             }
         } label: {
             HStack {

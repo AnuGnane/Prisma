@@ -40,9 +40,7 @@ struct GameDetailView: View {
     private var dailyStreak: Int { StreakManager.currentStreak(for: game.rawValue) }
 
     private var todayString: String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "EEEE d MMM"
-        return fmt.string(from: .now)
+        Date.now.formatted(date: .abbreviated, time: .omitted)
     }
 
     var body: some View {
@@ -51,10 +49,16 @@ struct GameDetailView: View {
 
             ScrollView {
                 VStack(spacing: 24) {
-                    heroCard
-                    actionButtons
-                    statsSection
-                    howToPlaySection
+                    GameDetailHeroCard(game: game, todayString: todayString)
+                    GameDetailActionButtons(game: game)
+                    GameDetailStatsSection(
+                        wonCount: wonCount,
+                        totalPlayed: totalPlayed,
+                        winRate: winRate,
+                        dailyStreak: dailyStreak,
+                        gameColor: gameColor
+                    )
+                    GameDetailHowToPlaySection(game: game, gameColor: gameColor, howToPlaySteps: howToPlaySteps)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
@@ -72,9 +76,47 @@ struct GameDetailView: View {
         }
     }
 
-    // MARK: - Hero Card
+    // MARK: - How to Play Steps
 
-    private var heroCard: some View {
+    private var howToPlaySteps: [String] {
+        switch game {
+        case .signals:
+            return [
+                "Guess the secret 4-digit code",
+                "After each guess, you'll see which digits are correct and in the right position",
+                "Use logic to narrow down the code in as few guesses as possible"
+            ]
+        case .archive:
+            return [
+                "Guess the historic date shown in the clue",
+                "Enter day, month, and year for each guess",
+                "Feedback shows which parts are correct or close"
+            ]
+        case .cargo:
+            return [
+                "Place all the pieces to fill the grid completely",
+                "Drag, rotate, and flip pieces to find the right fit",
+                "Every cell must be covered — no gaps or overlaps"
+            ]
+        case .shift:
+            return [
+                "Slide rows and columns to spell hidden words",
+                "Each move shifts an entire row or column",
+                "Find all the words in as few moves as possible"
+            ]
+        case .orbit:
+            return ["Coming soon"]
+        }
+    }
+}
+
+// MARK: - Subviews
+
+struct GameDetailHeroCard: View {
+    let game: GameType
+    let todayString: String
+
+    var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 16) {
                 GameCardGraphic(game: game)
@@ -113,10 +155,12 @@ struct GameDetailView: View {
                 .strokeBorder(.white.opacity(0.1), lineWidth: 1)
         )
     }
+}
 
-    // MARK: - Action Buttons
+struct GameDetailActionButtons: View {
+    let game: GameType
 
-    private var actionButtons: some View {
+    var body: some View {
         VStack(spacing: 12) {
             NavigationLink(value: GameDetailRoute.playDaily(game)) {
                 Text("Play Daily")
@@ -163,10 +207,16 @@ struct GameDetailView: View {
             .buttonStyle(.plain)
         }
     }
+}
 
-    // MARK: - Stats Section
+struct GameDetailStatsSection: View {
+    let wonCount: Int
+    let totalPlayed: Int
+    let winRate: Int
+    let dailyStreak: Int
+    let gameColor: Color
 
-    private var statsSection: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("YOUR STATS")
                 .font(.system(size: 11, weight: .heavy, design: .monospaced))
@@ -209,10 +259,14 @@ struct GameDetailView: View {
             .fill(Color.primary.opacity(0.06))
             .frame(width: 1, height: 36)
     }
+}
 
-    // MARK: - How to Play
+struct GameDetailHowToPlaySection: View {
+    let game: GameType
+    let gameColor: Color
+    let howToPlaySteps: [String]
 
-    private var howToPlaySection: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("HOW TO PLAY")
                 .font(.system(size: 11, weight: .heavy, design: .monospaced))
@@ -238,37 +292,6 @@ struct GameDetailView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(AppTheme.keyFill)
             )
-        }
-    }
-
-    private var howToPlaySteps: [String] {
-        switch game {
-        case .signals:
-            return [
-                "Guess the secret 4-digit code",
-                "After each guess, you'll see which digits are correct and in the right position",
-                "Use logic to narrow down the code in as few guesses as possible"
-            ]
-        case .archive:
-            return [
-                "Guess the historic date shown in the clue",
-                "Enter day, month, and year for each guess",
-                "Feedback shows which parts are correct or close"
-            ]
-        case .cargo:
-            return [
-                "Place all the pieces to fill the grid completely",
-                "Drag, rotate, and flip pieces to find the right fit",
-                "Every cell must be covered — no gaps or overlaps"
-            ]
-        case .shift:
-            return [
-                "Slide rows and columns to spell hidden words",
-                "Each move shifts an entire row or column",
-                "Find all the words in as few moves as possible"
-            ]
-        case .orbit:
-            return ["Coming soon"]
         }
     }
 }

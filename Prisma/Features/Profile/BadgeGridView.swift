@@ -21,23 +21,29 @@ struct BadgeGridView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("ACHIEVEMENTS")
-                    .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                    .font(.caption2.weight(.heavy).monospaced())
                     .foregroundStyle(.secondary)
                     .kerning(1.5)
                 
                 Spacer()
                 
                 Text("\(unlockedCount)/\(totalCount)")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .font(.caption.weight(.bold).monospaced())
                     .foregroundStyle(.primary.opacity(0.4))
             }
             
             LazyVGrid(columns: columns, spacing: 12) {
                 ForEach(badges) { info in
-                    badgeCell(info)
-                        .onTapGesture {
+                    Button {
                             selectedBadge = info
+                    } label: {
+                        badgeCell(info)
                         }
+                    .buttonStyle(.plain)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(info.badge.title)
+                    .accessibilityValue(info.isUnlocked ? "Unlocked" : "Locked")
+                    .accessibilityHint("Shows badge details")
                 }
             }
         }
@@ -64,12 +70,12 @@ struct BadgeGridView: View {
                 }
                 
                 Image(systemName: info.badge.iconName)
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.title3.weight(.medium))
                     .foregroundStyle(info.isUnlocked ? info.badge.accentColor : .primary.opacity(0.15))
             }
             
             Text(info.badge.title)
-                .font(.system(size: 9, weight: .semibold))
+                .font(.caption2.weight(.semibold))
                 .foregroundStyle(info.isUnlocked ? Color.primary.opacity(0.7) : Color.primary.opacity(0.2))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -92,27 +98,27 @@ struct BadgeGridView: View {
                 }
                 
                 Image(systemName: info.badge.iconName)
-                    .font(.system(size: 32, weight: .medium))
+                    .font(.largeTitle.weight(.medium))
                     .foregroundStyle(info.isUnlocked ? info.badge.accentColor : .primary.opacity(0.2))
             }
             .padding(.top, 20)
             
             Text(info.badge.title)
-                .font(.system(size: 20, weight: .bold))
+                .font(.title2.weight(.bold))
                 .foregroundStyle(info.isUnlocked ? .white : .primary.opacity(0.4))
             
             Text(info.badge.description)
-                .font(.system(size: 14))
+                .font(.body)
                 .foregroundStyle(.primary.opacity(0.5))
                 .multilineTextAlignment(.center)
             
             if info.isUnlocked, let date = info.unlockedDate {
                 Text("Unlocked \(date.formatted(.dateTime.month(.abbreviated).day().year()))")
-                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .font(.caption.weight(.medium).monospaced())
                     .foregroundStyle(info.badge.accentColor.opacity(0.7))
             } else {
                 Text("LOCKED")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                    .font(.caption.weight(.bold).monospaced())
                     .foregroundStyle(.primary.opacity(0.2))
                     .kerning(2)
             }

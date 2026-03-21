@@ -18,15 +18,15 @@ struct ArchiveEvent: Codable, Identifiable {
 
     /// The 8-digit representation: [D, D, M, M, Y, Y, Y, Y]
     var dateDigits: [Int] {
-        let dd = String(format: "%02d", day)
-        let mm = String(format: "%02d", month)
-        let yyyy = String(format: "%04d", year)
+        let dd = day.formatted(.number.precision(.integerLength(2)))
+        let mm = month.formatted(.number.precision(.integerLength(2)))
+        let yyyy = year.formatted(.number.precision(.integerLength(4)))
         return (dd + mm + yyyy).compactMap { $0.wholeNumberValue }
     }
 
     /// Formatted display string: "DD/MM/YYYY"
     var dateString: String {
-        String(format: "%02d/%02d/%04d", day, month, year)
+        "\(day.formatted(.number.precision(.integerLength(2))))/\(month.formatted(.number.precision(.integerLength(2))))/\(year.formatted(.number.precision(.integerLength(4))))"
     }
 
     /// YYYYMMDD integer for arrow comparison.

@@ -12,6 +12,7 @@ import SwiftUI
 struct SignalsFeedbackRow: View {
     let guess: SignalsGuess
     let feedback: SignalsFeedback
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// One Bool per tile — drives the flip from unrevealed → colour-revealed.
     @State private var revealed = [false, false, false, false]
@@ -28,19 +29,25 @@ struct SignalsFeedbackRow: View {
                 .frame(width: 36)
                 // Hint appears after the last tile has flipped
                 .opacity(revealed[3] ? 1 : 0)
-                .animation(.easeIn(duration: 0.2), value: revealed[3])
+                .animation(reduceMotion ? nil : .easeIn(duration: 0.2), value: revealed[3])
         }
         .onAppear {
-            for i in 0..<4 {
-                let delay = Double(i) * 0.15
-                withAnimation(
-                    .easeInOut(duration: 0.35)
-                    .delay(delay)
-                ) {
+            if reduceMotion {
+                for i in 0..<4 {
                     revealed[i] = true
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay + 0.15) {
-                    Haptics.playRigidImpact()
+            } else {
+                for i in 0..<4 {
+                    let delay = Double(i) * 0.15
+                    withAnimation(
+                        .easeInOut(duration: 0.35)
+                        .delay(delay)
+                    ) {
+                        revealed[i] = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay + 0.15) {
+                        Haptics.playRigidImpact()
+                    }
                 }
             }
         }

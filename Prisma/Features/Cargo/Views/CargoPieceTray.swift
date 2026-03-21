@@ -67,6 +67,7 @@ struct PieceThumbnail: View {
     let piece: CargoPiece
     let isSelected: Bool
     let isPlaced: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let cells = piece.transformedCells
@@ -114,7 +115,7 @@ struct PieceThumbnail: View {
         }
         .frame(width: previewSize, height: previewSize)
         .scaleEffect(isSelected ? 1.08 : 1.0)
-        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
+        .animation(reduceMotion ? nil : .spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
         .opacity(isPlaced ? 0.45 : 1.0)
     }
 }

@@ -109,7 +109,7 @@ struct PersistenceManager {
     static func markLevelPlayed(gameType: GameType, levelId: Int, won: Bool, score: Int, guessesUsed: Int, durationSeconds: Double = 0, context: ModelContext) {
         let progressList = fetchLevelProgress(for: gameType, context: context)
         
-        if let existing = progressList.first(where: { $0.levelId == levelId }) {
+        if progressList.contains(where: { $0.levelId == levelId }) {
             // Already played — don't overwrite
             return
         }

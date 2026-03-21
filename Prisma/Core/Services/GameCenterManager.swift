@@ -9,7 +9,7 @@
 import GameKit
 import Observation
 
-@Observable
+@Observable @MainActor
 final class GameCenterManager: @unchecked Sendable {
     static let shared = GameCenterManager()
 
@@ -62,7 +62,7 @@ final class GameCenterManager: @unchecked Sendable {
             self?.playerName = player.isAuthenticated ? player.displayName : nil
 
             if player.isAuthenticated {
-                print("[GameCenter] Authenticated as \(player.displayName)")
+                print("[GameCenter] Authenticated successfully")
             }
         }
     }

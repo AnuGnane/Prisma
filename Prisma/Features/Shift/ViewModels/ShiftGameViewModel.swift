@@ -9,7 +9,7 @@ import Foundation
 import Observation
 import UIKit
 
-@Observable
+@Observable @MainActor
 final class ShiftGameViewModel {
 
     // MARK: - Game Data
@@ -196,21 +196,22 @@ final class ShiftGameViewModel {
             let start = Date()
             while !Task.isCancelled {
                 try? await Task.sleep(for: .milliseconds(100))
-                await MainActor.run { self?.elapsedSeconds = Date().timeIntervalSince(start) }
+                guard let self = self else { break }
+                await MainActor.run { self.elapsedSeconds = Date().timeIntervalSince(start) }
             }
         }
     }
 
     var timerString: String {
-        String(format: "%d:%02d", Int(elapsedSeconds) / 60, Int(elapsedSeconds) % 60)
+        let minutes = Int(elapsedSeconds) / 60
+        let seconds = Int(elapsedSeconds) % 60
+        return "\(minutes):\(seconds.formatted(.number.precision(.integerLength(2))))"
     }
-
-    deinit { timerTask?.cancel() }
 
     // MARK: - Share
 
     func generateShareString() -> String {
-        let label = isDaily ? DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .none) : "Level \(activeLevelId ?? 0)"
+        let label = isDaily ? Date.now.formatted(date: .abbreviated, time: .omitted) : "Level \(activeLevelId ?? 0)"
         return """
         Prisma Shift · \(label)
         \(moveCount) moves · \(timerString)

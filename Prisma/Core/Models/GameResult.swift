@@ -8,14 +8,14 @@ import SwiftData
 
 @Model
 final class GameResult {
-    var gameTypeRaw: String
-    var date: Date
-    var score: Int
-    var shareString: String
-    var guessCount: Int
-    var isDaily: Bool
-    var durationSeconds: Double
-    var levelId: Int?  // For local games only, nil for daily games
+    var gameTypeRaw: String = ""
+    var date: Date = Date.now
+    var score: Int = 0
+    var shareString: String = ""
+    var guessCount: Int = 0
+    var isDaily: Bool = false
+    var durationSeconds: Double = 0.0
+    var levelId: Int? = nil  // For local games only, nil for daily games
     
     // Game state persistence properties
     var cargoStateJSON: String?

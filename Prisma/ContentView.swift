@@ -126,9 +126,7 @@ struct GameHeroCard: View {
     private var gameColor: Color { AppTheme.accent(for: game) }
 
     private var todayString: String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "EEEE d MMM"
-        return fmt.string(from: .now)
+        Date.now.formatted(date: .abbreviated, time: .omitted)
     }
 
     var body: some View {

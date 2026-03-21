@@ -14,6 +14,7 @@ struct ProfileView: View {
     @Query(sort: \GameResult.date, order: .reverse) private var allGameResults: [GameResult]
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showResetConfirmation = false
     @State private var badgeInfos: [BadgeInfo] = []
     @State private var newBadgeToast: Badge?
@@ -45,7 +46,7 @@ struct ProfileView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         // Section header
                         Text("YOUR STATS")
-                            .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                            .font(.caption.weight(.heavy).monospaced())
                             .foregroundStyle(.secondary)
                             .kerning(2)
                             .padding(.horizontal, 20)
@@ -141,17 +142,21 @@ struct ProfileView: View {
                         Button {
                             showCustomize = true
                         } label: {
-                            Image(systemName: "slider.horizontal.3")
-                                .font(.system(size: 15))
+                            Label("Customize", systemImage: "slider.horizontal.3")
+                                .font(.callout)
                                 .foregroundStyle(.primary.opacity(0.5))
                         }
+                        .accessibilityLabel("Customize profile")
+                        .accessibilityHint("Opens profile customization options")
                         NavigationLink {
                             SettingsView()
                         } label: {
-                            Image(systemName: "gearshape.fill")
-                                .font(.system(size: 15))
+                            Label("Settings", systemImage: "gearshape.fill")
+                                .font(.callout)
                                 .foregroundStyle(.primary.opacity(0.5))
                         }
+                        .accessibilityLabel("Settings")
+                        .accessibilityHint("Opens app settings")
                     }
                 }
             }
@@ -188,11 +193,19 @@ struct ProfileView: View {
         badgeInfos = BadgeManager.shared.allBadges()
         
         if let first = newlyUnlocked.first {
-            withAnimation(.spring(response: 0.5)) {
+            if reduceMotion {
                 newBadgeToast = first
+            } else {
+                withAnimation(.spring(response: 0.5)) {
+                    newBadgeToast = first
+                }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                withAnimation { newBadgeToast = nil }
+                if reduceMotion {
+                    newBadgeToast = nil
+                } else {
+                    withAnimation { newBadgeToast = nil }
+                }
             }
         }
     }
@@ -200,15 +213,15 @@ struct ProfileView: View {
     private func badgeToast(_ badge: Badge) -> some View {
         HStack(spacing: 10) {
             Image(systemName: badge.iconName)
-                .font(.system(size: 18, weight: .medium))
+                .font(.title3.weight(.medium))
                 .foregroundStyle(badge.accentColor)
             
             VStack(alignment: .leading, spacing: 1) {
                 Text("Badge Unlocked!")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .font(.caption2.weight(.bold).monospaced())
                     .foregroundStyle(.primary.opacity(0.5))
                 Text(badge.title)
-                    .font(.system(size: 15, weight: .bold))
+                    .font(.subheadline.weight(.bold))
                     .foregroundStyle(.primary)
             }
         }
@@ -282,13 +295,13 @@ struct ProfileView: View {
     private var emptyDailySection: some View {
         VStack(spacing: 8) {
             Image(systemName: "moon.stars.fill")
-                .font(.system(size: 32))
+                .font(.largeTitle)
                 .foregroundStyle(.secondary)
             Text("No daily puzzles played yet")
-                .font(.system(size: 15, weight: .medium))
+                .font(.body.weight(.medium))
                 .foregroundStyle(.secondary)
             Text("Complete your first daily puzzle to see results here.")
-                .font(.system(size: 13))
+                .font(.callout)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
         }
@@ -305,22 +318,22 @@ struct ProfileView: View {
 
             HStack(spacing: 14) {
                 Image(systemName: "trophy.fill")
-                    .font(.system(size: 22))
+                    .font(.title2)
                     .foregroundStyle(.secondary.opacity(0.6))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Game Center")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.body.weight(.semibold))
                         .foregroundStyle(.secondary)
                     Text("Coming soon — leaderboards & achievements")
-                        .font(.system(size: 13))
+                        .font(.callout)
                         .foregroundStyle(.tertiary)
                 }
 
                 Spacer()
 
                 Text("SOON")
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .font(.caption2.weight(.bold).monospaced())
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
@@ -336,7 +349,7 @@ struct ProfileView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 11, weight: .heavy, design: .monospaced))
+            .font(.caption2.weight(.heavy).monospaced())
             .foregroundStyle(.secondary)
             .kerning(1.5)
     }
@@ -352,9 +365,9 @@ struct ProfileView: View {
             } label: {
                 HStack {
                     Image(systemName: "trash.fill")
-                        .font(.system(size: 16))
+                        .font(.body)
                     Text("Reset All Local Progress")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.body.weight(.semibold))
                     Spacer()
                 }
                 .foregroundStyle(.red)
@@ -409,10 +422,10 @@ private struct StatCard: View {
             // Header
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.body.weight(.medium))
                     .foregroundStyle(accentColor)
                 Text(game.displayName)
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.callout.weight(.bold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
             }
@@ -421,14 +434,14 @@ private struct StatCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .lastTextBaseline, spacing: 3) {
                     Text("\(won)")
-                        .font(.system(size: 28, weight: .heavy, design: .rounded))
+                        .font(.title.weight(.heavy))
                         .foregroundStyle(accentColor)
                     Text("/ 100")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
                 Text("levels won")
-                    .font(.system(size: 10))
+                    .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
 
@@ -447,7 +460,7 @@ private struct StatCard: View {
             HStack {
                 miniStat(label: "Win %", value: played > 0 ? "\(Int(winRate * 100))%" : "—")
                 Spacer()
-                miniStat(label: "Avg", value: avgGuesses > 0 ? String(format: "%.1f", avgGuesses) : "—")
+                miniStat(label: "Avg", value: avgGuesses > 0 ? avgGuesses.formatted(.number.precision(.fractionLength(1))) : "—")
             }
         }
         .padding(14)
@@ -458,10 +471,10 @@ private struct StatCard: View {
     private func miniStat(label: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 1) {
             Text(value)
-                .font(.system(size: 14, weight: .bold))
+                .font(.headline.weight(.bold))
                 .foregroundStyle(.primary)
             Text(label)
-                .font(.system(size: 9))
+                .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
     }
@@ -481,14 +494,14 @@ private struct StreakPill: View {
             ZStack {
                 if streak >= 3 {
                     Image(systemName: "flame.fill")
-                        .font(.system(size: 24))
+                        .font(.title2)
                         .foregroundStyle(color.opacity(0.3))
                         .blur(radius: 6)
                         .scaleEffect(flamePulse ? 1.3 : 1.0)
                 }
 
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 18))
+                    .font(.title3)
                     .foregroundStyle(streak > 0 ? color : Color.secondary.opacity(0.4))
                     .scaleEffect(streak >= 3 && flamePulse ? 1.08 : 1.0)
             }
@@ -499,10 +512,10 @@ private struct StreakPill: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text("\(streak)")
-                    .font(.system(size: 22, weight: .heavy, design: .rounded))
+                    .font(.title2.weight(.heavy))
                     .foregroundStyle(streak > 0 ? color : .secondary)
                 Text("\(label) streak")
-                    .font(.system(size: 11))
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -535,10 +548,7 @@ private struct DailyResultRow: View {
     }
 
     private var formattedDate: String {
-        let fmt = DateFormatter()
-        fmt.dateStyle = .medium
-        fmt.timeStyle = .none
-        return fmt.string(from: result.date)
+        result.date.formatted(date: .abbreviated, time: .omitted)
     }
 
     var body: some View {
@@ -550,10 +560,10 @@ private struct DailyResultRow: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(result.gameType.displayName)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(.primary)
                 Text(formattedDate)
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
@@ -561,16 +571,16 @@ private struct DailyResultRow: View {
 
             if result.gameType == .cargo {
                 Text(result.shareString)
-                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .font(.caption.weight(.medium).monospaced())
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             } else if result.score > 0 {
                 Text("\(result.guessCount) guesses")
-                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .font(.callout.weight(.medium).monospaced())
                     .foregroundStyle(.secondary)
             } else {
                 Text("Lost")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .foregroundStyle(.tertiary)
             }
         }

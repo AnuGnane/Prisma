@@ -11,6 +11,7 @@ struct TargetWordListView: View {
     let targetWords: [TargetWord]
     let completedWords: Set<UUID>
     let hintWord: String?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -66,7 +67,7 @@ struct TargetWordListView: View {
             )
         )
         .scaleEffect(done ? 0.95 : 1.0)
-        .animation(.spring(response: 0.4, dampingFraction: 0.6), value: done)
+        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.6), value: done)
     }
 }
 

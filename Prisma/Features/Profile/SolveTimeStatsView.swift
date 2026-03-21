@@ -44,7 +44,7 @@ struct SolveTimeStatsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("SOLVE TIMES")
-                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                .font(.caption2.weight(.heavy).monospaced())
                 .foregroundStyle(.secondary)
                 .kerning(1.5)
             
@@ -64,7 +64,7 @@ struct SolveTimeStatsView: View {
                 y: .value("Avg Time", item.avgTime)
             )
             .foregroundStyle(gameColors[item.game] ?? .primary)
-            .cornerRadius(6)
+            .clipShape(.rect(cornerRadius: 6))
         }
         .chartYAxis {
             AxisMarks { value in
@@ -72,7 +72,7 @@ struct SolveTimeStatsView: View {
                     .foregroundStyle(Color.primary.opacity(0.1))
                 AxisValueLabel {
                     Text(formatTime(value.as(Double.self) ?? 0))
-                        .font(.system(size: 9, design: .monospaced))
+                        .font(.caption2.monospaced())
                         .foregroundStyle(.primary.opacity(0.4))
                 }
             }
@@ -81,7 +81,7 @@ struct SolveTimeStatsView: View {
             AxisMarks { _ in
                 AxisValueLabel()
                     .foregroundStyle(.primary.opacity(0.5))
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.caption2.weight(.medium))
             }
         }
         .frame(height: 140)
@@ -100,25 +100,25 @@ struct SolveTimeStatsView: View {
                                 .fill(gameColors[game]!)
                                 .frame(width: 6, height: 6)
                             Text(game.displayName)
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.caption.weight(.bold))
                                 .foregroundStyle(.primary.opacity(0.8))
                         }
                         
                         HStack(spacing: 12) {
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(formatTime(s.avg))
-                                    .font(.system(size: 16, weight: .heavy, design: .rounded))
+                                    .font(.headline.weight(.heavy))
                                     .foregroundStyle(gameColors[game]!)
                                 Text("avg")
-                                    .font(.system(size: 9, weight: .medium))
+                                    .font(.caption2.weight(.medium))
                                     .foregroundStyle(.primary.opacity(0.3))
                             }
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(formatTime(s.best))
-                                    .font(.system(size: 16, weight: .heavy, design: .rounded))
+                                    .font(.headline.weight(.heavy))
                                     .foregroundStyle(.primary.opacity(0.6))
                                 Text("best")
-                                    .font(.system(size: 9, weight: .medium))
+                                    .font(.caption2.weight(.medium))
                                     .foregroundStyle(.primary.opacity(0.3))
                             }
                         }
@@ -134,10 +134,10 @@ struct SolveTimeStatsView: View {
     private var emptyState: some View {
         VStack(spacing: 8) {
             Image(systemName: "stopwatch")
-                .font(.system(size: 28))
+                .font(.largeTitle)
                 .foregroundStyle(.secondary.opacity(0.5))
             Text("Win some games to track your solve times")
-                .font(.system(size: 13))
+                .font(.callout)
                 .foregroundStyle(.tertiary)
         }
         .frame(maxWidth: .infinity)
@@ -148,7 +148,9 @@ struct SolveTimeStatsView: View {
     private func formatTime(_ seconds: Double) -> String {
         let mins = Int(seconds) / 60
         let secs = Int(seconds) % 60
-        return mins > 0 ? String(format: "%d:%02d", mins, secs) : "\(secs)s"
+        return mins > 0
+            ? "\(mins):\(secs.formatted(.number.precision(.integerLength(2))))"
+            : "\(secs)s"
     }
 }
 

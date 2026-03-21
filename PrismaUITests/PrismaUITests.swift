@@ -23,12 +23,30 @@ final class PrismaUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testLaunchShowsMainTabs() throws {
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // Critical journey baseline: all primary tabs are visible after launch.
+        XCTAssertTrue(app.tabBars.buttons["Daily"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.tabBars.buttons["Local"].exists)
+        XCTAssertTrue(app.tabBars.buttons["You"].exists)
+    }
+
+    @MainActor
+    func testProfileTabCanOpenSettings() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        let profileTab = app.tabBars.buttons["You"]
+        XCTAssertTrue(profileTab.waitForExistence(timeout: 5))
+        profileTab.tap()
+
+        let settingsButton = app.buttons["Settings"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
+        settingsButton.tap()
+
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
     }
 
     @MainActor

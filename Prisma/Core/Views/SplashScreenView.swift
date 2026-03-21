@@ -10,6 +10,7 @@
 import SwiftUI
 
 struct SplashScreenView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var logoScale: CGFloat = 0.6
     @State private var logoOpacity: Double = 0
     @State private var taglineOpacity: Double = 0
@@ -73,6 +74,14 @@ struct SplashScreenView: View {
         }
         .ignoresSafeArea()
         .onAppear {
+            guard !reduceMotion else {
+                logoScale = 1.0
+                logoOpacity = 1.0
+                taglineOpacity = 1.0
+                glowOpacity = 1.0
+                return
+            }
+
             // Logo entrance
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 logoScale = 1.0
