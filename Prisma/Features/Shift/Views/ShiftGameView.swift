@@ -300,18 +300,7 @@ struct ShiftControls: View {
 
             Spacer()
 
-            if viewModel.gameState == .inProgress {
-                Button {
-                    showGiveUpAlert = true
-                } label: {
-                    Text("Give Up")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.primary.opacity(0.7))
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 10)
-                        .background(Capsule().fill(Color.primary.opacity(0.08)))
-                }
-            } else if viewModel.gameState == .gaveUp {
+            if viewModel.gameState == .gaveUp {
                 ShiftCtrlBtn(icon: "eye.fill", label: "Solution",
                         off: viewModel.solutionGrid == nil, tint: .orange) {
                     viewModel.showSolution()

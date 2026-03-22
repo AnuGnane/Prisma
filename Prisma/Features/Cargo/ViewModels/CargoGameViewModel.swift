@@ -179,8 +179,11 @@ final class CargoGameViewModel {
 
     func dropDraggingPiece() {
         guard let pId = draggingPieceId, let origin = ghostOrigin, let piece = piece(with: pId) else {
+            // Ghost origin is nil (piece was dragged off screen) or no drag in progress
+            // — return piece to tray cleanly.
             draggingPieceId = nil
             ghostOrigin = nil
+            lastValidOrigin = nil
             return
         }
         
@@ -195,6 +198,9 @@ final class CargoGameViewModel {
             pendingPieceId = pId
             pendingOrigin = restoreOrigin
             lastValidOrigin = nil
+        } else {
+            // Invalid drop with nowhere to restore — cancel cleanly so piece returns to tray.
+            cancelPendingPiece()
         }
         
         // Reset drag tracking

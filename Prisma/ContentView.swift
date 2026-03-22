@@ -46,12 +46,6 @@ struct GamesHomeView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         headerSection
 
-                        Text("TODAY'S PUZZLES")
-                            .font(.system(size: 13, weight: .heavy, design: .monospaced))
-                            .foregroundStyle(.primary.opacity(0.4))
-                            .kerning(1.5)
-                            .padding(.horizontal, 24)
-
                         VStack(spacing: 16) {
                             ForEach([GameType.signals, .archive, .cargo, .shift], id: \.self) { game in
                                 GameHeroCard(game: game)
@@ -92,7 +86,7 @@ struct GamesHomeView: View {
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(.primary.opacity(0.8))
 
-            Text("Your daily cognitive signal.")
+            Text("Four games. One daily challenge each.")
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(.primary.opacity(0.4))
         }

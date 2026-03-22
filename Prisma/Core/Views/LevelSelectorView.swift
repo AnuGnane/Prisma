@@ -305,8 +305,8 @@ struct LevelSelectorPlayedCell: View {
     
     /// Returns 1–3 stars based on score tier (unified across all games)
     private func starRating(score: Int, guesses: Int) -> Int {
-        if score >= 900 { return 3 }
-        if score >= 600 { return 2 }
+        if score >= 700 { return 3 }
+        if score >= 400 { return 2 }
         return 1
     }
     

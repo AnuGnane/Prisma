@@ -322,18 +322,13 @@ struct CargoPendingActionBar: View {
     let saveResult: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 0) {
             // Remove
             Button {
                 viewModel.cancelPendingPiece()
                 Haptics.playMediumImpact()
             } label: {
-                Label("Remove", systemImage: "xmark")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.red.opacity(0.9))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .background(Capsule().fill(Color.red.opacity(0.15)))
+                CargoActionButton(icon: "xmark", text: "Remove", tint: .red)
             }
 
             Spacer()
@@ -349,12 +344,7 @@ struct CargoPendingActionBar: View {
                 }
                 Haptics.playMediumImpact()
             } label: {
-                Label("Rotate", systemImage: "rotate.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .background(Capsule().fill(Color.primary.opacity(0.12)))
+                CargoActionButton(icon: "rotate.right", text: "Rotate", tint: .primary)
             }
 
             // Flip
@@ -368,12 +358,7 @@ struct CargoPendingActionBar: View {
                 }
                 Haptics.playMediumImpact()
             } label: {
-                Label("Flip", systemImage: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .background(Capsule().fill(Color.primary.opacity(0.12)))
+                CargoActionButton(icon: "arrow.left.and.right.righttriangle.left.righttriangle.right.fill", text: "Flip", tint: .primary)
             }
 
             Spacer()
@@ -384,12 +369,8 @@ struct CargoPendingActionBar: View {
                 Haptics.playMediumImpact()
                 if viewModel.isGameOver { saveResult() }
             } label: {
-                Label("Place", systemImage: "checkmark")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(viewModel.ghostIsValid ? Color.green : Color.primary.opacity(0.3))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(Capsule().fill(viewModel.ghostIsValid ? Color.green.opacity(0.25) : Color.primary.opacity(0.1)))
+                CargoActionButton(icon: "checkmark", text: "Place",
+                                  tint: viewModel.ghostIsValid ? .green : .primary.opacity(0.3))
             }
             .disabled(!viewModel.ghostIsValid)
         }
@@ -499,7 +480,29 @@ struct CargoLocalResultActions: View {
     }
 }
 
+// MARK: - Cargo Action Button (icon + label, single-line safe)
+
+private struct CargoActionButton: View {
+    let icon: String
+    let text: String
+    let tint: Color
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .semibold))
+            Text(text)
+                .font(.system(size: 11, weight: .semibold))
+                .lineLimit(1)
+        }
+        .foregroundStyle(tint)
+        .frame(width: 64, height: 52)
+        .background(Capsule().fill(tint.opacity(text == "Remove" ? 0.12 : 0.10)))
+    }
+}
+
 // MARK: - Isolated Timer View (Prevents whole screen redraws)
+
 
 struct CargoHeaderTimerView: View {
     let viewModel: CargoGameViewModel
