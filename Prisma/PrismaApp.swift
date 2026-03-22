@@ -15,7 +15,9 @@ struct PrismaApp: App {
     @State private var showSplash = true
 
     init() {
-        // GameCenterManager.shared.authenticate()
+        // Authenticate with Game Center on launch.
+        // Calls are guarded with `guard isAuthenticated` — safe to call even without a paid account.
+        GameCenterManager.shared.authenticate()
     }
 
     var body: some Scene {

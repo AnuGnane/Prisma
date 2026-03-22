@@ -187,19 +187,8 @@ struct SignalsHeader: View {
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 6)
                         }
+                        .padding(.trailing, 12)
                     }
-                    
-                    Button {
-                        viewModel.reset()
-                        Haptics.playMediumImpact()
-                    } label: {
-                        Label("Reset", systemImage: "arrow.clockwise")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.primary.opacity(0.6))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
-                    }
-                    .padding(.trailing, 12)
                 }
             }
 
@@ -513,43 +502,43 @@ private struct SignalsActiveCell: View {
 
 extension SignalsGameView {
     private func reportToGameCenter() {
-        // let gc = GameCenterManager.shared
-        // let didWin = viewModel.gameState.isCompleted
+        let gc = GameCenterManager.shared
+        let didWin = viewModel.gameState.isCompleted
 
-        // // Achievement: first signal puzzle completed (win or lose)
-        // gc.reportAchievement(GameCenterManager.Achievement.firstSignal)
+        // Achievement: first signal puzzle completed (win or lose)
+        gc.reportAchievement(GameCenterManager.Achievement.firstSignal)
 
-        // if viewModel.isDaily && didWin {
-        //     // Daily best score (fewer guesses = better)
-        //     gc.submitScore(viewModel.guessCount,
-        //                    leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyBest])
+        if viewModel.isDaily && didWin {
+            // Daily best score (fewer guesses = better)
+            gc.submitScore(viewModel.guessCount,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyBest])
 
-        //     // Update streak
-        //     let streak = StreakManager.recordDailyWin(game: "signals")
-        //     gc.submitScore(streak,
-        //                    leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyStreak])
+            // Update streak and submit
+            let streak = StreakManager.recordDailyWin(game: "signals")
+            gc.submitScore(streak,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyStreak])
 
-        //     // Streak achievements
-        //     if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
-        //     if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
-        //     if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
+            // Streak achievements
+            if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
+            if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
+            if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
 
-        //     // Perfect score (1 guess)
-        //     if viewModel.guessCount == 1 {
-        //         gc.reportAchievement(GameCenterManager.Achievement.perfectSignal)
-        //     }
-        // }
+            // Perfect score (1 guess)
+            if viewModel.guessCount == 1 {
+                gc.reportAchievement(GameCenterManager.Achievement.perfectSignal)
+            }
+        }
 
-        // if !viewModel.isDaily && didWin {
-        //     // Count all won local levels across both games for mastery
-        //     let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
-        //     gc.submitScore(totalWon,
-        //                    leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
+        if !viewModel.isDaily && didWin {
+            // Count all won local levels across both games for mastery
+            let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
+            gc.submitScore(totalWon,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
 
-        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local25, current: totalWon, target: 25)
-        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local50, current: totalWon, target: 50)
-        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local100, current: totalWon, target: 100)
-        // }
+            gc.reportProgressAchievement(GameCenterManager.Achievement.local25, current: totalWon, target: 25)
+            gc.reportProgressAchievement(GameCenterManager.Achievement.local50, current: totalWon, target: 50)
+            gc.reportProgressAchievement(GameCenterManager.Achievement.local100, current: totalWon, target: 100)
+        }
     }
 }
 

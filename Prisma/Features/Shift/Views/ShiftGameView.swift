@@ -39,7 +39,8 @@ struct ShiftGameView: View {
                     viewModel: viewModel,
                     moveCountBounce: moveCountBounce,
                     reduceMotion: reduceMotion,
-                    exitGame: exitGame
+                    exitGame: exitGame,
+                    showGiveUpAlert: { showGiveUpAlert = true }
                 )
                     .padding(.top, 4)
                     .padding(.bottom, 6)
@@ -145,9 +146,14 @@ struct ShiftGameView: View {
                                                 durationSeconds: viewModel.elapsedSeconds,
                                                 context: modelContext)
         }
-        // Record daily streak
+        // Record daily streak and report to Game Center
         if viewModel.isDaily, case .completed = viewModel.gameState {
-            _ = StreakManager.recordDailyWin(game: "shift")
+            let streak = StreakManager.recordDailyWin(game: "shift")
+            let gc = GameCenterManager.shared
+            gc.submitScore(streak, leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyStreak])
+            if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
+            if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
+            if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
         }
         dismiss()
     }
@@ -160,6 +166,7 @@ struct ShiftGameHeader: View {
     let moveCountBounce: Bool
     let reduceMotion: Bool
     let exitGame: () -> Void
+    let showGiveUpAlert: () -> Void
 
     var body: some View {
         VStack(spacing: 4) {
@@ -188,17 +195,18 @@ struct ShiftGameHeader: View {
 
                     Spacer()
 
-                    Button {
-                        viewModel.reset()
-                        Haptics.playMediumImpact()
-                    } label: {
-                        Label("Reset", systemImage: "arrow.clockwise")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.primary.opacity(0.6))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
+                    if viewModel.gameState == .inProgress {
+                        Button {
+                            showGiveUpAlert()
+                        } label: {
+                            Label("Give Up", systemImage: "flag.fill")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.red.opacity(0.7))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 6)
+                        }
+                        .padding(.trailing, 12)
                     }
-                    .padding(.trailing, 12)
                 }
             }
 

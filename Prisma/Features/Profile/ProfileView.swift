@@ -310,37 +310,37 @@ struct ProfileView: View {
         .padding(.horizontal, 20)
     }
 
-    // MARK: - Game Center Placeholder
+    // MARK: - Game Center Leaderboards
 
     private var gameCenterPlaceholder: some View {
         VStack(alignment: .leading, spacing: 10) {
             sectionLabel("LEADERBOARDS")
 
-            HStack(spacing: 14) {
-                Image(systemName: "trophy.fill")
-                    .font(.title2)
-                    .foregroundStyle(.secondary.opacity(0.6))
+            NavigationLink(destination: LeaderboardView()) {
+                HStack(spacing: 14) {
+                    Image(systemName: "trophy.fill")
+                        .font(.title2)
+                        .foregroundStyle(.yellow.opacity(0.8))
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Game Center")
-                        .font(.body.weight(.semibold))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Game Center")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Text("Rankings & Friends leaderboards")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.callout.weight(.semibold))
                         .foregroundStyle(.secondary)
-                    Text("Coming soon — leaderboards & achievements")
-                        .font(.callout)
-                        .foregroundStyle(.tertiary)
                 }
-
-                Spacer()
-
-                Text("SOON")
-                    .font(.caption2.weight(.bold).monospaced())
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Capsule().fill(Color.secondary.opacity(0.15)))
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.12)))
             }
-            .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.12)))
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 20)
     }

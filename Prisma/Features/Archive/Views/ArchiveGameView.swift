@@ -257,19 +257,8 @@ struct ArchiveHeader: View {
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 6)
                         }
+                        .padding(.trailing, 12)
                     }
-                    
-                    Button {
-                        viewModel.reset()
-                        Haptics.playMediumImpact()
-                    } label: {
-                        Label("Reset", systemImage: "arrow.clockwise")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.primary.opacity(0.6))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
-                    }
-                    .padding(.trailing, 12)
                 }
             }
 
@@ -579,38 +568,38 @@ private struct ShakeEffect: GeometryEffect {
 
 extension ArchiveGameView {
     private func reportToGameCenter() {
-        // let gc = GameCenterManager.shared
-        // let didWin = viewModel.gameState.isCompleted
+        let gc = GameCenterManager.shared
+        let didWin = viewModel.gameState.isCompleted
 
-        // // Achievement: first archive puzzle completed (win or lose)
-        // gc.reportAchievement(GameCenterManager.Achievement.firstArchive)
+        // Achievement: first archive puzzle completed (win or lose)
+        gc.reportAchievement(GameCenterManager.Achievement.firstArchive)
 
-        // if viewModel.isDaily && didWin {
-        //     // Daily best score (fewer guesses = better)
-        //     gc.submitScore(viewModel.guessCount,
-        //                    leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyBest])
+        if viewModel.isDaily && didWin {
+            // Daily best score (fewer guesses = better)
+            gc.submitScore(viewModel.guessCount,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyBest])
 
-        //     // Update streak
-        //     let streak = StreakManager.recordDailyWin(game: "archive")
-        //     gc.submitScore(streak,
-        //                    leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyStreak])
+            // Update streak and submit
+            let streak = StreakManager.recordDailyWin(game: "archive")
+            gc.submitScore(streak,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyStreak])
 
-        //     // Streak achievements
-        //     if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
-        //     if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
-        //     if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
-        // }
+            // Streak achievements
+            if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
+            if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
+            if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
+        }
 
-        // if !viewModel.isDaily && didWin {
-        //     // Count all won local levels across both games for mastery
-        //     let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
-        //     gc.submitScore(totalWon,
-        //                    leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
+        if !viewModel.isDaily && didWin {
+            // Count all won local levels across both games for mastery
+            let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
+            gc.submitScore(totalWon,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
 
-        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local25, current: totalWon, target: 25)
-        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local50, current: totalWon, target: 50)
-        //     gc.reportProgressAchievement(GameCenterManager.Achievement.local100, current: totalWon, target: 100)
-        // }
+            gc.reportProgressAchievement(GameCenterManager.Achievement.local25, current: totalWon, target: 25)
+            gc.reportProgressAchievement(GameCenterManager.Achievement.local50, current: totalWon, target: 50)
+            gc.reportProgressAchievement(GameCenterManager.Achievement.local100, current: totalWon, target: 100)
+        }
     }
 }
 

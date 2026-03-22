@@ -245,8 +245,9 @@ private struct ArchiveGraphic: View {
         VStack(spacing: 0) {
             // Day headers
             HStack(spacing: 0) {
-                ForEach(["S","M","T","W","T"], id: \.self) { d in
-                    Text(d)
+                let days = ["S","M","T","W","T"]
+                ForEach(days.indices, id: \.self) { i in
+                    Text(days[i])
                         .font(.system(size: 6, weight: .bold))
                         .foregroundStyle(.white.opacity(0.6))
                         .frame(maxWidth: .infinity)

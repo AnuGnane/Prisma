@@ -54,7 +54,6 @@ By injecting `LeaderboardSyncService`, the app can mock these responses inside S
 
 ## 3. Friend-Detection Strategy (`TASK 8.1.3`)
 
-There are two primary ways to detect and connect friends in Prisma.
 
 ### Option A: Game Center (Recommended)
 Prisma already possesses the `com.apple.developer.game-center` entitlement.
@@ -62,9 +61,3 @@ Prisma already possesses the `com.apple.developer.game-center` entitlement.
 - **Pros:** Zero backend maintenance. Apple handles authentication, friend requests, COPPA compliance, and secure data storage. The "Friends Only" leaderboard is built natively into `GKLeaderboard`.
 - **Cons:** Strictly limited to the Apple Ecosystem. Players cannot compete with friends on other platforms.
 
-### Option B: Custom Backend (CloudKit + Public Database)
-- **Workflow:** Build a custom friend-request system utilizing `CKRecord`.
-- **Pros:** Full control over UI/UX. Can be extended to cross-platform using CloudKit Web Services.
-- **Cons:** High engineering effort. Requires managing moderation, reporting mechanisms (App Store requirement), and complex async resolution.
-
-**Decision Pending:** For Phase 9/v1.1, Option A (Game Center) is highly recommended for an indie utility to reduce operational overhead. Option B should only be considered if Prisma scales significantly or requires Android parity.

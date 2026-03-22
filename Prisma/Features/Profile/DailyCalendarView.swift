@@ -68,8 +68,8 @@ struct DailyCalendarView: View {
 
             // Day headers
             HStack(spacing: 0) {
-                ForEach(daySymbols, id: \.self) { d in
-                    Text(d)
+                ForEach(daySymbols.indices, id: \.self) { i in
+                    Text(daySymbols[i])
                         .font(.caption2.weight(.bold).monospaced())
                         .foregroundStyle(.primary.opacity(0.3))
                         .frame(maxWidth: .infinity)
