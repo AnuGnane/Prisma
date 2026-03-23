@@ -36,6 +36,7 @@ enum CargoStateSerializer: GameStateSerializer {
             return SerializablePlacedPiece(
                 pieceId: placedPiece.pieceId,
                 baseCells: baseCells.map { SerializableCellCoord(row: $0.row, col: $0.col) },
+                absoluteCells: placedPiece.occupiedCells.map { SerializableCellCoord(row: $0.row, col: $0.col) },
                 originRow: placedPiece.origin.row,
                 originCol: placedPiece.origin.col,
                 rotationSteps: placedPiece.rotationSteps,
@@ -101,12 +102,26 @@ enum CargoStateSerializer: GameStateSerializer {
         
         // Reconstruct placed pieces
         for placedPiece in state.placedPieces {
-            // Find the original piece to retain correct baseCells and offset
+            // Priority 1: Use absolute cells for 100% accuracy (new saves)
+            let absCoords = placedPiece.absoluteCells.map { CellCoord($0.row, $0.col) }
+            if !absCoords.isEmpty {
+                // Manually fill cells and add record to grid
+                grid.reconstructPlacement(
+                    pieceId: placedPiece.pieceId,
+                    absoluteCells: absCoords,
+                    origin: CellCoord(placedPiece.originRow, placedPiece.originCol),
+                    rotationSteps: placedPiece.rotationSteps,
+                    isFlipped: placedPiece.isFlipped
+                )
+                continue
+            }
+            
+            // Priority 2: Use original pieces if provided for slightly better accuracy
+            // Priority 3: Fallback reconstruction from saved baseCells (original behavior)
             var piece: CargoPiece
             if let originalPiece = originalPieces?.first(where: { $0.id == placedPiece.pieceId }) {
                 piece = originalPiece
             } else {
-                // Fallback: Reconstruct the piece from saved baseCells (may have origin shift issues)
                 let baseCells = placedPiece.baseCells.map { CellCoord($0.row, $0.col) }
                 piece = CargoPiece(id: placedPiece.pieceId, baseCells: baseCells)
             }

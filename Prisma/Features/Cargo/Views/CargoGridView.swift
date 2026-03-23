@@ -22,6 +22,9 @@ struct CargoGridView: View {
     var onTapCell: ((CellCoord) -> Void)? = nil
     var onHoverGrid: (CellCoord?) -> Void
     var onDropGrid: () -> Void
+    
+    @State private var animatingCells: Set<CellCoord> = []
+    
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Dynamic cell size — fits grid within available width
@@ -83,6 +86,28 @@ struct CargoGridView: View {
                 )
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            .onChange(of: grid) { oldGrid, newGrid in
+                // Detect newly placed pieces to trigger the pop animation
+                guard !reduceMotion else { return }
+                var newPlacements: Set<CellCoord> = []
+                for r in 0..<newGrid.rows {
+                    for c in 0..<newGrid.cols {
+                        if case .filled = newGrid[r, c] {
+                            if case .filled = oldGrid[r, c] {
+                                // already filled
+                            } else {
+                                newPlacements.insert(CellCoord(r, c))
+                            }
+                        }
+                    }
+                }
+                if !newPlacements.isEmpty {
+                    animatingCells = newPlacements
+                    withAnimation(.spring(response: 0.2, dampingFraction: 0.5)) {
+                        animatingCells.removeAll()
+                    }
+                }
+            }
         }
     }
 
@@ -100,7 +125,7 @@ struct CargoGridView: View {
                     .strokeBorder(cellBorder(state: state, isGhost: isGhost), lineWidth: 1.5)
             )
             .frame(width: size, height: size)
-            .scaleEffect(isGhost ? (ghostIsValid ? 0.96 : 0.88) : 1.0)
+            .scaleEffect(isGhost ? (ghostIsValid ? 0.96 : 0.88) : (animatingCells.contains(coord) ? 1.15 : 1.0))
             .animation(reduceMotion ? nil : .spring(response: 0.2, dampingFraction: 0.7), value: isGhost)
     }
 

@@ -17,6 +17,7 @@ struct SignalsGameView: View {
     @State private var viewModel: SignalsGameViewModel
     @State private var showResultSheet = false
     @State private var showGiveUpAlert = false
+    @State private var showHowToPlay = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -35,7 +36,7 @@ struct SignalsGameView: View {
             AppTheme.appBackground()
 
             VStack(spacing: 0) {
-                SignalsHeader(viewModel: viewModel, showGiveUpAlert: $showGiveUpAlert)
+                SignalsHeader(viewModel: viewModel, showHowToPlay: { showHowToPlay = true }, showGiveUpAlert: $showGiveUpAlert)
                     .padding(.top, 4)
                     .padding(.bottom, 14)
 
@@ -112,6 +113,9 @@ struct SignalsGameView: View {
         .sheet(isPresented: $showResultSheet) {
             SignalsResultSheet(viewModel: viewModel, showResultSheet: $showResultSheet)
         }
+        .sheet(isPresented: $showHowToPlay) {
+            HowToPlaySheet(gameType: .signals)
+        }
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
                 viewModel.giveUp()
@@ -147,6 +151,7 @@ struct SignalsGameView: View {
 
 struct SignalsHeader: View {
     let viewModel: SignalsGameViewModel
+    let showHowToPlay: () -> Void
     @Binding var showGiveUpAlert: Bool
     @Environment(\.dismiss) private var dismiss
 
@@ -178,14 +183,39 @@ struct SignalsHeader: View {
                     Spacer()
 
                     if viewModel.gameState == .inProgress {
-                        Button {
-                            showGiveUpAlert = true
-                        } label: {
-                            Label("Give Up", systemImage: "flag.fill")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(.red.opacity(0.7))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 6)
+                        HStack(spacing: 8) {
+                            Button {
+                                showHowToPlay()
+                                Haptics.playLightImpact()
+                            } label: {
+                                Image(systemName: "questionmark.circle")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
+                            
+                            Button {
+                                viewModel.togglePossibleCodesCounter()
+                                Haptics.playLightImpact()
+                            } label: {
+                                Image(systemName: viewModel.showPossibleCodes ? "eye.fill" : "eye.slash.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(viewModel.showPossibleCodes ? AppTheme.signals : .secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                    .background(Capsule().fill(viewModel.showPossibleCodes ? AppTheme.signals.opacity(0.15) : Color.clear))
+                            }
+
+                            Button {
+                                showGiveUpAlert = true
+                            } label: {
+                                Label("Give Up", systemImage: "flag.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.red.opacity(0.7))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
                         }
                         .padding(.trailing, 12)
                     }
@@ -208,11 +238,26 @@ struct SignalsCounterPill: View {
     let viewModel: SignalsGameViewModel
 
     var body: some View {
-        let label = Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
-            .font(.system(size: 13, weight: .semibold, design: .monospaced))
-            .foregroundStyle(.primary.opacity(0.7))
-            .padding(.horizontal, 14)
-            .padding(.vertical, 5)
+        let label = HStack(spacing: 8) {
+            Text("\(viewModel.guessCount) / \(viewModel.maxGuesses)")
+                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .foregroundStyle(.primary.opacity(0.7))
+            
+            if viewModel.showPossibleCodes {
+                Divider()
+                    .frame(height: 12)
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "number")
+                        .font(.system(size: 10, weight: .bold))
+                    Text("\(viewModel.possibleCodesCount)")
+                        .font(.system(size: 13, weight: .bold, design: .monospaced))
+                }
+                .foregroundStyle(AppTheme.signals)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 5)
 
         if #available(iOS 26, *) {
             label
@@ -256,6 +301,10 @@ struct SignalsBoard: View {
                         .id(rowIndex) // stable identity so flip triggers once per guess
                 } else if rowIndex == viewModel.guessHistory.count && !viewModel.gameState.isOver {
                     SignalsActiveInputRow(viewModel: viewModel)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .top).combined(with: .opacity),
+                            removal: .opacity
+                        ))
                 } else {
                     SignalsEmptyRow()
                 }

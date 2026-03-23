@@ -82,19 +82,8 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
                 .padding(.horizontal, 20)
                 .background(Capsule().fill(Color.primary.opacity(0.08)))
                 
-            case .stars(let title):
-                VStack(spacing: 8) {
-                    HStack(spacing: 8) {
-                        ForEach(0..<3, id: \.self) { _ in
-                            Image(systemName: "star.fill")
-                                .font(.system(size: 30))
-                                .foregroundStyle(.yellow)
-                        }
-                    }
-                    Text(title)
-                        .font(.system(size: 22, weight: .black, design: .rounded))
-                        .foregroundStyle(.primary)
-                }
+            case .stars(let title, let count):
+                AnimatedStarsView(title: title, count: count)
                 
             case .titleSubtitle(let title, let subtitle):
                 VStack(spacing: 8) {
@@ -137,15 +126,25 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.primary.opacity(0.5))
                     Spacer()
-                    Text(stat.value)
-                        .font(.system(size: 15, weight: .bold, design: .monospaced))
-                        .foregroundStyle(.primary)
+                    if let n = Int(stat.value) {
+                        AnimatedScoreView(
+                            target: n,
+                            duration: 0.9,
+                            font: .system(size: 15, weight: .bold, design: .monospaced),
+                            color: .primary
+                        )
+                    } else {
+                        Text(stat.value)
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                            .foregroundStyle(.primary)
+                    }
                 }
             }
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(style == .fullScreen ? 0.12 : 0.07)))
     }
+
 }
 
 // MARK: - Supporting Types
@@ -157,7 +156,8 @@ enum ResultOverlayStyle {
 
 enum ResultOverlayHeader {
     case iconTitle(icon: String, color: Color, title: String)
-    case stars(title: String)
+    /// Sequential animated star pop-in. `count` = filled stars (1–3); default 3.
+    case stars(title: String, count: Int = 3)
     case titleSubtitle(title: String, subtitle: String?)
     case custom(title: String, subtitle: String?)
 }

@@ -149,6 +149,8 @@ final class CargoGameViewModel {
         selectedPieceIndex = nil // Clear multi-select overlay when dragging begins
         draggingPieceId = pieceId
         ghostOrigin = nil
+        Haptics.playLightImpact()
+        SoundManager.playTap()
     }
 
     func cancelDrag() {
@@ -193,14 +195,20 @@ final class CargoGameViewModel {
             pendingOrigin = origin
             lastValidOrigin = nil // Success, so clear restore point
             selectedPieceIndex = nil // Deselect tray item when placed
+            Haptics.playMediumImpact()
+            SoundManager.playClick()
         } else if let restoreOrigin = lastValidOrigin {
             // Invalid drop but it was a pending piece -> restore it!
             pendingPieceId = pId
             pendingOrigin = restoreOrigin
             lastValidOrigin = nil
+            Haptics.playError()
+            SoundManager.playError()
         } else {
             // Invalid drop with nowhere to restore — cancel cleanly so piece returns to tray.
             cancelPendingPiece()
+            Haptics.playError()
+            SoundManager.playError()
         }
         
         // Reset drag tracking
@@ -216,6 +224,9 @@ final class CargoGameViewModel {
         if grid.canPlace(piece, at: origin) {
             grid.place(piece, at: origin)
             placedPieceIds.insert(pId)
+            
+            Haptics.playMediumImpact()
+            SoundManager.playClick()
             
             // Auto complete check
             checkCompletion()
@@ -234,11 +245,15 @@ final class CargoGameViewModel {
     func rotatePendingPiece() {
         guard let pId = pendingPieceId, let idx = pieces.firstIndex(where: { $0.id == pId }) else { return }
         pieces[idx] = pieces[idx].rotated()
+        Haptics.playLightImpact()
+        SoundManager.playTap()
     }
 
     func flipPendingPiece() {
         guard let pId = pendingPieceId, let idx = pieces.firstIndex(where: { $0.id == pId }) else { return }
         pieces[idx] = pieces[idx].flipped()
+        Haptics.playLightImpact()
+        SoundManager.playTap()
     }
 
     // MARK: - Rotate / Flip Selected (Legacy)

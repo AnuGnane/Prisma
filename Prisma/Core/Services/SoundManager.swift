@@ -20,10 +20,11 @@ struct SoundManager {
         AudioServicesPlaySystemSound(1104)
     }
 
-    /// Play a completion/success sound.
+    /// Play a completion/success sound (soft, at reduced volume).
     static func playSuccess() {
         guard shouldPlay else { return }
-        AudioServicesPlaySystemSound(1025)
+        // 1110 = short key-press chime — considerably quieter than 1025 (new mail)
+        AudioServicesPlaySystemSound(1110)
     }
 
     /// Play a subtle click (e.g., piece snap).

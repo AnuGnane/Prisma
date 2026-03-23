@@ -16,6 +16,7 @@ import UniformTypeIdentifiers
 @MainActor
 struct CargoGameView: View {
     @State private var viewModel: CargoGameViewModel
+    @State private var showHowToPlay = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -34,7 +35,7 @@ struct CargoGameView: View {
             AppTheme.appBackground()
 
             VStack(spacing: 0) {
-                CargoHeader(viewModel: viewModel, dismiss: dismiss)
+                CargoHeader(viewModel: viewModel, dismiss: dismiss, showHowToPlay: { showHowToPlay = true })
                     .padding(.top, 4)
                     .padding(.bottom, 12)
 
@@ -79,6 +80,9 @@ struct CargoGameView: View {
         .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .showTutorialOnFirstPlay(for: .cargo)
+        .sheet(isPresented: $showHowToPlay) {
+            HowToPlaySheet(gameType: .cargo)
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("cancelDragSafe"))) { _ in
             viewModel.cancelDrag()
         }
@@ -122,6 +126,7 @@ struct CargoGameView: View {
 struct CargoHeader: View {
     let viewModel: CargoGameViewModel
     let dismiss: DismissAction
+    let showHowToPlay: () -> Void
 
     var body: some View {
         VStack(spacing: 4) {
@@ -150,17 +155,32 @@ struct CargoHeader: View {
                     
                     Spacer()
                     
-                    Button {
-                        viewModel.reset()
-                        Haptics.playMediumImpact()
-                    } label: {
-                        Label("Reset", systemImage: "arrow.clockwise")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(.primary.opacity(0.6))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
+                    if !viewModel.isGameOver {
+                        HStack(spacing: 8) {
+                            Button {
+                                showHowToPlay()
+                                Haptics.playLightImpact()
+                            } label: {
+                                Image(systemName: "questionmark.circle")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
+
+                            Button {
+                                viewModel.reset()
+                                Haptics.playMediumImpact()
+                            } label: {
+                                Label("Reset", systemImage: "arrow.clockwise")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.primary.opacity(0.6))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
+                        }
+                        .padding(.trailing, 12)
                     }
-                    .padding(.trailing, 12)
                 }
             }
 

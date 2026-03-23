@@ -17,6 +17,7 @@ struct SerializableCellCoord: Codable {
 struct SerializablePlacedPiece: Codable {
     let pieceId: Int
     let baseCells: [SerializableCellCoord]  // Store the actual piece shape
+    let absoluteCells: [SerializableCellCoord] // Store the exact final grid positions
     let originRow: Int
     let originCol: Int
     let rotationSteps: Int

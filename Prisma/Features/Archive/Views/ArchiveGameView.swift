@@ -16,6 +16,7 @@ struct ArchiveGameView: View {
     @State private var viewModel: ArchiveGameViewModel
     @State private var showResultSheet = false
     @State private var showGiveUpAlert = false
+    @State private var showHowToPlay = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -34,7 +35,7 @@ struct ArchiveGameView: View {
             AppTheme.appBackground()
 
             VStack(spacing: 0) {
-                ArchiveHeader(viewModel: viewModel, dismiss: dismiss, showGiveUpAlert: $showGiveUpAlert)
+                ArchiveHeader(viewModel: viewModel, dismiss: dismiss, showHowToPlay: { showHowToPlay = true }, showGiveUpAlert: $showGiveUpAlert)
                     .padding(.top, 4)
                     .padding(.bottom, 10)
 
@@ -109,6 +110,9 @@ struct ArchiveGameView: View {
         .sheet(isPresented: $showResultSheet) {
             ArchiveResultSheet(viewModel: viewModel, showResultSheet: $showResultSheet)
         }
+        .sheet(isPresented: $showHowToPlay) {
+            HowToPlaySheet(gameType: .archive)
+        }
         .alert("Give Up?", isPresented: $showGiveUpAlert) {
             Button("Give Up", role: .destructive) {
                 viewModel.giveUp()
@@ -157,7 +161,14 @@ struct ArchiveLocalResultOverlay: View {
             ),
             stats: []
         ) {
-            EmptyView()
+            VStack(spacing: 6) {
+                Text(viewModel.secretEvent.funFact)
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(16)
+            .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(0.06)))
         } actions: {
             HStack(spacing: 16) {
                 ResultPrimaryButton(title: viewModel.activeLevelId == 100 ? "All Done" : "Done") {
@@ -199,6 +210,12 @@ struct ArchiveGaveUpOverlay: View {
                 Text(viewModel.solutionEvent.dateString)
                     .font(.system(size: 20, weight: .bold, design: .monospaced))
                     .foregroundStyle(AppTheme.archive)
+                    
+                Text(viewModel.solutionEvent.funFact)
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 4)
             }
             .padding(16)
             .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(0.06)))
@@ -218,6 +235,7 @@ struct ArchiveGaveUpOverlay: View {
 struct ArchiveHeader: View {
     let viewModel: ArchiveGameViewModel
     let dismiss: DismissAction
+    let showHowToPlay: () -> Void
     @Binding var showGiveUpAlert: Bool
 
     var body: some View {
@@ -248,14 +266,27 @@ struct ArchiveHeader: View {
                     Spacer()
 
                     if viewModel.gameState == .inProgress {
-                        Button {
-                            showGiveUpAlert = true
-                        } label: {
-                            Label("Give Up", systemImage: "flag.fill")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(.red.opacity(0.7))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 6)
+                        HStack(spacing: 8) {
+                            Button {
+                                showHowToPlay()
+                                Haptics.playLightImpact()
+                            } label: {
+                                Image(systemName: "questionmark.circle")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
+
+                            Button {
+                                showGiveUpAlert = true
+                            } label: {
+                                Label("Give Up", systemImage: "flag.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.red.opacity(0.7))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
                         }
                         .padding(.trailing, 12)
                     }
@@ -340,6 +371,10 @@ struct ArchiveBoard: View {
                     ArchiveActiveInputRow(currentInput: viewModel.currentInput)
                         .modifier(ShakeEffect(shakes: viewModel.showInvalidShake ? 3 : 0))
                         .animation(.easeInOut(duration: 0.4), value: viewModel.showInvalidShake)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .top).combined(with: .opacity),
+                            removal: .opacity
+                        ))
                 } else {
                     ArchiveEmptyRow()
                 }
@@ -460,6 +495,12 @@ struct ArchiveResultSheet: View {
                 Text(viewModel.secretEvent.dateString)
                     .font(.system(size: 15, weight: .medium, design: .monospaced))
                     .foregroundStyle(.secondary)
+                    
+                Text(viewModel.secretEvent.funFact)
+                    .font(.system(size: 14, weight: .regular))
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 8)
             }
 
             if viewModel.isDaily {
@@ -615,7 +656,8 @@ extension ArchiveGameView {
     // Override with a known event for testing
     let testEvent = ArchiveEvent(id: 99, day: 20, month: 7, year: 1969,
                                   hint: "One small step changed it all",
-                                  event: "Apollo 11 Moon Landing")
+                                  event: "Apollo 11 Moon Landing",
+                                  funFact: "Neil Armstrong's famous quote was actually misheard due to static.")
     vm.overrideForTesting(event: testEvent, maxGuesses: 7)
     vm.currentInput = [1, 5, 0, 4, 1, 9, 1, 2]; vm.submitGuess()
     vm.currentInput = [2, 0, 0, 7, 1, 9, 5, 0]; vm.submitGuess()
@@ -627,7 +669,8 @@ extension ArchiveGameView {
     let vm = ArchiveGameViewModel(date: .now)
     let testEvent = ArchiveEvent(id: 99, day: 20, month: 7, year: 1969,
                                   hint: "One small step changed it all",
-                                  event: "Apollo 11 Moon Landing")
+                                  event: "Apollo 11 Moon Landing",
+                                  funFact: "Neil Armstrong's famous quote was actually misheard due to static.")
     vm.overrideForTesting(event: testEvent, maxGuesses: 7)
     vm.currentInput = [1, 5, 0, 4, 1, 9, 1, 2]; vm.submitGuess()
     vm.currentInput = [2, 0, 0, 7, 1, 9, 6, 9]; vm.submitGuess()

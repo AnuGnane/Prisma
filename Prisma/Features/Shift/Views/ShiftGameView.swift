@@ -13,6 +13,7 @@ struct ShiftGameView: View {
     @State private var viewModel: ShiftGameViewModel
     @State private var showGiveUpAlert = false
     @State private var moveCountBounce = false
+    @State private var showHowToPlay = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -40,7 +41,8 @@ struct ShiftGameView: View {
                     moveCountBounce: moveCountBounce,
                     reduceMotion: reduceMotion,
                     exitGame: exitGame,
-                    showGiveUpAlert: { showGiveUpAlert = true }
+                    showGiveUpAlert: { showGiveUpAlert = true },
+                    showHowToPlay: { showHowToPlay = true }
                 )
                     .padding(.top, 4)
                     .padding(.bottom, 6)
@@ -115,6 +117,9 @@ struct ShiftGameView: View {
             }
         }
         .showTutorialOnFirstPlay(for: .shift)
+        .sheet(isPresented: $showHowToPlay) {
+            HowToPlaySheet(gameType: .shift)
+        }
     }
 
     // MARK: - Exit (mid-game — no save for daily to avoid blocking replay)
@@ -167,6 +172,7 @@ struct ShiftGameHeader: View {
     let reduceMotion: Bool
     let exitGame: () -> Void
     let showGiveUpAlert: () -> Void
+    let showHowToPlay: () -> Void
 
     var body: some View {
         VStack(spacing: 4) {
@@ -196,14 +202,26 @@ struct ShiftGameHeader: View {
                     Spacer()
 
                     if viewModel.gameState == .inProgress {
-                        Button {
-                            showGiveUpAlert()
-                        } label: {
-                            Label("Give Up", systemImage: "flag.fill")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundStyle(.red.opacity(0.7))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 6)
+                        HStack(spacing: 8) {
+                            Button {
+                                showHowToPlay()
+                            } label: {
+                                Image(systemName: "questionmark.circle")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
+                            
+                            Button {
+                                showGiveUpAlert()
+                            } label: {
+                                Label("Give Up", systemImage: "flag.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(.red.opacity(0.7))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                            }
                         }
                         .padding(.trailing, 12)
                     }

@@ -83,6 +83,9 @@ final class ShiftGameViewModel {
         undoStack.append(move)
         redoStack.removeAll()
 
+        Haptics.playLightImpact()
+        SoundManager.playTap()
+
         scanForWords()
         checkWinCondition()
     }
@@ -92,6 +95,10 @@ final class ShiftGameViewModel {
         currentGrid = last.inverse.apply(to: currentGrid)
         redoStack.append(last)
         if !moveHistory.isEmpty { moveHistory.removeLast() }
+        
+        Haptics.playLightImpact()
+        SoundManager.playTap()
+        
         scanForWords()
     }
 
@@ -100,6 +107,10 @@ final class ShiftGameViewModel {
         currentGrid = move.apply(to: currentGrid)
         moveHistory.append(move)
         undoStack.append(move)
+        
+        Haptics.playLightImpact()
+        SoundManager.playTap()
+        
         scanForWords()
         checkWinCondition()
     }
@@ -147,6 +158,8 @@ final class ShiftGameViewModel {
         }
 
         if completedWords.count > prevCount {
+            Haptics.playMediumImpact()
+            SoundManager.playSuccess()
             UIAccessibility.post(notification: .announcement, argument: "Word found!")
         }
     }
@@ -156,6 +169,10 @@ final class ShiftGameViewModel {
             timerTask?.cancel()
             let score = calculateScore()
             gameState = .completed(score: score)
+            
+            Haptics.playSuccess()
+            SoundManager.playSuccess()
+            
             UIAccessibility.post(notification: .announcement, argument: "Puzzle completed!")
         }
     }

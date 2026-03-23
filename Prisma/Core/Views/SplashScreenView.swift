@@ -41,8 +41,11 @@ struct SplashScreenView: View {
 
             VStack(spacing: 16) {
                 // App icon
-                Image(systemName: "sparkle")
-                    .font(.system(size: 40, weight: .light))
+                Image("PrismaLogo")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 44, height: 44)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [AppTheme.shift, AppTheme.cascadeBlue],
@@ -66,7 +69,7 @@ struct SplashScreenView: View {
                     .opacity(logoOpacity)
 
                 // Tagline
-                Text("Your daily cognitive signal.")
+                Text("Four games. One daily challenge each.")
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(.primary.opacity(0.5))
                     .opacity(taglineOpacity)

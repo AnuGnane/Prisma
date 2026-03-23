@@ -54,13 +54,9 @@ struct CargoPuzzleLoader {
         return puzzles.first { $0.id == level }
     }
 
-    /// Daily puzzle — seeded from day of year
+    /// Daily puzzle — algorithmically generated from the date seed.
+    /// Uses `CargoPuzzleGenerator` so daily puzzles never overlap with local JSON levels.
     static func dailyPuzzle(for date: Date = .now) -> CargoPuzzle? {
-        let puzzles = load()
-        guard !puzzles.isEmpty else { return nil }
-        let calendar = Calendar.current
-        let dayOfYear = calendar.ordinality(of: .day, in: .year, for: date) ?? 1
-        let index = (dayOfYear - 1) % puzzles.count
-        return puzzles[index]
+        CargoPuzzleGenerator.generateDailyPuzzle(for: date)
     }
 }

@@ -77,7 +77,8 @@ final class ArchiveGameViewModel: ShareStringGenerator {
               !events.isEmpty else {
             // Fallback event if JSON fails to load
             let fallback = ArchiveEvent(id: 0, day: 1, month: 1, year: 2000,
-                                        hint: "A new millennium begins", event: "Y2K")
+                                        hint: "A new millennium begins", event: "Y2K",
+                                        funFact: "The Y2K bug cost the world over $300 billion to prepare for.")
             return [fallback]
         }
         cachedEvents = events
@@ -160,14 +161,22 @@ final class ArchiveGameViewModel: ShareStringGenerator {
 
     func inputDigit(_ digit: Int) {
         guard !gameState.isOver else { return }
-        guard let slot = currentInput.firstIndex(of: nil) else { return }
+        guard let slot = currentInput.firstIndex(of: nil) else {
+            Haptics.playError()
+            SoundManager.playError()
+            return
+        }
         currentInput[slot] = digit
+        Haptics.playLightImpact()
+        SoundManager.playTap()
     }
 
     func deleteLastDigit() {
         guard !gameState.isOver else { return }
         if let slot = currentInput.indices.last(where: { currentInput[$0] != nil }) {
             currentInput[slot] = nil
+            Haptics.playLightImpact()
+            SoundManager.playTap()
         }
     }
 
@@ -199,7 +208,11 @@ final class ArchiveGameViewModel: ShareStringGenerator {
 
     func submitGuess() {
         guard !gameState.isOver else { return }
-        guard isInputComplete else { return }
+        guard isInputComplete else {
+            Haptics.playError()
+            SoundManager.playError()
+            return 
+        }
         let digits = currentInput.compactMap { $0 }
         guard digits.count == 8 else { return }
 
@@ -211,6 +224,8 @@ final class ArchiveGameViewModel: ShareStringGenerator {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
                 self?.showInvalidShake = false
             }
+            Haptics.playError()
+            SoundManager.playError()
             return
         }
 
@@ -224,9 +239,16 @@ final class ArchiveGameViewModel: ShareStringGenerator {
             let score = calculateScore()
             gameState = .completed(score: score)
             stopTimer()
+            Haptics.playSuccess()
+            SoundManager.playSuccess()
         } else if guessHistory.count >= maxGuesses {
             gameState = .failed
             stopTimer()
+            Haptics.playError()
+            SoundManager.playError()
+        } else {
+            Haptics.playMediumImpact()
+            SoundManager.playClick()
         }
     }
 

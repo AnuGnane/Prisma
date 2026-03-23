@@ -304,6 +304,11 @@ struct DailyCompletedArchiveSolution: View {
             Text(event.dateString)
                 .font(.system(size: 15, weight: .medium, design: .monospaced))
                 .foregroundStyle(.secondary)
+            
+            Text(event.funFact)
+                .font(.system(size: 13, weight: .regular))
+                .foregroundStyle(.secondary)
+                .padding(.top, 4)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
@@ -485,12 +490,22 @@ struct DailyCompletedUnavailableView: View {
 struct DailyCompletedStatItem: View {
     let label: String
     let value: String
-    
+    /// If the value parses as an Int, it will count up from 0.
+    private var numericValue: Int? { Int(value) }
+
     var body: some View {
         VStack(spacing: 4) {
-            Text(value)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(.primary)
+            if let n = numericValue {
+                AnimatedScoreView(
+                    target: n,
+                    font: .system(size: 24, weight: .bold, design: .rounded),
+                    color: .primary
+                )
+            } else {
+                Text(value)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
+            }
             Text(label)
                 .font(.system(size: 10, weight: .heavy, design: .monospaced))
                 .foregroundStyle(.primary.opacity(0.4))
@@ -498,6 +513,7 @@ struct DailyCompletedStatItem: View {
         }
     }
 }
+
 
 struct DailyCompletedArrowIndicator: View {
     let result: DigitResult

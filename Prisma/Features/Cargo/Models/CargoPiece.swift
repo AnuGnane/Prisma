@@ -43,6 +43,10 @@ struct CargoPiece: Identifiable, Codable, Equatable {
 
     var rotationSteps: Int = 0   // 0, 1, 2, 3 (each step = 90° clockwise)
     var isFlipped: Bool = false
+    
+    /// Absolute grid coordinates where this piece sits in the solution.
+    /// Set by `CargoPuzzleGenerator`; nil for JSON-loaded puzzle pieces.
+    var solutionCells: [CellCoord]? = nil
 
     // MARK: - Computed Transformed Cells
 

@@ -209,11 +209,11 @@ struct GameCardGraphic: View {
 private struct SignalsGraphic: View {
     // 5 rows of guesses: each row has 4 circle dots
     let rows: [[Color?]] = [
-        [.green, .green, .green, .green],
-        [.green, .green, .yellow, nil],
-        [.green, .yellow, nil, nil],
-        [.green, nil, nil, nil],
         [nil, nil, nil, nil],
+        [.green, nil, nil, nil],
+        [.green, .yellow, nil, nil],
+        [.green, .green, .yellow, nil],
+        [.green, .green, .green, .green],
     ]
 
     var body: some View {
@@ -239,40 +239,44 @@ private struct ArchiveGraphic: View {
         VStack(spacing: 0) {
             // Day headers
             HStack(spacing: 0) {
-                let days = ["S","M","T","W","T"]
+                let days = ["S","M","T","W","T","F","S"]
                 ForEach(days.indices, id: \.self) { i in
                     Text(days[i])
-                        .font(.system(size: 6, weight: .bold))
+                        .font(.system(size: 5, weight: .bold))
                         .foregroundStyle(.white.opacity(0.6))
                         .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.bottom, 3)
+            .padding(.bottom, 2)
 
-            // Date grid — 4 rows, 5 cols
+            // Date grid — 5 rows, 7 cols
             let dates: [[Int?]] = [
-                [1,2,3,4,5],
-                [6,7,8,9,10],
-                [11,12,13,14,15],
-                [16,17,18,19,20],
+                [1,2,3,4,5,6,7],
+                [8,9,10,11,12,13,14],
+                [15,16,17,18,19,20,21],
+                [22,23,24,25,26,27,28],
+                [29,30,31,nil,nil,nil,nil]
             ]
-            let highlighted = 10
+            let highlighted = 16
 
-            VStack(spacing: 3) {
+            VStack(spacing: 2) {
                 ForEach(dates.indices, id: \.self) { r in
-                    HStack(spacing: 3) {
+                    HStack(spacing: 2) {
                         ForEach(dates[r].indices, id: \.self) { c in
-                            let d = dates[r][c]!
-                            ZStack {
-                                if d == highlighted {
-                                    Circle()
-                                        .strokeBorder(.white, lineWidth: 1.5)
+                            if let d = dates[r][c] {
+                                ZStack {
+                                    if d == highlighted {
+                                        Circle()
+                                            .strokeBorder(.white, lineWidth: 1)
+                                    }
+                                    Text("\(d)")
+                                        .font(.system(size: 6, weight: d == highlighted ? .bold : .regular))
+                                        .foregroundStyle(.white.opacity(d == highlighted ? 1.0 : 0.55))
                                 }
-                                Text("\(d)")
-                                    .font(.system(size: 7, weight: d == highlighted ? .bold : .regular))
-                                    .foregroundStyle(.white.opacity(d == highlighted ? 1.0 : 0.55))
+                                .frame(width: 8, height: 8)
+                            } else {
+                                Color.clear.frame(width: 8, height: 8)
                             }
-                            .frame(width: 12, height: 12)
                         }
                     }
                 }

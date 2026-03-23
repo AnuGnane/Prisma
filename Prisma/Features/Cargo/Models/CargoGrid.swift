@@ -38,7 +38,7 @@ struct PlacedPiece: Equatable {
 
 // MARK: - Cargo Grid
 
-struct CargoGrid {
+struct CargoGrid: Equatable {
     let rows: Int
     let cols: Int
     private(set) var cells: [[CargoCellState]]
@@ -114,6 +114,29 @@ struct CargoGrid {
         return true
     }
 
+    /// Directly reconstructs a placement from absolute grid coordinates.
+    /// Used by `CargoStateSerializer` during deserialization.
+    mutating func reconstructPlacement(
+        pieceId: Int,
+        absoluteCells: [CellCoord],
+        origin: CellCoord,
+        rotationSteps: Int,
+        isFlipped: Bool
+    ) {
+        for coord in absoluteCells {
+            if isInBounds(coord) {
+                cells[coord.row][coord.col] = .filled(pieceId: pieceId)
+            }
+        }
+        placedPieces.append(PlacedPiece(
+            pieceId: pieceId,
+            origin: origin,
+            rotationSteps: rotationSteps,
+            isFlipped: isFlipped,
+            occupiedCells: absoluteCells
+        ))
+    }
+
     /// Removes the last placed piece from the grid.
     @discardableResult
     mutating func undoLastPlacement() -> PlacedPiece? {
@@ -147,9 +170,13 @@ struct CargoGrid {
 
     // MARK: - Solution Helpers
 
+    /// Fills the grid using pieces' absolute solution coordinates.
+    /// Uses `solutionCells` (stored by the generator as absolute grid positions) when
+    /// available, falling back to `baseCells` for JSON-loaded puzzles.
     mutating func populateSolutionMode(with pieces: [CargoPiece]) {
         for piece in pieces {
-            for coord in piece.baseCells {
+            let coords = piece.solutionCells ?? piece.baseCells
+            for coord in coords {
                 if isInBounds(coord) {
                     cells[coord.row][coord.col] = .filled(pieceId: piece.id)
                 }

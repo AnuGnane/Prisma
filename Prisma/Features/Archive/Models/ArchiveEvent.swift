@@ -15,6 +15,7 @@ struct ArchiveEvent: Codable, Identifiable {
     let year: Int
     let hint: String    // shown during play
     let event: String   // revealed after game ends
+    let funFact: String // bonus trivia revealed after game ends
 
     /// The 8-digit representation: [D, D, M, M, Y, Y, Y, Y]
     var dateDigits: [Int] {

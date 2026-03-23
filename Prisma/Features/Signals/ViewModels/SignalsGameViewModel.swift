@@ -25,6 +25,11 @@ final class SignalsGameViewModel: ShareStringGenerator {
     private(set) var isDaily: Bool
     private(set) var activeLevelId: Int?
     private(set) var startDate: Date = .now
+    
+    // MARK: - Analysis
+    
+    var showPossibleCodes: Bool = false
+    private(set) var possibleCodesCount: Int = 10000
 
     // MARK: - Timer
 
@@ -145,13 +150,65 @@ final class SignalsGameViewModel: ShareStringGenerator {
         return states
     }
 
+    /// Toggles the possible codes counter and updates the count.
+    func togglePossibleCodesCounter() {
+        showPossibleCodes.toggle()
+        if showPossibleCodes {
+            updatePossibleCodesCount()
+        }
+    }
+
+    /// Pre-generated list of all 10,000 possible 4-digit codes.
+    private static let allPossibleCodes: [SignalsCode] = {
+        var codes: [SignalsCode] = []
+        for d1 in 0...9 {
+            for d2 in 0...9 {
+                for d3 in 0...9 {
+                    for d4 in 0...9 {
+                        codes.append(SignalsCode(digits: [d1, d2, d3, d4]))
+                    }
+                }
+            }
+        }
+        return codes
+    }()
+
+    /// Calculates how many of the 10,000 possible codes are still valid given the history.
+    private func updatePossibleCodesCount() {
+        guard !guessHistory.isEmpty else {
+            possibleCodesCount = 10000
+            return
+        }
+
+        // We can run this on a background thread if it's too slow, but 10k iterations of 
+        // local math is usually < 5ms on modern iPhones.
+        let currentHistory = guessHistory
+        let count = Self.allPossibleCodes.filter { candidate in
+            for historyEntry in currentHistory {
+                let feedback = Self.computeFeedback(guess: historyEntry.guess, secret: candidate)
+                if feedback != historyEntry.feedback {
+                    return false
+                }
+            }
+            return true
+        }.count
+        
+        self.possibleCodesCount = count
+    }
+
     // MARK: - Input Handling
 
     /// Appends a digit to the next empty input slot.
     func inputDigit(_ digit: Int) {
         guard !gameState.isOver else { return }
-        guard let slot = currentInput.firstIndex(of: nil) else { return }
+        guard let slot = currentInput.firstIndex(of: nil) else {
+            Haptics.playError()
+            SoundManager.playError()
+            return 
+        }
         currentInput[slot] = digit
+        Haptics.playLightImpact()
+        SoundManager.playTap()
     }
 
     /// Removes the last filled digit from input.
@@ -160,6 +217,8 @@ final class SignalsGameViewModel: ShareStringGenerator {
         // Find the last filled slot from right to left
         if let slot = currentInput.indices.last(where: { currentInput[$0] != nil }) {
             currentInput[slot] = nil
+            Haptics.playLightImpact()
+            SoundManager.playTap()
         }
     }
 
@@ -168,35 +227,49 @@ final class SignalsGameViewModel: ShareStringGenerator {
     /// Submits the current 4-digit input as a guess and computes feedback.
     func submitGuess() {
         guard !gameState.isOver else { return }
-        guard isInputComplete else { return }
+        guard isInputComplete else {
+            Haptics.playError()
+            SoundManager.playError()
+            return 
+        }
         let digits = currentInput.compactMap { $0 }
         guard digits.count == 4 else { return }
 
         if !timerStarted { startTimer(); timerStarted = true }
 
         let guess = SignalsGuess(digits: digits)
-        let feedback = computeFeedback(guess: guess, secret: secretCode)
+        let feedback = Self.computeFeedback(guess: guess, secret: secretCode)
 
         guessHistory.append((guess: guess, feedback: feedback))
         currentInput = [nil, nil, nil, nil]
+        
+        if showPossibleCodes {
+            updatePossibleCodesCount()
+        }
 
         // Determine new state
         if feedback.isWin {
             let score = calculateScore()
             gameState = .completed(score: score)
             stopTimer()
+            Haptics.playSuccess()
+            SoundManager.playSuccess()
         } else if guessHistory.count >= maxGuesses {
             gameState = .failed
             stopTimer()
+            Haptics.playError()
+            SoundManager.playError()
+        } else {
+            Haptics.playMediumImpact()
+            SoundManager.playClick()
         }
-        // else stays .inProgress
     }
 
     // MARK: - Mastermind Feedback Algorithm
 
     /// Computes per-digit results (green/yellow/grey) + numeric High/Low hint.
     /// Correctly handles duplicate digits in both guess and secret.
-    func computeFeedback(guess: SignalsGuess, secret: SignalsCode) -> SignalsFeedback {
+    static func computeFeedback(guess: SignalsGuess, secret: SignalsCode) -> SignalsFeedback {
         var results = Array(repeating: DigitResult.absent, count: 4)
         var secretUsed = Array(repeating: false, count: 4)
         var guessUsed  = Array(repeating: false, count: 4)
