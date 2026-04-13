@@ -3,11 +3,17 @@
 //  Prisma
 //
 //  SwiftData-backed persistence for GameResult and LevelProgress records.
-//  iCloud sync is enabled via CloudKit when the user is signed in to iCloud.
-//  Inject via .modelContainer(PersistenceManager.container) in PrismaApp.
 //
-//  CloudKit constraints observed:
-//  - No @Attribute(.unique) or #Unique on any model property
+//  CLOUDKIT SYNC — HOW TO ENABLE:
+//  1. In Xcode, select the Prisma target → Signing & Capabilities
+//  2. Add the "iCloud" capability and create a container named "iCloud.com.anugnana.Prisma"
+//  3. Add the "Background Modes" capability and tick "Remote notifications"
+//  4. In the container configuration below, switch from `.none` to:
+//       cloudKitDatabase: .private("iCloud.com.anugnana.Prisma")
+//  5. Create the same container in the Apple Developer portal
+//
+//  CloudKit model constraints already satisfied:
+//  - No @Attribute(.unique) / #Unique on any model property
 //  - All model properties have default values or are optional
 //  - All relationships are marked optional
 //
@@ -18,48 +24,35 @@ import SwiftData
 @MainActor
 struct PersistenceManager {
 
-    // MARK: - CloudKit container identifier
-    // Must match the "iCloud.com.yourteam.Prisma" container you create in the
-    // Apple Developer portal and add to the app's iCloud entitlements.
-    private static let cloudKitContainerID = "iCloud.com.anugnana.Prisma"
+    // MARK: - Container
 
     static let container: ModelContainer = {
         let schema = Schema([GameResult.self, LevelProgress.self])
-
-        // Use a named store URL so we can clean it up on migration failure
         let storeURL = URL.applicationSupportDirectory.appending(path: "Prisma.store")
 
-        // Attempt to build a CloudKit-mirrored container first.
-        // When the device isn't signed in to iCloud or CloudKit isn't available,
-        // SwiftData automatically falls back to a local-only store — no extra
-        // code is needed to handle that case.
-        let config = ModelConfiguration(
-            schema: schema,
-            url: storeURL,
-            cloudKitDatabase: .private(cloudKitContainerID)
-        )
+        // Local-only store. See file header for CloudKit migration steps.
+        let config = ModelConfiguration(schema: schema, url: storeURL)
 
         do {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
-            print("[Persistence] CloudKit container failed (\(error)). Falling back to local store.")
-
-            // Delete the named store and recreate without CloudKit
-            let fallbackConfig = ModelConfiguration(schema: schema, url: storeURL)
+            // Migration failure (e.g. schema changed without versioning).
+            // Delete the old store and rebuild from scratch — data loss is preferable to a crash.
+            print("[Persistence] ModelContainer init failed (\(error)). Deleting store and retrying.")
             try? FileManager.default.removeItem(at: storeURL)
             try? FileManager.default.removeItem(at: storeURL.appendingPathExtension("shm"))
             try? FileManager.default.removeItem(at: storeURL.appendingPathExtension("wal"))
 
-            // Also clean up default store from earlier builds
+            // Also clean up any legacy default store location from earlier builds
             let defaultURL = URL.applicationSupportDirectory.appending(path: "default.store")
             try? FileManager.default.removeItem(at: defaultURL)
             try? FileManager.default.removeItem(at: defaultURL.appendingPathExtension("shm"))
             try? FileManager.default.removeItem(at: defaultURL.appendingPathExtension("wal"))
 
             do {
-                return try ModelContainer(for: schema, configurations: [fallbackConfig])
+                return try ModelContainer(for: schema, configurations: [config])
             } catch {
-                fatalError("[Persistence] Failed to recreate ModelContainer: \(error)")
+                fatalError("[Persistence] Cannot create ModelContainer even after deleting store: \(error)")
             }
         }
     }()

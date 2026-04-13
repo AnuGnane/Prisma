@@ -457,12 +457,12 @@ struct CargoSolutionGrid: View {
     let viewModel: CargoGameViewModel
 
     var body: some View {
-        var tempGrid = CargoGrid(rows: viewModel.grid.rows, cols: viewModel.grid.cols, blockedCells: viewModel.puzzle.blockedCells)
-        tempGrid.populateSolutionMode(with: viewModel.puzzle.pieces)
-        
-        // Render it
-        return CargoGridView(
-            grid: tempGrid,
+        // The player's final grid IS the correct arrangement — show it directly.
+        // This avoids the bug where `solutionCells` is nil for JSON-loaded puzzles,
+        // which caused `populateSolutionMode` to paint pieces at (0,0) rather than
+        // their actual solved positions.
+        CargoGridView(
+            grid: viewModel.grid,
             ghostCells: [],
             ghostIsValid: false,
             pendingCells: [],

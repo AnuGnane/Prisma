@@ -343,28 +343,12 @@ struct DailyCompletedCargoUserState: View {
 
 struct DailyCompletedCargoSolution: View {
     let result: GameResult
-    
+
     var body: some View {
-        guard let puzzle = CargoPuzzleLoader.dailyPuzzle(for: result.date) else {
-            return AnyView(Text("Puzzle unavailable").foregroundStyle(.secondary).padding())
-        }
-        var grid = CargoGrid(rows: puzzle.gridRows, cols: puzzle.gridCols, blockedCells: puzzle.blockedCells)
-        grid.populateSolutionMode(with: puzzle.pieces)
-        return AnyView(
-            CargoGridView(
-                grid: grid,
-                ghostCells: [],
-                ghostIsValid: false,
-                pendingCells: [],
-                pendingPieceId: nil,
-                onDragPending: nil,
-                onHoverGrid: { _ in },
-                onDropGrid: {}
-            )
-            .frame(height: 260)
-            .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
-        )
+        // Show the player's own final grid — it IS the solution.
+        // Re-generating from puzzle.pieces causes the bug where pieces appear
+        // at (0,0) instead of their true solved positions for JSON puzzles.
+        DailyCompletedCargoUserState(result: result)
     }
 }
 

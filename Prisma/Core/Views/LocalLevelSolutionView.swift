@@ -187,26 +187,13 @@ struct LocalLevelSolutionView: View {
     }
 
     private var cargoSolution: some View {
-        guard let puzzle = CargoPuzzleLoader.puzzle(for: levelId) else {
-            return AnyView(Text("Puzzle unavailable").foregroundStyle(.secondary).padding())
-        }
-        var grid = CargoGrid(rows: puzzle.gridRows, cols: puzzle.gridCols, blockedCells: puzzle.blockedCells)
-        grid.populateSolutionMode(with: puzzle.pieces)
-        return AnyView(
-            CargoGridView(
-                grid: grid,
-                ghostCells: [],
-                ghostIsValid: false,
-                pendingCells: [],
-                pendingPieceId: nil,
-                onDragPending: nil,
-                onHoverGrid: { _ in },
-                onDropGrid: {}
-            )
-            .frame(height: 260)
-            .padding(16)
-            .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
-        )
+        // For Cargo, "Show Solution" shows the player's actual final grid
+        // (deserialized from the saved state) because local JSON puzzles don't
+        // store absolute solution coordinates per piece — the user's own filled
+        // grid IS the solution. For daily generated puzzles we re-run the
+        // deterministic generator to get solution coords, but showing the
+        // player's final state is always correct and consistent across both modes.
+        cargoUserState
     }
     
     // MARK: - User State Rendering

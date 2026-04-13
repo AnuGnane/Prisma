@@ -220,24 +220,10 @@ struct PastDailyResultView: View {
     }
 
     private var cargoSolution: some View {
-        guard let puzzle = CargoPuzzleLoader.dailyPuzzle(for: result.date) else {
-            return AnyView(Text("Puzzle unavailable").foregroundStyle(.secondary))
-        }
-        var grid = CargoGrid(rows: puzzle.gridRows, cols: puzzle.gridCols, blockedCells: puzzle.blockedCells)
-        grid.populateSolutionMode(with: puzzle.pieces)
-        return AnyView(
-            CargoGridView(
-                grid: grid,
-                ghostCells: [],
-                ghostIsValid: false,
-                pendingCells: [],
-                pendingPieceId: nil,
-                onDragPending: nil,
-                onHoverGrid: { _ in },
-                onDropGrid: {}
-            )
-            .frame(height: 220)
-        )
+        // Show the player's own final grid — it IS the solution.
+        // Re-generating via populateSolutionMode with puzzle.pieces causes pieces
+        // to appear at (0,0) instead of their solved positions for JSON puzzles.
+        cargoUserState
     }
     
     // MARK: - User State Rendering
