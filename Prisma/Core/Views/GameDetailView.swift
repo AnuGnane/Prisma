@@ -104,8 +104,6 @@ struct GameDetailView: View {
                 "Each move shifts an entire row or column",
                 "Find all the words in as few moves as possible"
             ]
-        case .orbit:
-            return ["Coming soon"]
         }
     }
 }
@@ -123,11 +121,11 @@ struct GameDetailHeroCard: View {
                     .frame(width: 80, height: 80)
 
                 Text(game.displayName)
-                    .font(.system(size: 36, weight: .heavy, design: .rounded))
+                    .font(.system(.largeTitle, design: .rounded, weight: .heavy))
                     .foregroundStyle(.white)
 
                 Text(game.description)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
             }
@@ -135,7 +133,7 @@ struct GameDetailHeroCard: View {
             .padding(.bottom, 24)
 
             Text(todayString)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.5))
                 .padding(.bottom, 20)
         }
@@ -164,7 +162,7 @@ struct GameDetailActionButtons: View {
         VStack(spacing: 12) {
             NavigationLink(value: GameDetailRoute.playDaily(game)) {
                 Text("Play Daily")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.headline)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
@@ -188,9 +186,9 @@ struct GameDetailActionButtons: View {
             NavigationLink(value: GameDetailRoute.levels(game)) {
                 HStack {
                     Image(systemName: "square.stack.3d.up.fill")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.subheadline.weight(.medium))
                     Text("Levels")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                 }
                 .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity)
@@ -219,7 +217,7 @@ struct GameDetailStatsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("YOUR STATS")
-                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                .font(.caption2.weight(.heavy))
                 .foregroundStyle(.secondary)
                 .kerning(1.5)
 
@@ -245,10 +243,10 @@ struct GameDetailStatsSection: View {
     private func statItem(value: String, label: String) -> some View {
         VStack(spacing: 4) {
             Text(value)
-                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                .font(.system(.title2, design: .rounded, weight: .heavy))
                 .foregroundStyle(gameColor)
             Text(label)
-                .font(.system(size: 11, weight: .medium))
+                .font(.caption2.weight(.medium))
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
@@ -269,7 +267,7 @@ struct GameDetailHowToPlaySection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("HOW TO PLAY")
-                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                .font(.caption2.weight(.heavy))
                 .foregroundStyle(.secondary)
                 .kerning(1.5)
 
@@ -281,7 +279,7 @@ struct GameDetailHowToPlaySection: View {
                             .frame(width: 6, height: 6)
                             .padding(.top, 6)
                         Text(step)
-                            .font(.system(size: 14, weight: .regular))
+                            .font(.subheadline)
                             .foregroundStyle(.primary.opacity(0.7))
                     }
                 }
@@ -311,7 +309,6 @@ private struct DailyGameDestinationInternal: View {
             case .archive: ArchiveGameView()
             case .cargo: CargoGameView()
             case .shift: ShiftGameView(puzzle: ShiftPuzzleGenerator.generateDailyPuzzle(for: .now), isDaily: true)
-            case .orbit: Text("Coming Soon")
             }
         }
     }

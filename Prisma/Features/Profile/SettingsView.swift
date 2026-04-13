@@ -13,10 +13,15 @@ struct SettingsView: View {
     @AppStorage("settings.soundEnabled") private var soundEnabled = true
     @AppStorage("settings.showGameTimer") private var showGameTimer = true
     @AppStorage("settings.appearanceMode") private var appearanceMode = AppearanceMode.dark.rawValue
+    @AppStorage("settings.notificationsEnabled") private var notificationsEnabled = false
+    @AppStorage("settings.notificationHour") private var notificationHour = 18
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.modelContext) private var modelContext
     @State private var showResetAlert = false
     @State private var resetGameType: GameType?
+    @State private var showResetAllConfirmation = false
+    @Query private var allLevelProgress: [LevelProgress]
+    @Query private var allGameResults: [GameResult]
 
     private let games: [(GameType, String, String, Color)] = [
         (.signals, "Signals", "antenna.radiowaves.left.and.right", AppTheme.signals),
@@ -58,6 +63,51 @@ struct SettingsView: View {
                                 .foregroundStyle(.primary)
                         }
                         .tint(AppTheme.shift)
+
+                        Divider().background(Color.primary.opacity(0.06))
+
+                        Toggle(isOn: $notificationsEnabled) {
+                            Label("Daily Reminders", systemImage: "bell.fill")
+                                .font(.body.weight(.medium))
+                                .foregroundStyle(.primary)
+                        }
+                        .tint(AppTheme.shift)
+                        .onChange(of: notificationsEnabled) { _, enabled in
+                            Task {
+                                if enabled {
+                                    let granted = await NotificationManager.shared.requestAuthorisation()
+                                    if granted {
+                                        await NotificationManager.shared.scheduleDailyReminder(hour: notificationHour)
+                                    } else {
+                                        notificationsEnabled = false
+                                    }
+                                } else {
+                                    NotificationManager.shared.cancelDailyReminder()
+                                }
+                            }
+                        }
+
+                        if notificationsEnabled {
+                            Divider().background(Color.primary.opacity(0.06))
+
+                            HStack {
+                                Label("Remind me at", systemImage: "clock")
+                                    .font(.body.weight(.medium))
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Picker("Hour", selection: $notificationHour) {
+                                    ForEach(0..<24, id: \.self) { hour in
+                                        Text(formattedHour(hour)).tag(hour)
+                                    }
+                                }
+                                .labelsHidden()
+                                .onChange(of: notificationHour) { _, newHour in
+                                    Task {
+                                        await NotificationManager.shared.scheduleDailyReminder(hour: newHour)
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     sectionLabel("APPEARANCE")
@@ -123,6 +173,23 @@ struct SettingsView: View {
                         }
                     }
 
+                    sectionLabel("DANGER ZONE")
+
+                    settingsCard {
+                        Button {
+                            showResetAllConfirmation = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "trash.fill")
+                                    .font(.body)
+                                Text("Reset All Local Progress")
+                                    .font(.body.weight(.semibold))
+                                Spacer()
+                            }
+                            .foregroundStyle(.red)
+                        }
+                    }
+
                     sectionLabel("ABOUT")
 
                     settingsCard {
@@ -142,7 +209,7 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(AppTheme.backgroundSecondary, for: .navigationBar)
+        // Navigation bar glass handled automatically by iOS 26
         
         .alert("Reset Progress?", isPresented: $showResetAlert) {
             Button("Reset", role: .destructive) {
@@ -153,6 +220,18 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("This will delete all local level progress for \(resetGameType?.displayName ?? "this game"). Daily results are kept.")
+        }
+        .confirmationDialog(
+            "Reset All Progress",
+            isPresented: $showResetAllConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Reset Everything", role: .destructive) {
+                resetAllProgress()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will delete all local level progress and game history. Daily games will not be affected. This action cannot be undone.")
         }
     }
 
@@ -187,6 +266,29 @@ struct SettingsView: View {
         }
         // Also reset streak
         StreakManager.resetStreak(for: gameType.rawValue)
+    }
+
+    private func formattedHour(_ hour: Int) -> String {
+        var components = DateComponents()
+        components.hour = hour
+        components.minute = 0
+        let date = Calendar.current.date(from: components) ?? .now
+        return date.formatted(.dateTime.hour())
+    }
+
+    private func resetAllProgress() {
+        // Delete all local level progress
+        for progress in allLevelProgress {
+            modelContext.delete(progress)
+        }
+
+        // Delete all local game results (keep daily games)
+        for result in allGameResults where !result.isDaily {
+            modelContext.delete(result)
+        }
+
+        // Save changes
+        try? modelContext.save()
     }
 }
 

@@ -58,7 +58,7 @@ struct LevelSelectorView: View {
         }
         .navigationTitle(game.displayName)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(AppTheme.background, for: .navigationBar)
+        // Navigation bar glass handled automatically by iOS 26
         
         .toolbar(.hidden, for: .tabBar)
     }
@@ -125,7 +125,6 @@ struct LevelSelectorView: View {
         case .archive: return "clock.arrow.circlepath"
         case .cargo:   return "shippingbox.fill"
         case .shift:   return "slider.horizontal.3"
-        case .orbit:   return "record.circle"
         }
     }
     
@@ -135,7 +134,6 @@ struct LevelSelectorView: View {
         case .archive: return AppTheme.archive
         case .cargo:   return Color(red: 0.85, green: 0.52, blue: 0.24)
         case .shift:   return AppTheme.shift
-        case .orbit:   return Color(red: 0.85, green: 0.24, blue: 0.52)
         }
     }
     
@@ -163,9 +161,6 @@ struct LevelSelectorView: View {
                 Text("Failed to load level \(levelId)")
                     .foregroundStyle(.primary)
             }
-        default:
-            Text("Coming Soon")
-                .foregroundStyle(.primary)
         }
     }
 }

@@ -50,9 +50,12 @@ final class ScoreManager {
                 case .archive:
                     gc.submitScore(result.guessCount, leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyBest])
                     gc.submitScore(currentStreak, leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyStreak])
-                default:
-                    // Future games hooked in seamlessly
-                    break
+                case .cargo:
+                    gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [GameCenterManager.Leaderboard.cargoDailyBest])
+                    gc.submitScore(currentStreak, leaderboardIDs: [GameCenterManager.Leaderboard.cargoDailyStreak])
+                case .shift:
+                    gc.submitScore(result.guessCount, leaderboardIDs: [GameCenterManager.Leaderboard.shiftDailyBest])
+                    gc.submitScore(currentStreak, leaderboardIDs: [GameCenterManager.Leaderboard.shiftDailyStreak])
                 }
             }
             

@@ -81,7 +81,6 @@ enum AppTheme {
         case .archive: archiveGradient
         case .cargo:   cargoGradient
         case .shift:   shiftGradient
-        case .orbit:   shiftGradient
         }
     }
 
@@ -91,7 +90,6 @@ enum AppTheme {
         case .archive: archive
         case .cargo:   cargo
         case .shift:   shift
-        case .orbit:   shift
         }
     }
 

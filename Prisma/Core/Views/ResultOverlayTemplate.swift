@@ -72,10 +72,10 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
             case .iconTitle(let icon, let iconColor, let title):
                 HStack(spacing: 12) {
                     Image(systemName: icon)
-                        .font(.system(size: 24))
+                        .font(.title3)
                         .foregroundStyle(iconColor)
                     Text(title)
-                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .font(.footnote.weight(.bold).monospaced())
                         .foregroundStyle(.primary)
                 }
                 .padding(.vertical, 12)
@@ -88,11 +88,11 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
             case .titleSubtitle(let title, let subtitle):
                 VStack(spacing: 8) {
                     Text(title)
-                        .font(.system(size: 24, weight: .black, design: .rounded))
+                        .font(.system(.title2, design: .rounded, weight: .black))
                         .foregroundStyle(.primary)
                     if let subtitle {
                         Text(subtitle)
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.subheadline.weight(.medium))
                             .foregroundStyle(.primary.opacity(0.5))
                     }
                 }
@@ -100,11 +100,11 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
             case .custom(let title, let subtitle):
                 VStack(spacing: 6) {
                     Text(title)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(.system(.title3, design: .rounded, weight: .bold))
                         .foregroundStyle(.primary)
                     if let subtitle {
                         Text(subtitle)
-                            .font(.system(size: 13, weight: .medium, design: .monospaced))
+                            .font(.caption.weight(.medium).monospaced())
                             .foregroundStyle(.primary.opacity(0.6))
                             .multilineTextAlignment(.center)
                     }
@@ -123,19 +123,19 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
             ForEach(stats) { stat in
                 HStack {
                     Text(stat.label)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.callout.weight(.medium))
                         .foregroundStyle(.primary.opacity(0.5))
                     Spacer()
                     if let n = Int(stat.value) {
                         AnimatedScoreView(
                             target: n,
                             duration: 0.9,
-                            font: .system(size: 15, weight: .bold, design: .monospaced),
+                            font: .callout.weight(.bold).monospaced(),
                             color: .primary
                         )
                     } else {
                         Text(stat.value)
-                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                            .font(.callout.weight(.bold).monospaced())
                             .foregroundStyle(.primary)
                     }
                 }
@@ -177,7 +177,7 @@ struct ResultPrimaryButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 17, weight: .bold))
+                .font(.headline)
                 .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
@@ -200,7 +200,7 @@ struct ResultSecondaryButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 17, weight: .bold))
+                .font(.headline)
                 .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
@@ -215,7 +215,7 @@ struct ResultShareButton: View {
     var body: some View {
         ShareLink(item: shareString) {
             Label("Share", systemImage: "square.and.arrow.up")
-                .font(.system(size: 17, weight: .semibold))
+                .font(.headline.weight(.semibold))
                 .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)

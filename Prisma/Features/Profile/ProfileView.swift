@@ -15,7 +15,6 @@ struct ProfileView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var showResetConfirmation = false
     @State private var badgeInfos: [BadgeInfo] = []
     @State private var newBadgeToast: Badge?
     @State private var showCustomize = false
@@ -128,8 +127,6 @@ struct ProfileView: View {
                             .padding(.horizontal, 20)
                         }
                         
-                        // Reset button (developer tool)
-                        resetButton
                     }
                     .padding(.bottom, 40)
                 }
@@ -163,18 +160,6 @@ struct ProfileView: View {
             .sheet(isPresented: $showCustomize) {
                 ProfileCustomizeSheet(prefs: prefs)
             }
-            .confirmationDialog(
-                "Reset All Progress",
-                isPresented: $showResetConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button("Reset Everything", role: .destructive) {
-                    resetAllProgress()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("This will delete all local level progress and game history. Daily games will not be affected. This action cannot be undone.")
-            }
             .onAppear {
                 evaluateBadges()
             }
@@ -200,7 +185,8 @@ struct ProfileView: View {
                     newBadgeToast = first
                 }
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            Task {
+                try? await Task.sleep(for: .seconds(3))
                 if reduceMotion {
                     newBadgeToast = nil
                 } else {
@@ -354,50 +340,6 @@ struct ProfileView: View {
             .kerning(1.5)
     }
     
-    // MARK: - Reset Button
-    
-    private var resetButton: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionLabel("DEVELOPER")
-            
-            Button {
-                showResetConfirmation = true
-            } label: {
-                HStack {
-                    Image(systemName: "trash.fill")
-                        .font(.body)
-                    Text("Reset All Local Progress")
-                        .font(.body.weight(.semibold))
-                    Spacer()
-                }
-                .foregroundStyle(.red)
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.primary.opacity(0.12))
-                )
-            }
-            .buttonStyle(.plain)
-        }
-        .padding(.horizontal, 20)
-    }
-    
-    // MARK: - Reset Function
-    
-    private func resetAllProgress() {
-        // Delete all local level progress
-        for progress in allLevelProgress {
-            modelContext.delete(progress)
-        }
-        
-        // Delete all local game results (keep daily games)
-        for result in allGameResults where !result.isDaily {
-            modelContext.delete(result)
-        }
-        
-        // Save changes
-        try? modelContext.save()
-    }
 }
 
 // MARK: - Stat Card
@@ -445,16 +387,10 @@ private struct StatCard: View {
                     .foregroundStyle(.tertiary)
             }
 
-            // Progress bar
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color.secondary.opacity(0.15))
-                        .frame(height: 5)
-                    Capsule().fill(accentColor)
-                        .frame(width: max(0, geo.size.width * CGFloat(won) / 100), height: 5)
-                }
-            }
-            .frame(height: 5)
+            // Progress bar — using ProgressView avoids GeometryReader
+            ProgressView(value: Double(won), total: 100)
+                .progressViewStyle(.linear)
+                .tint(accentColor)
 
             // Secondary stats
             HStack {
@@ -543,7 +479,6 @@ private struct DailyResultRow: View {
         case .archive: return AppTheme.archive
         case .cargo:   return AppTheme.cargo
         case .shift:   return AppTheme.shift
-        default: return .secondary
         }
     }
 

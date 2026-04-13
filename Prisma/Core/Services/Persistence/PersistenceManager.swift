@@ -2,8 +2,14 @@
 //  PersistenceManager.swift
 //  Prisma
 //
-//  SwiftData-backed persistence for GameResult records.
+//  SwiftData-backed persistence for GameResult and LevelProgress records.
+//  iCloud sync is enabled via CloudKit when the user is signed in to iCloud.
 //  Inject via .modelContainer(PersistenceManager.container) in PrismaApp.
+//
+//  CloudKit constraints observed:
+//  - No @Attribute(.unique) or #Unique on any model property
+//  - All model properties have default values or are optional
+//  - All relationships are marked optional
 //
 
 import Foundation
@@ -11,33 +17,49 @@ import SwiftData
 
 @MainActor
 struct PersistenceManager {
+
+    // MARK: - CloudKit container identifier
+    // Must match the "iCloud.com.yourteam.Prisma" container you create in the
+    // Apple Developer portal and add to the app's iCloud entitlements.
+    private static let cloudKitContainerID = "iCloud.com.anugnana.Prisma"
+
     static let container: ModelContainer = {
         let schema = Schema([GameResult.self, LevelProgress.self])
-        
-        // Define a specific URL for the store so we can delete it if migration fails
+
+        // Use a named store URL so we can clean it up on migration failure
         let storeURL = URL.applicationSupportDirectory.appending(path: "Prisma.store")
-        let config = ModelConfiguration(schema: schema, url: storeURL)
-        
+
+        // Attempt to build a CloudKit-mirrored container first.
+        // When the device isn't signed in to iCloud or CloudKit isn't available,
+        // SwiftData automatically falls back to a local-only store — no extra
+        // code is needed to handle that case.
+        let config = ModelConfiguration(
+            schema: schema,
+            url: storeURL,
+            cloudKitDatabase: .private(cloudKitContainerID)
+        )
+
         do {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
-            print("SwiftData schema mismatch or load failure. Deleting old store and recreating...")
-            
-            // Delete the named store
+            print("[Persistence] CloudKit container failed (\(error)). Falling back to local store.")
+
+            // Delete the named store and recreate without CloudKit
+            let fallbackConfig = ModelConfiguration(schema: schema, url: storeURL)
             try? FileManager.default.removeItem(at: storeURL)
             try? FileManager.default.removeItem(at: storeURL.appendingPathExtension("shm"))
             try? FileManager.default.removeItem(at: storeURL.appendingPathExtension("wal"))
-            
-            // Also clean up the default store from earlier builds
+
+            // Also clean up default store from earlier builds
             let defaultURL = URL.applicationSupportDirectory.appending(path: "default.store")
             try? FileManager.default.removeItem(at: defaultURL)
             try? FileManager.default.removeItem(at: defaultURL.appendingPathExtension("shm"))
             try? FileManager.default.removeItem(at: defaultURL.appendingPathExtension("wal"))
-            
+
             do {
-                return try ModelContainer(for: schema, configurations: [config])
+                return try ModelContainer(for: schema, configurations: [fallbackConfig])
             } catch {
-                fatalError("Failed to recreate ModelContainer: \(error)")
+                fatalError("[Persistence] Failed to recreate ModelContainer: \(error)")
             }
         }
     }()
@@ -108,12 +130,12 @@ struct PersistenceManager {
 
     static func markLevelPlayed(gameType: GameType, levelId: Int, won: Bool, score: Int, guessesUsed: Int, durationSeconds: Double = 0, context: ModelContext) {
         let progressList = fetchLevelProgress(for: gameType, context: context)
-        
+
         if progressList.contains(where: { $0.levelId == levelId }) {
             // Already played — don't overwrite
             return
         }
-        
+
         let newProgress = LevelProgress(
             gameTypeRaw: gameType.rawValue,
             levelId: levelId,
@@ -136,8 +158,8 @@ struct PersistenceManager {
     // MARK: - Total Local Wins (for Game Center mastery leaderboard)
 
     static func totalLocalWins(context: ModelContext) -> Int {
-        let signalsWins = fetchLevelProgress(for: .signals, context: context).filter { $0.won }.count
-        let archiveWins = fetchLevelProgress(for: .archive, context: context).filter { $0.won }.count
-        return signalsWins + archiveWins
+        let descriptor = FetchDescriptor<LevelProgress>()
+        let allProgress = (try? context.fetch(descriptor)) ?? []
+        return allProgress.filter(\.won).count
     }
 }

@@ -57,7 +57,7 @@ struct SplashScreenView: View {
 
                 // Logo text
                 Text("Prisma")
-                    .font(.system(size: 52, weight: .heavy, design: .rounded))
+                    .font(.system(.largeTitle, design: .rounded, weight: .heavy))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [AppTheme.shift, AppTheme.cascadeBlue],
@@ -70,7 +70,7 @@ struct SplashScreenView: View {
 
                 // Tagline
                 Text("Four games. One daily challenge each.")
-                    .font(.system(size: 17, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .foregroundStyle(.primary.opacity(0.5))
                     .opacity(taglineOpacity)
             }

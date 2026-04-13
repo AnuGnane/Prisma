@@ -46,10 +46,6 @@ struct HowToPlaySheet: View {
                 HowToPlayStep(title: "Spell the Targets", instruction: "Find and align the required words anywhere in the grid.", systemImage: "character.book.closed.fill", color: AppTheme.shift),
                 HowToPlayStep(title: "Optimal Moves", instruction: "Try to find all words in the fewest moves possible for a higher rank.", systemImage: "target", color: AppTheme.shift)
             ]
-        case .orbit:
-            return [
-                HowToPlayStep(title: "Synchronize", instruction: "Tap when the orbiting signal crosses the target zones.", systemImage: "circle.dotted.circle", color: .purple)
-            ]
         }
     }
 

@@ -147,14 +147,6 @@ struct GameLogicTests {
         #expect(true, "Shift undo mechanic verified")
     }
     
-    // MARK: - Orbit Game Specific Tests
-    
-    @Test("Orbit: Rotation mechanics correct")
-    func orbitRotationMechanics() async {
-        // Test orbital mechanics and rotations
-        #expect(true, "Orbit rotation mechanics verified")
-    }
-    
     // MARK: - Daily Challenge Tests
     
     @Test("Daily challenge generates unique puzzle each day")

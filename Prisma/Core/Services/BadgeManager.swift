@@ -105,7 +105,7 @@ final class BadgeManager {
         }
         
         // Per-game mastery (all 100 local levels won)
-        for (badge, game) in [(Badge.signalsMaster, GameType.signals), (.archiveMaster, .archive), (.shiftMaster, .shift)] {
+        for (badge, game) in [(Badge.signalsMaster, GameType.signals), (.archiveMaster, .archive), (.cargoMaster, .cargo), (.shiftMaster, .shift)] {
             if !isUnlocked(badge) {
                 let gameWins = allProgress.filter { $0.gameTypeRaw == game.rawValue && $0.won }.count
                 if gameWins >= 100 {

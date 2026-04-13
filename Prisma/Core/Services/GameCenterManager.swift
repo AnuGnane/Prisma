@@ -25,6 +25,10 @@ final class GameCenterManager: @unchecked Sendable {
         static let signalsDailyBest    = "prisma.signals.daily.best"
         static let archiveDailyStreak  = "prisma.archive.daily.streak"
         static let archiveDailyBest    = "prisma.archive.daily.best"
+        static let cargoDailyStreak    = "prisma.cargo.daily.streak"
+        static let cargoDailyBest      = "prisma.cargo.daily.best"
+        static let shiftDailyStreak    = "prisma.shift.daily.streak"
+        static let shiftDailyBest      = "prisma.shift.daily.best"
         static let localMastery        = "prisma.local.mastery"
     }
 

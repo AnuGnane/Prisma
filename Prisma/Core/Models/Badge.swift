@@ -28,6 +28,7 @@ enum Badge: String, CaseIterable, Identifiable {
     // Completionist (per game)
     case signalsMaster     = "signals_master"
     case archiveMaster     = "archive_master"
+    case cargoMaster       = "cargo_master"
     case shiftMaster       = "shift_master"
     
     var id: String { rawValue }
@@ -46,6 +47,7 @@ enum Badge: String, CaseIterable, Identifiable {
         case .signalsMaster:  return "Signals Master"
         case .archiveMaster:  return "Archive Master"
         case .shiftMaster:    return "Shift Master"
+        case .cargoMaster:    return "Cargo Master"
         }
     }
     
@@ -63,6 +65,7 @@ enum Badge: String, CaseIterable, Identifiable {
         case .signalsMaster:  return "Win all 100 Signals local levels"
         case .archiveMaster:  return "Win all 100 Archive local levels"
         case .shiftMaster:    return "Win all 100 Shift local levels"
+        case .cargoMaster:    return "Win all 100 Cargo local levels"
         }
     }
     
@@ -80,6 +83,7 @@ enum Badge: String, CaseIterable, Identifiable {
         case .signalsMaster:  return "antenna.radiowaves.left.and.right"
         case .archiveMaster:  return "clock.arrow.circlepath"
         case .shiftMaster:    return "slider.horizontal.3"
+        case .cargoMaster:    return "shippingbox.fill"
         }
     }
     
@@ -93,6 +97,7 @@ enum Badge: String, CaseIterable, Identifiable {
         case .speedDemon:                        return .cyan
         case .local25, .local50, .local100:      return .purple
         case .archiveMaster:                     return AppTheme.archive
+        case .cargoMaster:                       return AppTheme.cargo
         case .shiftMaster:                       return AppTheme.shift
         }
     }

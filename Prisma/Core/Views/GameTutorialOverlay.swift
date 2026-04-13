@@ -105,8 +105,6 @@ struct GameTutorialOverlay: View {
                 "Found words highlight and lock in place.",
                 "Find all words to complete the puzzle!"
             ]
-        default:
-            return ["Coming soon!"]
         }
     }
 
@@ -116,7 +114,6 @@ struct GameTutorialOverlay: View {
         case .archive: return "clock.arrow.circlepath"
         case .cargo:   return "shippingbox.fill"
         case .shift:   return "slider.horizontal.3"
-        default:       return "star.fill"
         }
     }
 
@@ -126,7 +123,6 @@ struct GameTutorialOverlay: View {
         case .archive: return AppTheme.archive
         case .cargo:   return AppTheme.cargo
         case .shift:   return AppTheme.shift
-        default:       return .primary
         }
     }
 }

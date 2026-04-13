@@ -40,7 +40,6 @@ struct LocalLevelSolutionView: View {
         case .signals: return result.signalsStateJSON != nil
         case .archive: return result.archiveStateJSON != nil
         case .shift: return result.shiftStateJSON != nil
-        default: return false
         }
     }
     
@@ -135,8 +134,6 @@ struct LocalLevelSolutionView: View {
                 cargoSolution
             case .shift:
                 shiftSolution
-            default:
-                EmptyView()
             }
         }
     }
@@ -152,8 +149,6 @@ struct LocalLevelSolutionView: View {
             cargoUserState
         case .shift:
             shiftUserState
-        default:
-            EmptyView()
         }
     }
 

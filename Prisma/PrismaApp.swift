@@ -11,6 +11,7 @@ import SwiftData
 @main
 struct PrismaApp: App {
     @AppStorage("settings.appearanceMode") private var appearanceMode = AppearanceMode.dark.rawValue
+    @AppStorage("onboarding.hasSeenWelcome") private var hasSeenWelcome = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showSplash = true
 
@@ -32,16 +33,17 @@ struct PrismaApp: App {
                 }
             }
             .preferredColorScheme(AppearanceMode(rawValue: appearanceMode)?.colorScheme)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                    let hideSplash = {
+            .sheet(isPresented: .constant(!hasSeenWelcome && !showSplash)) {
+                OnboardingView()
+                    .interactiveDismissDisabled()
+            }
+            .task {
+                try? await Task.sleep(for: .seconds(1.8))
+                if reduceMotion {
+                    showSplash = false
+                } else {
+                    withAnimation(.easeInOut(duration: 0.5)) {
                         showSplash = false
-                    }
-
-                    if reduceMotion {
-                        hideSplash()
-                    } else {
-                        withAnimation(.easeInOut(duration: 0.5), hideSplash)
                     }
                 }
             }

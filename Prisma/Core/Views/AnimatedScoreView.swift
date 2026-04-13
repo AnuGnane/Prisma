@@ -11,7 +11,7 @@ import SwiftUI
 struct AnimatedScoreView: View {
     let target: Int
     var duration: Double = 1.2
-    var font: Font = .system(size: 24, weight: .bold, design: .rounded)
+    var font: Font = .system(.title2, design: .rounded, weight: .bold)
     var color: Color = .primary
 
     @State private var displayed: Int = 0

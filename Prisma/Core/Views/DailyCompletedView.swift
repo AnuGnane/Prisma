@@ -24,7 +24,6 @@ struct DailyCompletedView: View {
         case .signals: return result.signalsStateJSON != nil
         case .archive: return result.archiveStateJSON != nil
         case .shift: return result.shiftStateJSON != nil
-        default: return false
         }
     }
 
@@ -121,7 +120,6 @@ struct DailyCompletedView: View {
         case .archive: DailyCompletedArchiveUserState(result: result, won: won, gameColor: gameColor)
         case .cargo: DailyCompletedCargoUserState(result: result)
         case .shift: DailyCompletedShiftUserState(result: result)
-        default: EmptyView()
         }
     }
     
@@ -132,7 +130,6 @@ struct DailyCompletedView: View {
         case .archive: DailyCompletedArchiveSolution(result: result)
         case .cargo: DailyCompletedCargoSolution(result: result)
         case .shift: DailyCompletedShiftSolution(result: result)
-        default: EmptyView()
         }
     }
     
