@@ -10,6 +10,7 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
     case shift
     case signals
     case archive
+    case circuit
 
     var id: String { rawValue }
 
@@ -19,6 +20,7 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         case .shift:   return "Shift"
         case .signals: return "Signals"
         case .archive: return "Archive"
+        case .circuit: return "Circuit"
         }
     }
 
@@ -28,6 +30,7 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         case .shift:   return "Slide the grid to spell the words"
         case .signals: return "Break the 4-digit code"
         case .archive: return "Guess the historic date"
+        case .circuit: return "Route the signal to its target"
         }
     }
 
@@ -37,6 +40,7 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         case .archive: return "clock.arrow.circlepath"
         case .cargo:   return "shippingbox.fill"
         case .shift:   return "slider.horizontal.3"
+        case .circuit: return "point.3.connected.trianglepath.dotted"
         }
     }
 }

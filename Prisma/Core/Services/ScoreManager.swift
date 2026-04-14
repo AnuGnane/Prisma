@@ -56,6 +56,10 @@ final class ScoreManager {
                 case .shift:
                     gc.submitScore(result.guessCount, leaderboardIDs: [GameCenterManager.Leaderboard.shiftDailyBest])
                     gc.submitScore(currentStreak, leaderboardIDs: [GameCenterManager.Leaderboard.shiftDailyStreak])
+                case .circuit:
+                    // Circuit uses time as the primary efficiency metric
+                    gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [])
+                    gc.submitScore(currentStreak, leaderboardIDs: [])
                 }
             }
             

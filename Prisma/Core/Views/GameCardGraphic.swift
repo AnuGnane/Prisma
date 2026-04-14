@@ -16,11 +16,66 @@ struct GameCardGraphic: View {
         case .archive:  ArchiveGraphic()
         case .cargo:    CargoGraphic()
         case .shift:    ShiftGraphic()
+        case .circuit:  CircuitGraphic()
         }
     }
 }
 
-// MARK: - Signals: Mastermind code-guess board
+// MARK: - Circuit: miniature neon path grid
+
+struct CircuitGraphic: View {
+    // 4×4 grid showing two intersecting neon traces
+    var body: some View {
+        Canvas { context, size in
+            let cell = size.width / 4
+            let half = cell / 2
+
+            func center(row: Int, col: Int) -> CGPoint {
+                CGPoint(x: CGFloat(col) * cell + half, y: CGFloat(row) * cell + half)
+            }
+
+            // Cyan path: (0,0) → (1,0) → (2,0) → (2,1) → (2,2) → (3,2)
+            let cyanPoints: [(Int,Int)] = [(0,0),(1,0),(2,0),(2,1),(2,2),(3,2)]
+            drawNeonPath(from: cyanPoints, color: Color(red: 0, green: 0.78, blue: 1), cellFn: center, in: context, lineWidth: cell * 0.25)
+
+            // Magenta path: (0,3) → (0,2) → (1,2) → (1,1) → (1,0) — crosses cyan via bridge
+            let magentaPoints: [(Int,Int)] = [(0,3),(0,2),(1,2),(1,1),(3,1)]
+            drawNeonPath(from: magentaPoints, color: Color(red: 0.88, green: 0.25, blue: 0.98), cellFn: center, in: context, lineWidth: cell * 0.25)
+
+            // Draw small terminal circles
+            for (r, c) in [(0,0),(3,2)] {
+                let pt = center(row: r, col: c)
+                let rect = CGRect(x: pt.x - cell*0.22, y: pt.y - cell*0.22, width: cell*0.44, height: cell*0.44)
+                context.fill(Path(ellipseIn: rect), with: .color(Color(red: 0, green: 0.78, blue: 1)))
+            }
+            for (r, c) in [(0,3),(3,1)] {
+                let pt = center(row: r, col: c)
+                let rect = CGRect(x: pt.x - cell*0.22, y: pt.y - cell*0.22, width: cell*0.44, height: cell*0.44)
+                context.fill(Path(ellipseIn: rect), with: .color(Color(red: 0.88, green: 0.25, blue: 0.98)))
+            }
+        }
+    }
+
+    private func drawNeonPath(
+        from points: [(Int, Int)],
+        color: Color,
+        cellFn: (Int, Int) -> CGPoint,
+        in context: GraphicsContext,
+        lineWidth: CGFloat
+    ) {
+        guard points.count >= 2 else { return }
+        var path = Path()
+        path.move(to: cellFn(points[0].0, points[0].1))
+        for p in points.dropFirst() { path.addLine(to: cellFn(p.0, p.1)) }
+
+        // Glow pass
+        var glow = context
+        glow.opacity = 0.3
+        glow.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: lineWidth * 1.8, lineCap: .round, lineJoin: .round))
+        // Core pass
+        context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+    }
+}
 
 struct SignalsGraphic: View {
     // 5 rows of guesses: each row has 4 circle dots

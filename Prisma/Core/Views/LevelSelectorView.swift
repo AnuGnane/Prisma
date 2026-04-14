@@ -125,6 +125,7 @@ struct LevelSelectorView: View {
         case .archive: return "clock.arrow.circlepath"
         case .cargo:   return "shippingbox.fill"
         case .shift:   return "slider.horizontal.3"
+        case .circuit: return "point.3.connected.trianglepath.dotted"
         }
     }
     
@@ -134,6 +135,7 @@ struct LevelSelectorView: View {
         case .archive: return AppTheme.archive
         case .cargo:   return Color(red: 0.85, green: 0.52, blue: 0.24)
         case .shift:   return AppTheme.shift
+        case .circuit: return AppTheme.circuit
         }
     }
     
@@ -161,6 +163,8 @@ struct LevelSelectorView: View {
                 Text("Failed to load level \(levelId)")
                     .foregroundStyle(.primary)
             }
+        case .circuit:
+            CircuitGameView(levelId: levelId)
         }
     }
 }

@@ -22,6 +22,7 @@ final class GameResult {
     var signalsStateJSON: String?
     var archiveStateJSON: String?
     var shiftStateJSON: String?
+    var circuitStateJSON: String?
 
     init(
         gameType: GameType,

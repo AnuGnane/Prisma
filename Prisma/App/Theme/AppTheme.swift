@@ -55,6 +55,7 @@ enum AppTheme {
     static let archive = Color(red: 0.24, green: 0.52, blue: 0.85)
     static let cargo   = Color(red: 1.00, green: 0.55, blue: 0.26)
     static let shift   = Color(red: 0.65, green: 0.24, blue: 0.85)
+    static let circuit = Color(red: 0.0,  green: 0.78, blue: 1.0)   // deep electric cyan
 
     // MARK: Per-Game Gradient Pairs
 
@@ -74,6 +75,10 @@ enum AppTheme {
         Color(red: 0.50, green: 0.16, blue: 0.72),
         Color(red: 0.72, green: 0.34, blue: 0.92)
     ]
+    static let circuitGradient: [Color] = [
+        Color(red: 0.00, green: 0.55, blue: 0.75),
+        Color(red: 0.00, green: 0.85, blue: 1.00)
+    ]
 
     static func gradient(for game: GameType) -> [Color] {
         switch game {
@@ -81,6 +86,7 @@ enum AppTheme {
         case .archive: archiveGradient
         case .cargo:   cargoGradient
         case .shift:   shiftGradient
+        case .circuit: circuitGradient
         }
     }
 
@@ -90,6 +96,7 @@ enum AppTheme {
         case .archive: archive
         case .cargo:   cargo
         case .shift:   shift
+        case .circuit: circuit
         }
     }
 

@@ -29,7 +29,7 @@ struct GamesHomeView: View {
                         headerSection
 
                         VStack(spacing: 16) {
-                            ForEach([GameType.signals, .archive, .cargo, .shift], id: \.self) { game in
+                            ForEach([GameType.signals, .archive, .cargo, .shift, .circuit], id: \.self) { game in
                                 GameHeroCard(game: game)
                             }
                         }

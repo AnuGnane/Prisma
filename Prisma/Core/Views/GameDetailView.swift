@@ -104,6 +104,12 @@ struct GameDetailView: View {
                 "Each move shifts an entire row or column",
                 "Find all the words in as few moves as possible"
             ]
+        case .circuit:
+            return [
+                "Draw paths to connect matching source and target terminals",
+                "Routes pass through logic gates that transform color and signal state",
+                "Cover every cell and match the optimal path count for max efficiency"
+            ]
         }
     }
 }
@@ -309,6 +315,7 @@ private struct DailyGameDestinationInternal: View {
             case .archive: ArchiveGameView()
             case .cargo: CargoGameView()
             case .shift: ShiftGameView(puzzle: ShiftPuzzleGenerator.generateDailyPuzzle(for: .now), isDaily: true)
+            case .circuit: CircuitGameView(viewModel: CircuitGameViewModel(date: .now))
             }
         }
     }
