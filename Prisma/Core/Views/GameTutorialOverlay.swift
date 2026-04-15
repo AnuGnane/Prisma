@@ -105,6 +105,12 @@ struct GameTutorialOverlay: View {
                 "Found words highlight and lock in place.",
                 "Find all words to complete the puzzle!"
             ]
+        case .circuit:
+            return [
+                "Draw paths to connect matching source and target terminals.",
+                "Routes pass through logic gates that transform color and signal state.",
+                "Cover every cell and match the optimal path count for max efficiency."
+            ]
         }
     }
 
@@ -114,6 +120,7 @@ struct GameTutorialOverlay: View {
         case .archive: return "clock.arrow.circlepath"
         case .cargo:   return "shippingbox.fill"
         case .shift:   return "slider.horizontal.3"
+        case .circuit: return "point.3.connected.trianglepath.dotted"
         }
     }
 
@@ -123,6 +130,7 @@ struct GameTutorialOverlay: View {
         case .archive: return AppTheme.archive
         case .cargo:   return AppTheme.cargo
         case .shift:   return AppTheme.shift
+        case .circuit: return AppTheme.circuit
         }
     }
 }

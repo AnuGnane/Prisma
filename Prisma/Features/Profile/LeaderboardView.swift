@@ -46,7 +46,7 @@ struct LeaderboardView: View {
             // Game picker
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach([GameType.signals, .archive, .cargo, .shift], id: \.self) { game in
+                    ForEach([GameType.signals, .archive, .cargo, .shift, .circuit], id: \.self) { game in
                         GamePickerChip(game: game, isSelected: selectedGame == game) {
                             selectedGame = game
                         }
@@ -143,9 +143,12 @@ struct LeaderboardView: View {
                 return
             }
 
+            let playerScope: GKLeaderboard.PlayerScope = selectedScope == .friends ? .friendsOnly : .global
+            let timeScope: GKLeaderboard.TimeScope = selectedScope == .today ? .today : .allTime
+
             let (localEntry, entries: topEntries, _) = try await board.loadEntries(
-                for: .global,
-                timeScope: selectedScope.gkTimeScope,
+                for: playerScope,
+                timeScope: timeScope,
                 range: NSRange(1...20)
             )
 
@@ -164,7 +167,12 @@ struct LeaderboardView: View {
         case (.signals, _):        return GameCenterManager.Leaderboard.signalsDailyBest
         case (.archive, .today):   return GameCenterManager.Leaderboard.archiveDailyBest
         case (.archive, _):        return GameCenterManager.Leaderboard.archiveDailyBest
-        default:                   return GameCenterManager.Leaderboard.localMastery
+        case (.cargo, .today):     return GameCenterManager.Leaderboard.cargoDailyBest
+        case (.cargo, _):          return GameCenterManager.Leaderboard.cargoDailyBest
+        case (.shift, .today):     return GameCenterManager.Leaderboard.shiftDailyBest
+        case (.shift, _):          return GameCenterManager.Leaderboard.shiftDailyBest
+        case (.circuit, .today):   return GameCenterManager.Leaderboard.circuitDailyBest
+        case (.circuit, _):        return GameCenterManager.Leaderboard.circuitDailyBest
         }
     }
 }

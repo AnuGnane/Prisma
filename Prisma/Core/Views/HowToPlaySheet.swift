@@ -46,6 +46,12 @@ struct HowToPlaySheet: View {
                 HowToPlayStep(title: "Spell the Targets", instruction: "Find and align the required words anywhere in the grid.", systemImage: "character.book.closed.fill", color: AppTheme.shift),
                 HowToPlayStep(title: "Optimal Moves", instruction: "Try to find all words in the fewest moves possible for a higher rank.", systemImage: "target", color: AppTheme.shift)
             ]
+        case .circuit:
+            return [
+                HowToPlayStep(title: "Connect Terminals", instruction: "Draw paths to connect matching source and target terminals.", systemImage: "point.topleft.down.curvedto.point.bottomright.up", color: AppTheme.circuit),
+                HowToPlayStep(title: "Pass Through Gates", instruction: "Logic gates transform the path's color and signal state.", systemImage: "arrow.triangle.branch", color: AppTheme.circuit),
+                HowToPlayStep(title: "Max Efficiency", instruction: "Cover every cell and match the optimal path count for 3 stars.", systemImage: "bolt.fill", color: AppTheme.circuit)
+            ]
         }
     }
 

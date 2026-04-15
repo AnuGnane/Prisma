@@ -479,6 +479,7 @@ private struct DailyResultRow: View {
         case .archive: return AppTheme.archive
         case .cargo:   return AppTheme.cargo
         case .shift:   return AppTheme.shift
+        case .circuit: return AppTheme.circuit
         }
     }
 

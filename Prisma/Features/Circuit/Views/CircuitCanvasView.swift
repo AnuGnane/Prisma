@@ -5,16 +5,21 @@
 //  Draws all active path segments as glowing neon strokes using SwiftUI Canvas.
 //  Using Canvas (not per-cell views) keeps rendering smooth even on large grids.
 //
-//  Neon glow effect: two pass rendering —
-//    Pass 1: wide blurred stroke at 30% opacity (halo)
+//  Neon glow effect: two-pass rendering —
+//    Pass 1: wide blurred stroke at 35% opacity (halo)
 //    Pass 2: narrow sharp stroke at full opacity (core line)
+//
+//  pathLayer change: this view now reads per-segment signal color from
+//  `pathLayer` (the drawing layer) rather than `liveGrid`. This produces correct
+//  per-segment coloring when a gate mid-route transforms the signal color.
 //
 
 import SwiftUI
 
 struct CircuitCanvasView: View {
     let activePaths: [NeonColor: ActivePath]
-    let liveGrid: [[CellState]]
+    /// Per-position signal map from the ViewModel's pathLayer.
+    let pathLayer: [GridPosition: PathSignal]
     let gridSize: Int
     let cellSize: CGFloat
 
@@ -24,71 +29,112 @@ struct CircuitCanvasView: View {
                 drawPath(path, in: context, size: size)
             }
         }
-        .allowsHitTesting(false) // Gesture handled by the grid layer beneath
+        .allowsHitTesting(false) // Gesture handled by the grid layer beneath.
     }
 
     // MARK: - Path Drawing
 
     private func drawPath(_ path: ActivePath, in context: GraphicsContext, size: CGSize) {
         guard path.segments.count >= 2 else {
-            // Single-segment path (just the source tap) — draw start cap dot
+            // Single-segment path (just the source tap) — draw start cap dot.
             if let origin = path.segments.first {
                 drawStartDot(at: origin, signal: path.currentSignal, in: context)
             }
             return
         }
 
-        // Build a continuous UIBezierPath-style SwiftUI Path
-        var swiftUIPath = Path()
-        var prevCenter: CGPoint? = nil
-
+        // ── Pass 1 & 2: draw the full path in source color (halo + core) ──
+        // We draw the full stroke in one pass first, then overlay transformed
+        // segments so color changes after gates are clearly visible.
+        var fullPath = Path()
         for (index, position) in path.segments.enumerated() {
             let center = cellCenter(for: position)
-            let signal: PathSignal = signalAt(index: index, in: path)
-
-            if index == 0 {
-                swiftUIPath.move(to: center)
-                prevCenter = center
-            } else {
-                swiftUIPath.addLine(to: center)
-                prevCenter = center
-            }
+            if index == 0 { fullPath.move(to: center) }
+            else          { fullPath.addLine(to: center) }
         }
 
-        // Draw glow pass (wide, translucent)
-        let baseColor = path.currentSignal.color.swiftUIColor
-        var glowStroke = context
-        glowStroke.opacity = 0.35
-        glowStroke.stroke(
-            swiftUIPath,
+        let baseColor = path.sourceColor.swiftUIColor
+
+        // Halo pass
+        var glowContext = context
+        glowContext.opacity = 0.3
+        glowContext.stroke(
+            fullPath,
             with: .color(baseColor),
             style: StrokeStyle(lineWidth: cellSize * 0.55, lineCap: .round, lineJoin: .round)
         )
 
-        // Draw core pass (narrow, opaque)
+        // Core pass
         context.stroke(
-            swiftUIPath,
+            fullPath,
             with: .color(baseColor),
             style: StrokeStyle(lineWidth: cellSize * 0.28, lineCap: .round, lineJoin: .round)
         )
 
-        // Draw transformed segment overlay (slightly lighter tint to show transform happened)
-        drawTransformedOverlay(path: path, in: context)
+        // ── Per-segment color overlay for gate-transformed sections ──
+        // Groups consecutive segments that share the same signal color into runs
+        // and draws each run with its actual transformed color.
+        drawPerSegmentColorOverlay(path, in: context)
+
+        // ── Transformed-segment dashed overlay (white shimmer) ──
+        drawTransformedOverlay(path, in: context)
     }
 
-    /// Draws a subtle white overlay on segments that were transformed by a gate.
-    private func drawTransformedOverlay(path: ActivePath, in context: GraphicsContext) {
+    /// Draws colored overlays on top of the base path to show gate-transformed color changes.
+    private func drawPerSegmentColorOverlay(_ path: ActivePath, in context: GraphicsContext) {
+        // Walk segments grouping by color. When the color changes, flush the current run.
+        var runStart: Int = 0
+        var runColor: Color? = nil
+        var runIsTransformed = false
+
+        func flushRun(upTo end: Int) {
+            guard let color = runColor, runIsTransformed, end > runStart else { return }
+            var runPath = Path()
+            for i in runStart...end {
+                let center = cellCenter(for: path.segments[i])
+                if i == runStart { runPath.move(to: center) }
+                else             { runPath.addLine(to: center) }
+            }
+            // Halo
+            var glowCtx = context
+            glowCtx.opacity = 0.35
+            glowCtx.stroke(runPath, with: .color(color),
+                           style: StrokeStyle(lineWidth: cellSize * 0.55, lineCap: .round, lineJoin: .round))
+            // Core
+            context.stroke(runPath, with: .color(color),
+                           style: StrokeStyle(lineWidth: cellSize * 0.28, lineCap: .round, lineJoin: .round))
+        }
+
+        for (index, _) in path.segments.enumerated() {
+            let signal = signalAt(index: index, in: path)
+            let color  = signal.color.swiftUIColor
+
+            if runColor == nil {
+                runColor = color
+                runIsTransformed = signal.wasTransformed
+                runStart = index
+            } else if color != runColor {
+                flushRun(upTo: index)
+                runColor = color
+                runIsTransformed = signal.wasTransformed
+                runStart = index
+            }
+        }
+        // Flush last run
+        flushRun(upTo: path.segments.count - 1)
+    }
+
+    /// Draws a dashed white shimmer on segments that were transformed by a gate.
+    private func drawTransformedOverlay(_ path: ActivePath, in context: GraphicsContext) {
         guard path.segments.count >= 2 else { return }
 
         var transformedPath = Path()
         var inTransformedRun = false
-        var lastCenter: CGPoint? = nil
 
         for (index, position) in path.segments.enumerated() {
             guard index < path.segments.count - 1 else { break }
-            let cell = liveGrid[position.row][position.col]
-            let signal = signalAt(index: index, in: path)
-            let center = cellCenter(for: position)
+            let signal     = signalAt(index: index, in: path)
+            let center     = cellCenter(for: position)
             let nextCenter = cellCenter(for: path.segments[index + 1])
 
             if signal.wasTransformed {
@@ -100,7 +146,6 @@ struct CircuitCanvasView: View {
             } else {
                 inTransformedRun = false
             }
-            lastCenter = center
         }
 
         var overlayContext = context
@@ -108,11 +153,15 @@ struct CircuitCanvasView: View {
         overlayContext.stroke(
             transformedPath,
             with: .color(.white),
-            style: StrokeStyle(lineWidth: cellSize * 0.14, lineCap: .round, lineJoin: .round, dash: [cellSize * 0.12, cellSize * 0.08])
+            style: StrokeStyle(
+                lineWidth: cellSize * 0.14,
+                lineCap: .round, lineJoin: .round,
+                dash: [cellSize * 0.12, cellSize * 0.08]
+            )
         )
     }
 
-    /// Draws the pulsing dot at the path origin (source terminal position).
+    /// Draws a dot at the source terminal position when only the start tap has been registered.
     private func drawStartDot(at position: GridPosition, signal: PathSignal, in context: GraphicsContext) {
         let center = cellCenter(for: position)
         let radius = cellSize * 0.16
@@ -131,13 +180,10 @@ struct CircuitCanvasView: View {
         )
     }
 
-    /// Returns the PathSignal at an index in the path by reading from the live grid.
-    /// Falls back to path.currentSignal for the last segment.
+    /// Returns the PathSignal at an index by reading the ViewModel's pathLayer.
+    /// Falls back to the path's current (final) signal for positions not yet in the layer.
     private func signalAt(index: Int, in path: ActivePath) -> PathSignal {
         let pos = path.segments[index]
-        if case .path(let signal, _) = liveGrid[pos.row][pos.col] {
-            return signal
-        }
-        return path.currentSignal
+        return pathLayer[pos] ?? path.currentSignal
     }
 }

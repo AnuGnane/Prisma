@@ -9,6 +9,19 @@
 //    - Timer
 //    - Daily and local level modes
 //
+//  Architecture — pathLayer separation:
+//  ──────────────────────────────────────
+//  `liveGrid` is the *static* layer. It holds terminals, gates, and waypoints
+//  exactly as loaded from the level. Path drawing NEVER replaces cells in
+//  liveGrid — only gate runtime state, waypoint visited flags, and terminal
+//  arrivedSignal are mutated here.
+//
+//  `pathLayer` is the *dynamic* drawing layer. It maps every grid position the
+//  player has drawn over to the PathSignal at that position. CircuitCanvasView
+//  reads from pathLayer for rendering. clearPath / truncatePath remove entries;
+//  extendPath adds them. This prevents path drawing from destroying gate or
+//  waypoint cells, which was the root cause of the core gameplay bugs.
+//
 
 import Foundation
 import Observation
@@ -34,15 +47,22 @@ final class CircuitGameViewModel {
 
     private(set) var level: CircuitLevel
 
-    // MARK: - Live Grid State
+    // MARK: - Static Grid
 
-    /// The mutable working grid updated as the player draws.
-    /// Initialized from level.makeLiveGrid(); reset on resetLevel().
+    /// The mutable-but-stable grid holding level entities (terminals, gates, waypoints).
+    /// Only gate runtime state, waypoint.visited, and terminal arrivedSignal change
+    /// during gameplay — the cell type itself is never replaced by a path cell.
     private(set) var liveGrid: [[CellState]]
+
+    // MARK: - Path Layer
+
+    /// Maps every position the player has drawn on to the PathSignal at that cell.
+    /// CircuitCanvasView reads from this for per-segment color/signal rendering.
+    private(set) var pathLayer: [GridPosition: PathSignal] = [:]
 
     // MARK: - Active Paths
 
-    /// One active path per NeonColor (at most one path per color at any time).
+    /// One active path per NeonColor (at most one path per color simultaneously).
     private(set) var activePaths: [NeonColor: ActivePath] = [:]
 
     /// The color currently being drawn (nil when no drag is in progress).
@@ -83,14 +103,22 @@ final class CircuitGameViewModel {
 
     var totalCells: Int { level.size * level.size }
 
-    /// Number of cells that are occupied by a path segment (excludes terminals, gates).
-    var filledPathCells: Int {
-        liveGrid.flatMap { $0 }.filter { $0.isPathSegment }.count
-    }
+    /// Number of cells covered by player-drawn path segments.
+    var filledPathCells: Int { pathLayer.count }
 
-    /// Number of non-empty cells (paths + gates + terminals).
+    /// Total occupied cells: the union of path-drawn positions and static entities
+    /// (terminals, gates, waypoints). Avoids double-counting when a path passes
+    /// through a gate or waypoint.
     var usedCells: Int {
-        liveGrid.flatMap { $0 }.filter { !$0.isEmpty }.count
+        var positions = Set(pathLayer.keys)
+        for row in 0..<level.size {
+            for col in 0..<level.size {
+                if !liveGrid[row][col].isEmpty {
+                    positions.insert(GridPosition(row, col))
+                }
+            }
+        }
+        return positions.count
     }
 
     var coveragePercent: Double {
@@ -113,12 +141,20 @@ final class CircuitGameViewModel {
         poweredTerminalCount == level.terminalPairs.count
     }
 
+    /// True when all waypoints in the level have been visited by a drawn path.
+    var allWaypointsVisited: Bool {
+        let totalWaypoints = liveGrid.flatMap { $0 }.filter { $0.isWaypoint }.count
+        guard totalWaypoints > 0 else { return true }
+        let visited = liveGrid.flatMap { $0 }.filter { $0.waypointVisited }.count
+        return visited == totalWaypoints
+    }
+
     var isPerfectFlow: Bool {
-        allTerminalsPowered && coveragePercent >= 1.0
+        allTerminalsPowered && allWaypointsVisited && coveragePercent >= 1.0
     }
 
     var isMaxEfficiency: Bool {
-        isPerfectFlow && totalPathLength <= level.parPathLength
+        isPerfectFlow && level.parPathLength > 0 && totalPathLength <= level.parPathLength
     }
 
     var isGameOver: Bool {
@@ -140,20 +176,20 @@ final class CircuitGameViewModel {
     func dragBegan(at position: GridPosition) {
         guard !isGameOver else { return }
         guard isInBounds(position) else { return }
+
         let cell = liveGrid[position.row][position.col]
 
         switch cell {
         case .terminal(let color, let signal, true, _):
-            // Starting from a source terminal
+            // Starting from a source terminal — clear existing path and begin fresh.
             startNewPath(color: color, signal: signal, at: position)
-        case .path:
-            // Picking up an existing path mid-segment — truncate to this point
+        default:
+            // Check pathLayer: player may be tapping on an existing drawn path
+            // (which no longer shows as .path in liveGrid with the new architecture).
             if let color = colorOfPath(at: position) {
                 truncatePath(color: color, to: position)
                 activeDrawColor = color
             }
-        default:
-            break
         }
     }
 
@@ -165,26 +201,28 @@ final class CircuitGameViewModel {
         guard let path = activePaths[color] else { return }
         guard let head = path.headPosition else { return }
 
-        // Ignore if we haven't moved to a new cell
+        // Ignore if we haven't moved to a new cell.
         guard position != head else { return }
 
-        // If dragging back onto own path: truncate
+        // If dragging back onto own path: truncate to that point.
         if path.contains(position) {
             truncatePath(color: color, to: position)
             return
         }
 
-        // Must be adjacent to head
+        // Must be adjacent to head.
         guard head.isAdjacent(to: position) else { return }
 
         let cell = liveGrid[position.row][position.col]
 
-        // Block if cell is occupied by a different path
-        if case .path(let existing, _) = cell {
-            if existing.color != color { return }
+        // Block if cell is already owned by a different path in pathLayer.
+        if pathLayer[position] != nil {
+            if let existingColor = colorOfPath(at: position), existingColor != color {
+                return
+            }
         }
 
-        // Block if it's a different source terminal
+        // Block entry into a different color's source terminal.
         if case .terminal(let c, _, true, _) = cell, c != color { return }
 
         extendPath(color: color, to: position)
@@ -195,11 +233,10 @@ final class CircuitGameViewModel {
         guard let color = activeDrawColor else { return }
         activeDrawColor = nil
 
-        // Check if path has reached its target terminal
+        // Finalize arrival at a matching target terminal.
         if let path = activePaths[color], let head = path.headPosition {
             let cell = liveGrid[head.row][head.col]
             if case .terminal(let tc, let ts, false, _) = cell, tc == color {
-                // Mark the target terminal with the arriving signal
                 let arrivedSignal = path.currentSignal
                 liveGrid[head.row][head.col] = .terminal(
                     color: tc,
@@ -217,13 +254,12 @@ final class CircuitGameViewModel {
     // MARK: - Path Management
 
     private func startNewPath(color: NeonColor, signal: SignalState, at position: GridPosition) {
-        // Clear any existing path of this color
+        // Clear any existing path of this color before starting fresh.
         clearPath(color: color)
-
         let path = ActivePath(sourceColor: color, sourceSignal: signal, startPosition: position)
         activePaths[color] = path
         activeDrawColor = color
-        // Source terminal stays as terminal (not replaced with a path segment)
+        // Source terminal is NOT added to pathLayer — it remains a static entity in liveGrid.
     }
 
     private func extendPath(color: NeonColor, to position: GridPosition) {
@@ -231,32 +267,55 @@ final class CircuitGameViewModel {
               let prevHead = path.headPosition else { return }
 
         let cell = liveGrid[position.row][position.col]
-
-        // Resolve gate transform if applicable
         let entryDir = prevHead.directionTo(position)
         let newSignal = applyGateTransform(cell: cell, incoming: path.currentSignal, entryDirection: entryDir)
 
-        // If it's a target terminal — we don't replace it with a path cell
-        if case .terminal = cell {
-            path.segments.append(position)
-            path.currentSignal = newSignal
-            activePaths[color] = path
-            return
+        // Update runtime state on static entities in liveGrid WITHOUT replacing the cell type.
+        switch cell {
+        case .gate(let gateType, let gateState):
+            let newGateState: GateState
+            switch gateType {
+            case .synthesizer:
+                // Wire the synthesizer evaluator — missing prior to this refactor.
+                newGateState = evaluateSynthesizer(
+                    gateType: gateType,
+                    currentState: gateState,
+                    incoming: path.currentSignal
+                )
+            case .bridge:
+                // Track which axis this path is crossing. Each axis is independent.
+                let isHorizontal = entryDir?.isHorizontal ?? true
+                if case .bridgeLocked(let h, let v) = gateState {
+                    newGateState = isHorizontal
+                        ? .bridgeLocked(horizontalSignal: path.currentSignal, verticalSignal: v)
+                        : .bridgeLocked(horizontalSignal: h, verticalSignal: path.currentSignal)
+                } else {
+                    newGateState = isHorizontal
+                        ? .bridgeLocked(horizontalSignal: path.currentSignal, verticalSignal: nil)
+                        : .bridgeLocked(horizontalSignal: nil, verticalSignal: path.currentSignal)
+                }
+            default:
+                newGateState = .active(outputColor: newSignal.color, outputSignal: newSignal.signal)
+            }
+            liveGrid[position.row][position.col] = .gate(type: gateType, state: newGateState)
+
+        case .waypoint:
+            // Mark waypoint as visited (needed for win condition check).
+            liveGrid[position.row][position.col] = .waypoint(visited: true)
+
+        case .terminal(let tc, let ts, false, _) where tc == color:
+            // Eagerly record arriving signal on the target terminal.
+            liveGrid[position.row][position.col] = .terminal(
+                color: tc, signal: ts, isSource: false,
+                arrivedSignal: newSignal
+            )
+
+        default:
+            break
         }
 
-        // Determine path direction for rendering
-        let prevPrevHead = path.segments.count >= 2 ? path.segments[path.segments.count - 2] : nil
-        let prevEntryDir: GateDirection? = prevPrevHead.flatMap { $0.directionTo(prevHead) }
-        let renderDir = PathDirection.from(entry: prevEntryDir, exit: entryDir)
-
-        // Update previous head rendering direction
-        if path.segments.count >= 1 {
-            updatePathDirection(at: prevHead, entryDir: prevEntryDir, exitDir: entryDir, signal: path.currentSignal)
-        }
-
-        // Place path segment
-        liveGrid[position.row][position.col] = .path(signal: newSignal, direction: renderDir)
-
+        // Record signal in pathLayer — never write .path(...) to liveGrid.
+        pathLayer[position] = newSignal
         path.segments.append(position)
         path.currentSignal = newSignal
         activePaths[color] = path
@@ -268,33 +327,31 @@ final class CircuitGameViewModel {
         guard var path = activePaths[color],
               let idx = path.indexOfSegment(position) else { return }
 
-        // Clear all segment cells after this position
+        // Remove all positions after the truncation point from pathLayer and
+        // restore the underlying static entity state.
         let toRemove = Array(path.segments[(idx + 1)...])
         for pos in toRemove {
-            let cell = liveGrid[pos.row][pos.col]
-            // Don't clear terminals — restore them
-            if case .terminal = cell { break }
-            liveGrid[pos.row][pos.col] = .empty
+            pathLayer.removeValue(forKey: pos)
+            resetStaticCell(at: pos)
         }
 
-        // Also clear any arrived signal on a target terminal at the old head
-        if let oldHead = path.headPosition {
-            if case .terminal(let c, let s, false, _) = liveGrid[oldHead.row][oldHead.col] {
-                liveGrid[oldHead.row][oldHead.col] = .terminal(color: c, signal: s, isSource: false, arrivedSignal: nil)
-            }
+        // Also reset the arrived signal on the old head if it was a target terminal.
+        if let oldHead = path.headPosition,
+           case .terminal(let c, let s, false, _) = liveGrid[oldHead.row][oldHead.col] {
+            liveGrid[oldHead.row][oldHead.col] = .terminal(color: c, signal: s, isSource: false, arrivedSignal: nil)
         }
 
         path.segments = Array(path.segments.prefix(idx + 1))
-
-        // Recompute current signal from scratch by replaying from source
-        path.currentSignal = PathSignal(color: path.sourceColor, signal: path.sourceSignal)
-        // (Full replay would be more accurate but segments store their resolved signals)
-        if let lastSegPos = path.segments.last {
-            if case .path(let s, _) = liveGrid[lastSegPos.row][lastSegPos.col] {
-                path.currentSignal = s
-            }
-        }
         path.isComplete = false
+
+        // Restore current signal from pathLayer at the new head (gate-transformed value).
+        if let headPos = path.segments.last, let signal = pathLayer[headPos] {
+            path.currentSignal = signal
+        } else {
+            // Head has been truncated all the way back to the source terminal.
+            path.currentSignal = PathSignal(color: path.sourceColor, signal: path.sourceSignal)
+        }
+
         activePaths[color] = path
         activeDrawColor = color
     }
@@ -302,25 +359,36 @@ final class CircuitGameViewModel {
     private func clearPath(color: NeonColor) {
         guard let path = activePaths[color] else { return }
         for pos in path.segments {
-            let cell = liveGrid[pos.row][pos.col]
-            switch cell {
-            case .path:
-                liveGrid[pos.row][pos.col] = .empty
-            case .terminal(let c, let s, let isSrc, _):
-                // Reset arrived signal on the target terminal
-                liveGrid[pos.row][pos.col] = .terminal(color: c, signal: s, isSource: isSrc, arrivedSignal: nil)
-            case .gate(let t, _):
-                liveGrid[pos.row][pos.col] = .gate(type: t, state: .idle)
-            default:
-                break
-            }
+            pathLayer.removeValue(forKey: pos)
+            resetStaticCell(at: pos)
         }
         activePaths.removeValue(forKey: color)
     }
 
+    /// Restores the runtime state of a static entity after its overlying path is removed.
+    private func resetStaticCell(at pos: GridPosition) {
+        switch liveGrid[pos.row][pos.col] {
+        case .gate(let t, _):
+            liveGrid[pos.row][pos.col] = .gate(type: t, state: initialGateState(for: t))
+        case .waypoint:
+            liveGrid[pos.row][pos.col] = .waypoint(visited: false)
+        case .terminal(let c, let s, let isSrc, _):
+            liveGrid[pos.row][pos.col] = .terminal(color: c, signal: s, isSource: isSrc, arrivedSignal: nil)
+        default:
+            break
+        }
+    }
+
+    private func initialGateState(for gateType: GateType) -> GateState {
+        switch gateType {
+        case .bridge: return .bridgeLocked(horizontalSignal: nil, verticalSignal: nil)
+        default:      return .idle
+        }
+    }
+
     // MARK: - Gate Transform
 
-    /// Computes the outgoing PathSignal after a signal passes through a cell (may be a gate).
+    /// Computes the outgoing PathSignal after a signal passes through a cell (which may be a gate).
     func applyGateTransform(cell: CellState, incoming: PathSignal, entryDirection: GateDirection?) -> PathSignal {
         switch cell {
         case .gate(let gateType, _):
@@ -330,30 +398,30 @@ final class CircuitGameViewModel {
                 if let constraint = constraint, let entry = entryDirection {
                     shouldInvert = (constraint == entry)
                 } else {
-                    shouldInvert = true // unconstrained: always invert
+                    shouldInvert = true // Unconstrained NOT gate: always inverts.
                 }
                 if shouldInvert {
                     let flipped: SignalState = incoming.signal == .active ? .inactive : .active
                     return PathSignal(color: incoming.color, signal: flipped, wasTransformed: true)
                 } else {
-                    return incoming // constrained, wrong direction — pass through
+                    return incoming // Wrong direction for a constrained gate: pass through.
                 }
 
             case .colorShift(let outputColor):
                 return PathSignal(color: outputColor, signal: incoming.signal, wasTransformed: true)
 
             case .bridge:
-                // Bridge passes signals through without modification (crossing is handled by model, not transform)
+                // Bridge passes the signal through on the entering axis without modification.
                 return incoming
 
             case .synthesizer(_, let outputColor, let outputSignal):
-                // Synthesizer requires two inputs; single pass resolves based on gate logic
-                // (Full Synthesizer state machine is handled in evaluateSynthesizer)
+                // Single-input pass returns the preset output. Full resolution happens
+                // via evaluateSynthesizer() when the gate receives both required inputs.
                 return PathSignal(color: outputColor, signal: outputSignal, wasTransformed: true)
             }
 
         default:
-            return incoming // Non-gate cell: pass through unchanged
+            return incoming // Non-gate cell: pass signal through unchanged.
         }
     }
 
@@ -367,16 +435,16 @@ final class CircuitGameViewModel {
             return .partiallyFilled(arrivedInputs: [incoming])
         case .partiallyFilled(var inputs):
             inputs.append(incoming)
-            // Synthesizer unlocks when it has received 2 inputs
             if inputs.count >= 2 {
-                // Evaluate the boolean logic on signal states
                 let activeCount = inputs.filter { $0.signal == .active }.count
                 let shouldActivate: Bool
                 switch logic {
                 case .or:  shouldActivate = activeCount >= 1
                 case .xor: shouldActivate = activeCount == 1
                 }
-                let resolvedSignal: SignalState = shouldActivate ? outputSignal : (outputSignal == .active ? .inactive : .active)
+                let resolvedSignal: SignalState = shouldActivate
+                    ? outputSignal
+                    : (outputSignal == .active ? .inactive : .active)
                 return .active(outputColor: outputColor, outputSignal: resolvedSignal)
             }
             return .partiallyFilled(arrivedInputs: inputs)
@@ -388,7 +456,15 @@ final class CircuitGameViewModel {
     // MARK: - Win Condition
 
     func checkWinCondition() {
-        guard allTerminalsPowered else { return }
+        // Auto-finish only if the player achieves 100% board coverage (3 stars)
+        guard allTerminalsPowered && allWaypointsVisited && coveragePercent >= 1.0 else { return }
+        
+        forceFinish()
+    }
+    
+    /// Finishes the game early when the user settles for a sub-optimal solution.
+    func forceFinish() {
+        guard allTerminalsPowered && allWaypointsVisited else { return }
         let stars = calculateStarRating()
         timerTask?.cancel()
         gameState = .completed(stars: stars)
@@ -396,9 +472,37 @@ final class CircuitGameViewModel {
     }
 
     func calculateStarRating() -> Int {
-        if isMaxEfficiency { return 3 }
-        if isPerfectFlow { return 2 }
+        if coveragePercent >= 1.0 { return 3 }
+        if coveragePercent >= 0.8 { return 2 }
         return 1
+    }
+
+    // MARK: - Result Builder
+
+    /// Builds a persisted result payload from the current completed state.
+    func buildGameResult() -> GameResult {
+        let stars: Int
+        if case .completed(let s) = gameState {
+            stars = s
+        } else {
+            stars = 0
+        }
+
+        // Circuit uses star rating for local progression while leaderboard scoring
+        // continues to use duration inside ScoreManager's Circuit branch.
+        let persistedScore = stars * 100
+
+        return GameResult(
+            gameType: .circuit,
+            date: .now,
+            score: persistedScore,
+            shareString: generateShareString(),
+            guessCount: totalPathLength,
+            isDaily: isDaily,
+            durationSeconds: Double(elapsedSeconds),
+            levelId: activeLevelId,
+            circuitStateJSON: CircuitStateSerializer.serialize(activePaths: activePaths)
+        )
     }
 
     // MARK: - Controls
@@ -406,6 +510,7 @@ final class CircuitGameViewModel {
     func resetLevel() {
         timerTask?.cancel()
         liveGrid = level.makeLiveGrid()
+        pathLayer = [:]
         activePaths = [:]
         activeDrawColor = nil
         gameState = .inProgress
@@ -414,14 +519,11 @@ final class CircuitGameViewModel {
     }
 
     /// Undoes the current path back to the last direction change (branch point).
-    /// If the path is entirely straight, removes all segments back to the source.
-    /// Falls back to removing a single segment if the path is very short.
+    /// If the path is entirely straight, reverts all the way to the source.
     func undoToLastBranch() {
         guard let color = activeDrawColor ?? activePaths.first?.key else { return }
         guard var path = activePaths[color], path.segments.count > 1 else { return }
 
-        // Find the index of the last direction change (turn) in the segment list.
-        // A turn is any position where the direction from prev→current differs from current→next.
         var branchIndex: Int? = nil
         if path.segments.count >= 3 {
             for i in stride(from: path.segments.count - 2, through: 1, by: -1) {
@@ -431,43 +533,26 @@ final class CircuitGameViewModel {
                 let dirIn  = prev.directionTo(curr)
                 let dirOut = curr.directionTo(next)
                 if dirIn != dirOut {
-                    // This cell is a turn — undo back to here (exclusive)
                     branchIndex = i
                     break
                 }
             }
         }
 
-        // If no turn found (straight line) or path is < 3, undo to source (segment count 1)
         let targetLength = branchIndex ?? 1
-
-        // Clear all cells after targetLength
         let toRemove = path.segments[targetLength...]
         for pos in toRemove {
-            switch liveGrid[pos.row][pos.col] {
-            case .path:
-                liveGrid[pos.row][pos.col] = .empty
-            case .terminal(let c, let s, false, _):
-                // Reset arrived signal on any target terminal we're clearing
-                liveGrid[pos.row][pos.col] = .terminal(color: c, signal: s, isSource: false, arrivedSignal: nil)
-            case .gate(let t, _):
-                liveGrid[pos.row][pos.col] = .gate(type: t, state: .idle)
-            default:
-                break
-            }
+            pathLayer.removeValue(forKey: pos)
+            resetStaticCell(at: pos)
         }
 
         path.segments = Array(path.segments.prefix(targetLength))
         path.isComplete = false
 
-        // Recompute current signal from the new head
-        if let headPos = path.segments.last {
-            if case .path(let s, _) = liveGrid[headPos.row][headPos.col] {
-                path.currentSignal = s
-            } else {
-                // Head is back at the source terminal
-                path.currentSignal = PathSignal(color: path.sourceColor, signal: path.sourceSignal)
-            }
+        if let headPos = path.segments.last, let signal = pathLayer[headPos] {
+            path.currentSignal = signal
+        } else {
+            path.currentSignal = PathSignal(color: path.sourceColor, signal: path.sourceSignal)
         }
 
         activePaths[color] = path
@@ -487,20 +572,41 @@ final class CircuitGameViewModel {
         }
     }
 
+    // MARK: - State Restoration
+
+    /// Restores the visual board state from serialized active paths.
+    /// This replays the stored drawing actions so the board's gate and 
+    /// logic state evaluates identically to what the user actually played.
+    func restoreState(from state: CircuitState) {
+        // Reset grid
+        self.liveGrid = level.makeLiveGrid()
+        self.pathLayer = [:]
+        self.activePaths = [:]
+        self.activeDrawColor = nil
+        timerTask?.cancel()
+        
+        // Replay paths
+        for (color, path) in state.activePaths {
+            guard let first = path.segments.first else { continue }
+            startNewPath(color: path.sourceColor, signal: path.sourceSignal, at: first)
+            for pos in path.segments.dropFirst() {
+                extendPath(color: path.sourceColor, to: pos)
+            }
+            // Manually force the final completion state logic, as dragEnded isn't called
+            activePaths[color]?.isComplete = path.isComplete
+        }
+    }
+
     // MARK: - Private Helpers
 
     private func isInBounds(_ pos: GridPosition) -> Bool {
         pos.row >= 0 && pos.row < level.size && pos.col >= 0 && pos.col < level.size
     }
 
+    /// Returns the color of whichever active path occupies `position` in the pathLayer.
     private func colorOfPath(at position: GridPosition) -> NeonColor? {
-        activePaths.first { $0.value.contains(position) }?.key
-    }
-
-    private func updatePathDirection(at pos: GridPosition, entryDir: GateDirection?, exitDir: GateDirection?, signal: PathSignal) {
-        guard case .path = liveGrid[pos.row][pos.col] else { return }
-        let dir = PathDirection.from(entry: entryDir, exit: exitDir)
-        liveGrid[pos.row][pos.col] = .path(signal: signal, direction: dir)
+        guard pathLayer[position] != nil else { return nil }
+        return activePaths.first { $0.value.contains(position) }?.key
     }
 
     private func startTimer() {

@@ -16,9 +16,7 @@ struct PrismaApp: App {
     @State private var showSplash = true
 
     init() {
-        // Authenticate with Game Center on launch.
-        // Calls are guarded with `guard isAuthenticated` — safe to call even without a paid account.
-        GameCenterManager.shared.authenticate()
+        // Initialization without GameCenter blocking the thread
     }
 
     var body: some Scene {
@@ -38,6 +36,8 @@ struct PrismaApp: App {
                     .interactiveDismissDisabled()
             }
             .task {
+                GameCenterManager.shared.authenticate()
+                
                 try? await Task.sleep(for: .seconds(1.8))
                 if reduceMotion {
                     showSplash = false

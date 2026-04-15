@@ -58,8 +58,8 @@ final class ScoreManager {
                     gc.submitScore(currentStreak, leaderboardIDs: [GameCenterManager.Leaderboard.shiftDailyStreak])
                 case .circuit:
                     // Circuit uses time as the primary efficiency metric
-                    gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [])
-                    gc.submitScore(currentStreak, leaderboardIDs: [])
+                    gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [GameCenterManager.Leaderboard.circuitDailyBest])
+                    gc.submitScore(currentStreak, leaderboardIDs: [GameCenterManager.Leaderboard.circuitDailyStreak])
                 }
             }
             

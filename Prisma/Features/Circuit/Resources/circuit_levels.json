@@ -1,0 +1,525 @@
+[
+  {
+    "id": 1,
+    "size": 4,
+    "parPathLength": 8,
+    "seed": 1,
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 3
+        },
+        "color": "cyan",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 3,
+          "col": 0
+        },
+        "target": {
+          "row": 3,
+          "col": 3
+        },
+        "color": "magenta",
+        "signal": "inactive"
+      }
+    ],
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "cyan",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "cyan",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "magenta",
+          "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "magenta",
+          "signal": "inactive"
+        }
+      ]
+    ],
+    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 0, \"col\": 0}, {\"row\": 0, \"col\": 1}, {\"row\": 0, \"col\": 2}, {\"row\": 0, \"col\": 3}], \"currentSignal\": {\"color\": \"cyan\", \"signal\": \"active\", \"wasTransformed\": false}, \"isComplete\": true}, \"magenta\": {\"sourceColor\": \"magenta\", \"sourceSignal\": \"inactive\", \"segments\": [{\"row\": 3, \"col\": 0}, {\"row\": 3, \"col\": 1}, {\"row\": 3, \"col\": 2}, {\"row\": 3, \"col\": 3}], \"currentSignal\": {\"color\": \"magenta\", \"signal\": \"inactive\", \"wasTransformed\": false}, \"isComplete\": true}}}"
+  },
+  {
+    "id": 2,
+    "size": 4,
+    "parPathLength": 4,
+    "seed": 2,
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 1
+        },
+        "target": {
+          "row": 3,
+          "col": 1
+        },
+        "color": "amber",
+        "signal": "inactive"
+      }
+    ],
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "amber",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "amber",
+          "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "solutionStateJSON": "{\"activePaths\": {\"amber\": {\"sourceColor\": \"amber\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 0, \"col\": 1}, {\"row\": 1, \"col\": 1}, {\"row\": 2, \"col\": 1}, {\"row\": 3, \"col\": 1}], \"currentSignal\": {\"color\": \"amber\", \"signal\": \"inactive\", \"wasTransformed\": true}, \"isComplete\": true}}}"
+  },
+  {
+    "id": 3,
+    "size": 4,
+    "parPathLength": 4,
+    "seed": 3,
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 1,
+          "col": 0
+        },
+        "target": {
+          "row": 1,
+          "col": 3
+        },
+        "color": "magenta",
+        "signal": "active"
+      }
+    ],
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "cyan",
+          "signal": "active"
+        },
+        {
+          "kind": "colorShiftGate",
+          "outputColor": "magenta"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "magenta",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 1, \"col\": 0}, {\"row\": 1, \"col\": 1}, {\"row\": 1, \"col\": 2}, {\"row\": 1, \"col\": 3}], \"currentSignal\": {\"color\": \"magenta\", \"signal\": \"active\", \"wasTransformed\": true}, \"isComplete\": true}}}"
+  },
+  {
+    "id": 4,
+    "size": 5,
+    "parPathLength": 10,
+    "seed": 4,
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 2,
+          "col": 0
+        },
+        "target": {
+          "row": 2,
+          "col": 4
+        },
+        "color": "cyan",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 0,
+          "col": 2
+        },
+        "target": {
+          "row": 4,
+          "col": 2
+        },
+        "color": "amber",
+        "signal": "inactive"
+      }
+    ],
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "amber",
+          "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "cyan",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "bridge"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "cyan",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "amber",
+          "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 2, \"col\": 0}, {\"row\": 2, \"col\": 1}, {\"row\": 2, \"col\": 2}, {\"row\": 2, \"col\": 3}, {\"row\": 2, \"col\": 4}], \"currentSignal\": {\"color\": \"cyan\", \"signal\": \"active\", \"wasTransformed\": false}, \"isComplete\": true}, \"amber\": {\"sourceColor\": \"amber\", \"sourceSignal\": \"inactive\", \"segments\": [{\"row\": 0, \"col\": 2}, {\"row\": 1, \"col\": 2}, {\"row\": 2, \"col\": 2}, {\"row\": 3, \"col\": 2}, {\"row\": 4, \"col\": 2}], \"currentSignal\": {\"color\": \"amber\", \"signal\": \"inactive\", \"wasTransformed\": false}, \"isComplete\": true}}}"
+  },
+  {
+    "id": 5,
+    "size": 5,
+    "parPathLength": 10,
+    "seed": 5,
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 1,
+          "col": 0
+        },
+        "target": {
+          "row": 2,
+          "col": 4
+        },
+        "color": "amber",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 3,
+          "col": 0
+        },
+        "target": {
+          "row": 2,
+          "col": 2
+        },
+        "color": "magenta",
+        "signal": "active"
+      }
+    ],
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "cyan",
+          "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "synthesizer",
+          "outputColor": "amber",
+          "outputSignal": "active",
+          "synthLogic": "or"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "amber",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "magenta",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"inactive\", \"segments\": [{\"row\": 1, \"col\": 0}, {\"row\": 1, \"col\": 1}, {\"row\": 1, \"col\": 2}, {\"row\": 2, \"col\": 2}, {\"row\": 2, \"col\": 3}, {\"row\": 2, \"col\": 4}], \"currentSignal\": {\"color\": \"amber\", \"signal\": \"active\", \"wasTransformed\": true}, \"isComplete\": true}, \"magenta\": {\"sourceColor\": \"magenta\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 3, \"col\": 0}, {\"row\": 3, \"col\": 1}, {\"row\": 3, \"col\": 2}, {\"row\": 2, \"col\": 2}], \"currentSignal\": {\"color\": \"magenta\", \"signal\": \"active\", \"wasTransformed\": false}, \"isComplete\": true}}}"
+  }
+]

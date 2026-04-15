@@ -252,8 +252,8 @@ enum CellState: Codable, Hashable {
 // MARK: - Active Path
 
 /// Represents the player's current live drawing for a single color.
-struct ActivePath: Identifiable {
-    let id: UUID = UUID()
+struct ActivePath: Identifiable, Codable {
+    var id: UUID = UUID()
     /// Color this path was started from.
     let sourceColor: NeonColor
     /// Signal state at the source terminal.

@@ -8,9 +8,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CircuitGameView: View {
     @State private var viewModel: CircuitGameViewModel
+    @State private var hasSavedResult = false
+    @State private var showingTutorial = false
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
     private let accentColor = Color(red: 0.0, green: 0.78, blue: 1.0)
@@ -47,8 +51,22 @@ struct CircuitGameView: View {
                 bottomBar
                     .padding(.horizontal, 24)
                     .padding(.top, 16)
-                    .padding(.bottom, 8)
-
+                    
+                if viewModel.allTerminalsPowered && viewModel.allWaypointsVisited && !viewModel.isGameOver && viewModel.coveragePercent < 1.0 {
+                    Button {
+                        viewModel.forceFinish()
+                    } label: {
+                        Text("Finish Anyway (\(viewModel.calculateStarRating()) ★)")
+                            .font(.body.weight(.bold))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(RoundedRectangle(cornerRadius: 12).fill(AppTheme.circuit))
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
+                }
+                
                 Spacer()
             }
 
@@ -59,8 +77,16 @@ struct CircuitGameView: View {
                     CircuitResultView(
                         viewModel: viewModel,
                         stars: stars,
-                        onDone: { dismiss() },
-                        onNextLevel: nextLevelAction
+                        onDone: {
+                            saveCompletionIfNeeded()
+                            dismiss()
+                        },
+                        onNextLevel: nextLevelAction.map { advance in
+                            {
+                                saveCompletionIfNeeded()
+                                advance()
+                            }
+                        }
                     )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .padding(.bottom, 24)
@@ -72,8 +98,20 @@ struct CircuitGameView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                levelLabel
+                HStack(spacing: 12) {
+                    levelLabel
+                    Button {
+                        showingTutorial = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                            .font(.body.weight(.medium))
+                            .foregroundStyle(.primary)
+                    }
+                }
             }
+        }
+        .sheet(isPresented: $showingTutorial) {
+            CircuitTutorialView()
         }
     }
 
@@ -168,8 +206,24 @@ struct CircuitGameView: View {
         let nextId = currentId + 1
         guard CircuitLevelLoader.level(for: nextId) != nil else { return nil }
         return {
+            hasSavedResult = false
             viewModel = CircuitGameViewModel(levelId: nextId)
         }
+    }
+
+    private func saveCompletionIfNeeded() {
+        guard !hasSavedResult else { return }
+        guard case .completed = viewModel.gameState else { return }
+
+        if viewModel.isDaily,
+           PersistenceManager.fetchDailyResult(for: .circuit, on: .now, context: modelContext) != nil {
+            hasSavedResult = true
+            return
+        }
+
+        let result = viewModel.buildGameResult()
+        ScoreManager.shared.processAndSaveResult(result, context: modelContext)
+        hasSavedResult = true
     }
 }
 

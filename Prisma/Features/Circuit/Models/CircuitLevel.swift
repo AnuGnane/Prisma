@@ -24,6 +24,8 @@ struct CircuitLevel: Codable, Identifiable {
     let grid: [[CircuitCellData]]
     /// Terminal connection pairs that must all be powered for completion.
     let terminalPairs: [TerminalPair]
+    /// Pre-computed solution JSON representing [NeonColor: ActivePath] 
+    var solutionStateJSON: String?
 
     // MARK: Computed
 

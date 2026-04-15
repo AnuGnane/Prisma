@@ -30,6 +30,7 @@ struct PastDailyResultView: View {
         case .signals: return result.signalsStateJSON != nil
         case .archive: return result.archiveStateJSON != nil
         case .shift: return result.shiftStateJSON != nil
+        case .circuit: return result.circuitStateJSON != nil
         }
     }
 
@@ -170,6 +171,8 @@ struct PastDailyResultView: View {
             cargoUserState
         case .shift:
             shiftUserState
+        case .circuit:
+            DailyCompletedCircuitUserState(result: result)
         }
     }
 
@@ -185,6 +188,8 @@ struct PastDailyResultView: View {
                 cargoSolution
             case .shift:
                 shiftSolution
+            case .circuit:
+                DailyCompletedCircuitSolution(result: result)
             }
         }
         .padding(16)

@@ -28,7 +28,7 @@ struct CircuitGridView: View {
                 // LAYER 2: Neon path canvas overlay
                 CircuitCanvasView(
                     activePaths: viewModel.activePaths,
-                    liveGrid: viewModel.liveGrid,
+                    pathLayer: viewModel.pathLayer,
                     gridSize: viewModel.level.size,
                     cellSize: computedCellSize
                 )

@@ -40,6 +40,7 @@ struct LocalLevelSolutionView: View {
         case .signals: return result.signalsStateJSON != nil
         case .archive: return result.archiveStateJSON != nil
         case .shift: return result.shiftStateJSON != nil
+        case .circuit: return result.circuitStateJSON != nil
         }
     }
     
@@ -134,6 +135,8 @@ struct LocalLevelSolutionView: View {
                 cargoSolution
             case .shift:
                 shiftSolution
+            case .circuit:
+                circuitSolution
             }
         }
     }
@@ -149,6 +152,8 @@ struct LocalLevelSolutionView: View {
             cargoUserState
         case .shift:
             shiftUserState
+        case .circuit:
+            circuitUserState
         }
     }
 
@@ -508,6 +513,54 @@ struct LocalLevelSolutionView: View {
             .padding(16)
             .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
         )
+    }
+
+    // MARK: - Circuit Views
+
+    private var circuitSolution: some View {
+        // Show the player's own final grid — it IS the solution.
+        circuitUserState
+    }
+
+    private var circuitUserState: some View {
+        // Use a wrapper view to hold the state since we need an @State for the ViewModel
+        LocalLevelCircuitUserState(result: gameResult, levelId: levelId)
+    }
+}
+
+private struct LocalLevelCircuitUserState: View {
+    let result: GameResult?
+    let levelId: Int
+    @State private var viewModel: CircuitGameViewModel? = nil
+    
+    var body: some View {
+        Group {
+            if let vm = viewModel {
+                CircuitGridView(viewModel: vm)
+                    .aspectRatio(1, contentMode: .fit)
+                    .disabled(true)
+                    .padding(16)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
+            } else {
+                VStack(spacing: 8) {
+                    Text("Game history unavailable for games before this feature")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+            }
+        }
+        .onAppear {
+            guard let json = result?.circuitStateJSON,
+                  let state = CircuitStateSerializer.deserialize(json) else { return }
+            
+            let vm = CircuitGameViewModel(levelId: levelId)
+            vm.restoreState(from: state)
+            self.viewModel = vm
+        }
     }
 }
 

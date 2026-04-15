@@ -24,6 +24,7 @@ struct DailyCompletedView: View {
         case .signals: return result.signalsStateJSON != nil
         case .archive: return result.archiveStateJSON != nil
         case .shift: return result.shiftStateJSON != nil
+        case .circuit: return result.circuitStateJSON != nil
         }
     }
 
@@ -120,6 +121,7 @@ struct DailyCompletedView: View {
         case .archive: DailyCompletedArchiveUserState(result: result, won: won, gameColor: gameColor)
         case .cargo: DailyCompletedCargoUserState(result: result)
         case .shift: DailyCompletedShiftUserState(result: result)
+        case .circuit: DailyCompletedCircuitUserState(result: result)
         }
     }
     
@@ -130,6 +132,7 @@ struct DailyCompletedView: View {
         case .archive: DailyCompletedArchiveSolution(result: result)
         case .cargo: DailyCompletedCargoSolution(result: result)
         case .shift: DailyCompletedShiftSolution(result: result)
+        case .circuit: DailyCompletedCircuitSolution(result: result)
         }
     }
     
@@ -516,5 +519,48 @@ struct DailyCompletedArrowIndicator: View {
                     .foregroundStyle(AppTheme.error)
             }
         }
+    }
+}
+
+// MARK: - Circuit Game Views
+
+struct DailyCompletedCircuitUserState: View {
+    let result: GameResult
+    @State private var viewModel: CircuitGameViewModel? = nil
+    
+    var body: some View {
+        Group {
+            if let vm = viewModel {
+                CircuitGridView(viewModel: vm)
+                    .aspectRatio(1, contentMode: .fit)
+                    .disabled(true)
+                    .padding(16)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
+            } else {
+                DailyCompletedUnavailableView()
+            }
+        }
+        .onAppear {
+            guard let json = result.circuitStateJSON,
+                  let state = CircuitStateSerializer.deserialize(json) else { return }
+            
+            let vm: CircuitGameViewModel
+            if let id = result.levelId {
+                vm = CircuitGameViewModel(levelId: id)
+            } else {
+                vm = CircuitGameViewModel(date: result.date)
+            }
+            vm.restoreState(from: state)
+            self.viewModel = vm
+        }
+    }
+}
+
+struct DailyCompletedCircuitSolution: View {
+    let result: GameResult
+
+    var body: some View {
+        // Show the player's own final grid — it IS the solution.
+        DailyCompletedCircuitUserState(result: result)
     }
 }

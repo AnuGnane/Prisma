@@ -6,10 +6,10 @@
 //
 //  CLOUDKIT SYNC — HOW TO ENABLE:
 //  1. In Xcode, select the Prisma target → Signing & Capabilities
-//  2. Add the "iCloud" capability and create a container named "iCloud.com.anugnana.Prisma"
+//  2. Add the "iCloud" capability and use the same container configured in Prisma.entitlements
 //  3. Add the "Background Modes" capability and tick "Remote notifications"
 //  4. In the container configuration below, switch from `.none` to:
-//       cloudKitDatabase: .private("iCloud.com.anugnana.Prisma")
+//       cloudKitDatabase: .private("<your container identifier>")
 //  5. Create the same container in the Apple Developer portal
 //
 //  CloudKit model constraints already satisfied:
@@ -30,8 +30,8 @@ struct PersistenceManager {
         let schema = Schema([GameResult.self, LevelProgress.self])
         let storeURL = URL.applicationSupportDirectory.appending(path: "Prisma.store")
 
-        // Local-only store. See file header for CloudKit migration steps.
-        let config = ModelConfiguration(schema: schema, url: storeURL)
+        // Enable seamless CloudKit syncing across devices natively.
+        let config = ModelConfiguration(schema: schema, url: storeURL, cloudKitDatabase: .automatic)
 
         do {
             return try ModelContainer(for: schema, configurations: [config])

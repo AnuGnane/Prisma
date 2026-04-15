@@ -36,7 +36,8 @@ final class GameResult {
         cargoStateJSON: String? = nil,
         signalsStateJSON: String? = nil,
         archiveStateJSON: String? = nil,
-        shiftStateJSON: String? = nil
+        shiftStateJSON: String? = nil,
+        circuitStateJSON: String? = nil
     ) {
         self.gameTypeRaw    = gameType.rawValue
         self.date           = date
@@ -50,6 +51,7 @@ final class GameResult {
         self.signalsStateJSON = signalsStateJSON
         self.archiveStateJSON = archiveStateJSON
         self.shiftStateJSON = shiftStateJSON
+        self.circuitStateJSON = circuitStateJSON
     }
 
     var gameType: GameType {

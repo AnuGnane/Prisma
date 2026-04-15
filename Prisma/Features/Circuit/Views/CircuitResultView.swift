@@ -17,6 +17,7 @@ struct CircuitResultView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var revealedStars: Int = 0
+    @State private var revealTask: Task<Void, Never>?
 
     private let accentColor = Color(red: 0.0, green: 0.78, blue: 1.0) // circuit cyan
 
@@ -115,6 +116,10 @@ struct CircuitResultView: View {
                 revealStarsSequentially()
             }
         }
+        .onDisappear {
+            revealTask?.cancel()
+            revealTask = nil
+        }
     }
 
     // MARK: - Helpers
@@ -145,10 +150,17 @@ struct CircuitResultView: View {
     }
 
     private func revealStarsSequentially() {
-        for i in 1...stars {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i - 1) * 0.35) {
-                withAnimation { revealedStars = i }
-                Haptics.playLightImpact()
+        revealTask?.cancel()
+        revealTask = Task {
+            for i in 1...stars {
+                if i > 1 {
+                    try? await Task.sleep(for: .seconds(0.35))
+                }
+                guard !Task.isCancelled else { return }
+                await MainActor.run {
+                    withAnimation { revealedStars = i }
+                    Haptics.playLightImpact()
+                }
             }
         }
     }

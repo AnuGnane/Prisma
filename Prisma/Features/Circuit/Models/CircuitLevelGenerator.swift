@@ -100,17 +100,54 @@ struct CircuitLevelGenerator {
             }
         }
 
-        // Insert one NOT gate into a path interior cell if there's room
-        if let longestPath = solutionPaths.max(by: { $0.count < $1.count }),
-           longestPath.count >= 3 {
-            let interiorCells = Array(longestPath.dropFirst().dropLast())
-            if let gatePos = interiorCells.randomElement(using: &rng) {
-                // Only place NOT gate if cell is genuinely empty (interior)
-                if cells[gatePos.row][gatePos.col].kind == .empty {
+        // Insert a random complex element (NOT gate or ColorShift) into a path interior cell
+        if let longestIndex = solutionPaths.enumerated().max(by: { $0.element.count < $1.element.count })?.offset,
+           solutionPaths[longestIndex].count >= 3 {
+            let path = solutionPaths[longestIndex]
+            let interiorCells = Array(path.dropFirst().dropLast())
+            if let gatePos = interiorCells.randomElement(using: &rng), cells[gatePos.row][gatePos.col].kind == .empty {
+                
+                let isColorShift = Bool.random(using: &rng)
+                if isColorShift, !availableColors.isEmpty {
+                    let newColor = availableColors.removeFirst()
+                    cells[gatePos.row][gatePos.col] = .colorShift(to: newColor)
+                    
+                    // Update the target terminal pair to accept the new color
+                    let targetPos = path.last!
+                    let oldPair = terminalPairs[longestIndex]
+                    let updatedPair = TerminalPair(source: oldPair.source, target: targetPos, color: newColor, signal: oldPair.signal)
+                    terminalPairs[longestIndex] = updatedPair
+                    cells[targetPos.row][targetPos.col] = .target(newColor, oldPair.signal)
+                } else {
                     cells[gatePos.row][gatePos.col] = .notGate()
+                    
+                    // Update the target terminal signal if NOT gate is used
+                    let targetPos = path.last!
+                    let oldPair = terminalPairs[longestIndex]
+                    let newSignal: SignalState = oldPair.signal == .active ? .inactive : .active
+                    let updatedPair = TerminalPair(source: oldPair.source, target: targetPos, color: oldPair.color, signal: newSignal)
+                    terminalPairs[longestIndex] = updatedPair
+                    cells[targetPos.row][targetPos.col] = .target(oldPair.color, newSignal)
                 }
             }
         }
+
+        // Build the solutionStateJSON for replay views
+        var activePaths: [NeonColor: ActivePath] = [:]
+        for (i, pathCells) in solutionPaths.enumerated() {
+            guard i < terminalPairs.count else { continue }
+            let pair = terminalPairs[i]
+            var activePath = ActivePath(
+                sourceColor: pair.color,
+                sourceSignal: pair.signal,
+                startPosition: pathCells.first!
+            )
+            activePath.segments = pathCells
+            activePath.isComplete = true
+            activePaths[pair.color] = activePath
+        }
+        
+        let solutionJSON = CircuitStateSerializer.serialize(activePaths: activePaths)
 
         // Compute par path length (sum of all solution path lengths)
         let parPathLength = solutionPaths.reduce(0) { $0 + $1.count }
@@ -121,7 +158,8 @@ struct CircuitLevelGenerator {
             parPathLength: parPathLength,
             seed: seed,
             grid: cells,
-            terminalPairs: terminalPairs
+            terminalPairs: terminalPairs,
+            solutionStateJSON: solutionJSON
         )
     }
 
