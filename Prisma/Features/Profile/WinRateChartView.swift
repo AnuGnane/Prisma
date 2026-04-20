@@ -19,7 +19,8 @@ struct WinRateChartView: View {
         .signals: AppTheme.signals,
         .archive: AppTheme.archive,
         .cargo:   AppTheme.cargo,
-        .shift:   AppTheme.shift
+        .shift:   AppTheme.shift,
+        .circuit: AppTheme.circuit
     ]
     
     enum TimeWindow: String, CaseIterable {
@@ -49,7 +50,7 @@ struct WinRateChartView: View {
         
         Task.detached(priority: .userInitiated) {
             let calendar = Calendar.current
-            let games: [GameType] = [.signals, .archive, .cargo, .shift]
+            let games: [GameType] = [.signals, .archive, .cargo, .shift, .circuit]
             var points: [ChartDataPoint] = []
             
             // Perform filtering off main thread
@@ -143,7 +144,8 @@ struct WinRateChartView: View {
             GameType.signals.displayName: gameColors[.signals]!,
             GameType.archive.displayName: gameColors[.archive]!,
             GameType.cargo.displayName:   gameColors[.cargo]!,
-            GameType.shift.displayName:   gameColors[.shift]!
+            GameType.shift.displayName:   gameColors[.shift]!,
+            GameType.circuit.displayName: gameColors[.circuit]!
         ])
         .chartYScale(domain: 0...100)
         .chartYAxis {
@@ -174,7 +176,7 @@ struct WinRateChartView: View {
     
     private var legend: some View {
         HStack(spacing: 16) {
-            ForEach([GameType.signals, .archive, .cargo, .shift], id: \.self) { game in
+            ForEach([GameType.signals, .archive, .cargo, .shift, .circuit], id: \.self) { game in
                 HStack(spacing: 4) {
                     Circle()
                         .fill(gameColors[game]!)

@@ -66,12 +66,12 @@ struct CircuitGameView: View {
                         .padding(.horizontal, 16)
                 }
 
-                // Bottom info bar
-                bottomBar
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
+                // Dashboard panel — path status + star coverage bar
+                CircuitDashboardPanel(viewModel: viewModel)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
 
-                Spacer()
+                Spacer(minLength: 0)
             }
 
             // Victory flare — overlays a brief white flash synced with haptic
@@ -121,34 +121,6 @@ struct CircuitGameView: View {
             Button("Keep Playing", role: .cancel) { }
         } message: {
             Text("You can view the solution after giving up.")
-        }
-    }
-
-    // MARK: - Bottom Bar
-
-    private var bottomBar: some View {
-        HStack {
-            // Terminal progress
-            HStack(spacing: 6) {
-                Image(systemName: "bolt.fill")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(AppTheme.circuit)
-                Text("\(viewModel.poweredTerminalCount)/\(viewModel.level.terminalPairs.count) powered")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            // Coverage meter
-            HStack(spacing: 6) {
-                Image(systemName: "square.grid.2x2.fill")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.secondary)
-                Text("\(Int(viewModel.coveragePercent * 100))%")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-            }
         }
     }
 
@@ -415,6 +387,149 @@ private struct CircuitSolutionGridView: View {
         }
         vm.restoreState(from: state)
         solutionVM = vm
+    }
+}
+
+// MARK: - Dashboard Panel
+
+/// Fills the space below the grid with live path-status indicators and
+/// a star-threshold coverage bar. Visible during active play and solution view.
+private struct CircuitDashboardPanel: View {
+    let viewModel: CircuitGameViewModel
+
+    var body: some View {
+        VStack(spacing: 14) {
+            pathStatusRow
+            coverageBar
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.primary.opacity(0.05))
+        )
+    }
+
+    // MARK: Path Status Row
+
+    private var pathStatusRow: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("PATHS")
+                .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                .foregroundStyle(.secondary)
+                .kerning(1.2)
+
+            let pairs = viewModel.level.terminalPairs
+            let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: min(pairs.count, 4))
+
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(pairs.indices, id: \.self) { i in
+                    pathPill(for: pairs[i])
+                }
+            }
+        }
+    }
+
+    private func pathPill(for pair: TerminalPair) -> some View {
+        let color = pair.color.swiftUIColor
+        let isComplete = viewModel.activePaths[pair.color]?.isComplete == true
+        let hasPath = viewModel.activePaths[pair.color] != nil
+
+        return HStack(spacing: 5) {
+            Circle()
+                .fill(isComplete ? color : (hasPath ? color.opacity(0.5) : Color.primary.opacity(0.15)))
+                .frame(width: 8, height: 8)
+                .overlay(
+                    isComplete
+                        ? Circle().strokeBorder(color.opacity(0.4), lineWidth: 1)
+                        : nil
+                )
+
+            Image(systemName: isComplete ? "checkmark" : (hasPath ? "arrow.right" : "minus"))
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(isComplete ? color : .secondary.opacity(0.5))
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isComplete ? color.opacity(0.12) : Color.primary.opacity(0.06))
+                .overlay(
+                    isComplete
+                        ? RoundedRectangle(cornerRadius: 10).strokeBorder(color.opacity(0.25), lineWidth: 1)
+                        : nil
+                )
+        )
+    }
+
+    // MARK: Coverage Bar
+
+    private var coverageBar: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("COVERAGE")
+                    .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .kerning(1.2)
+                Spacer()
+                Text("\(Int(viewModel.coveragePercent * 100))%")
+                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                    .foregroundStyle(coverageColor)
+            }
+
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    // Track
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.primary.opacity(0.08))
+                        .frame(height: 8)
+
+                    // Fill
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(
+                            LinearGradient(
+                                colors: [AppTheme.circuit.opacity(0.7), coverageColor],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: geo.size.width * viewModel.coveragePercent, height: 8)
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.coveragePercent)
+
+                    // 80% threshold marker (2★)
+                    thresholdMarker(at: 0.80, width: geo.size.width, label: "2★")
+
+                    // 100% threshold marker (3★)
+                    thresholdMarker(at: 1.00, width: geo.size.width, label: "3★")
+                }
+            }
+            .frame(height: 22)
+        }
+    }
+
+    private func thresholdMarker(at fraction: CGFloat, width: CGFloat, label: String) -> some View {
+        let xPos = width * fraction
+        let reached = viewModel.coveragePercent >= fraction
+
+        return VStack(spacing: 0) {
+            Rectangle()
+                .fill(reached ? Color.white.opacity(0.8) : Color.primary.opacity(0.25))
+                .frame(width: 1.5, height: 8)
+
+            Text(label)
+                .font(.system(size: 8, weight: .bold, design: .monospaced))
+                .foregroundStyle(reached ? coverageColor : .secondary.opacity(0.5))
+                .offset(x: fraction == 1.00 ? -10 : -6)
+                .padding(.top, 2)
+        }
+        .offset(x: xPos - 0.75)
+    }
+
+    private var coverageColor: Color {
+        let pct = viewModel.coveragePercent
+        if pct >= 1.0  { return .yellow }
+        if pct >= 0.80 { return AppTheme.circuit }
+        return .secondary
     }
 }
 

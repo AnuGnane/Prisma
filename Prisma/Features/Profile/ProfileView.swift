@@ -32,6 +32,9 @@ struct ProfileView: View {
     private var shiftProgress: [LevelProgress] {
         allLevelProgress.filter { $0.gameTypeRaw == GameType.shift.rawValue }
     }
+    private var circuitProgress: [LevelProgress] {
+        allLevelProgress.filter { $0.gameTypeRaw == GameType.circuit.rawValue }
+    }
     private var dailyResults: [GameResult] {
         allGameResults.filter { $0.isDaily }
     }
@@ -53,35 +56,40 @@ struct ProfileView: View {
 
                         // Game stat cards
                         if prefs.showStatCards {
-                            VStack(spacing: 12) {
-                                HStack(spacing: 12) {
-                                    StatCard(
-                                        game: .signals,
-                                        icon: "antenna.radiowaves.left.and.right",
-                                        accentColor: AppTheme.signals,
-                                        progress: signalsProgress
-                                    )
-                                    StatCard(
-                                        game: .archive,
-                                        icon: "clock.arrow.circlepath",
-                                        accentColor: AppTheme.archive,
-                                        progress: archiveProgress
-                                    )
-                                }
-                                HStack(spacing: 12) {
-                                    StatCard(
-                                        game: .cargo,
-                                        icon: "shippingbox.fill",
-                                        accentColor: AppTheme.cargo,
-                                        progress: cargoProgress
-                                    )
-                                    StatCard(
-                                        game: .shift,
-                                        icon: "slider.horizontal.3",
-                                        accentColor: AppTheme.shift,
-                                        progress: shiftProgress
-                                    )
-                                }
+                            LazyVGrid(
+                                columns: [GridItem(.flexible()), GridItem(.flexible())],
+                                spacing: 12
+                            ) {
+                                StatCard(
+                                    game: .signals,
+                                    icon: "antenna.radiowaves.left.and.right",
+                                    accentColor: AppTheme.signals,
+                                    progress: signalsProgress
+                                )
+                                StatCard(
+                                    game: .archive,
+                                    icon: "clock.arrow.circlepath",
+                                    accentColor: AppTheme.archive,
+                                    progress: archiveProgress
+                                )
+                                StatCard(
+                                    game: .cargo,
+                                    icon: "shippingbox.fill",
+                                    accentColor: AppTheme.cargo,
+                                    progress: cargoProgress
+                                )
+                                StatCard(
+                                    game: .shift,
+                                    icon: "slider.horizontal.3",
+                                    accentColor: AppTheme.shift,
+                                    progress: shiftProgress
+                                )
+                                StatCard(
+                                    game: .circuit,
+                                    icon: "bolt.horizontal.fill",
+                                    accentColor: AppTheme.circuit,
+                                    progress: circuitProgress
+                                )
                             }
                             .padding(.horizontal, 20)
                         }
@@ -226,7 +234,10 @@ struct ProfileView: View {
         VStack(alignment: .leading, spacing: 10) {
             sectionLabel("DAILY STREAKS")
 
-            HStack(spacing: 12) {
+            LazyVGrid(
+                columns: [GridItem(.flexible()), GridItem(.flexible())],
+                spacing: 12
+            ) {
                 StreakPill(
                     label: "Signals",
                     streak: StreakManager.currentStreak(for: "signals"),
@@ -237,8 +248,6 @@ struct ProfileView: View {
                     streak: StreakManager.currentStreak(for: "archive"),
                     color: AppTheme.archive
                 )
-            }
-            HStack(spacing: 12) {
                 StreakPill(
                     label: "Cargo",
                     streak: StreakManager.currentStreak(for: "cargo"),
@@ -248,6 +257,11 @@ struct ProfileView: View {
                     label: "Shift",
                     streak: StreakManager.currentStreak(for: "shift"),
                     color: AppTheme.shift
+                )
+                StreakPill(
+                    label: "Circuit",
+                    streak: StreakManager.currentStreak(for: "circuit"),
+                    color: AppTheme.circuit
                 )
             }
         }

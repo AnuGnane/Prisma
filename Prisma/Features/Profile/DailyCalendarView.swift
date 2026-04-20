@@ -23,7 +23,8 @@ struct DailyCalendarView: View {
         .signals: AppTheme.signals,
         .archive: AppTheme.archive,
         .cargo:   AppTheme.cargo,
-        .shift:   AppTheme.shift
+        .shift:   AppTheme.shift,
+        .circuit: AppTheme.circuit
     ]
 
     private var displayDate: Date {
@@ -159,9 +160,9 @@ struct DailyCalendarView: View {
     
     // MARK: - Intensity
     
-    /// 0 = no games, 1-4 based on games completed that day
+    /// 0 = no games, 1-5 based on games completed that day
     private func intensityLevel(for results: [GameResult]) -> Int {
-        min(results.count, 4)
+        min(results.count, 5)
     }
     
     private func intensityFill(level: Int, isToday: Bool, isSelected: Bool) -> Color {
@@ -176,7 +177,8 @@ struct DailyCalendarView: View {
         case 1: return AppTheme.signals.opacity(0.10)
         case 2: return AppTheme.signals.opacity(0.20)
         case 3: return AppTheme.signals.opacity(0.30)
-        default: return AppTheme.signals.opacity(0.40)
+        case 4: return AppTheme.signals.opacity(0.40)
+        default: return AppTheme.signals.opacity(0.50)
         }
     }
     
@@ -188,7 +190,7 @@ struct DailyCalendarView: View {
                 .font(.caption2.weight(.medium).monospaced())
                 .foregroundStyle(.primary.opacity(0.3))
             
-            ForEach(0..<5) { level in
+            ForEach(0..<6) { level in
                 RoundedRectangle(cornerRadius: 2)
                     .fill(level == 0 ? Color.primary.opacity(0.06) : AppTheme.signals.opacity(Double(level) * 0.10))
                     .frame(width: 10, height: 10)

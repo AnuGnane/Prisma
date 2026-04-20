@@ -12,12 +12,13 @@ import Charts
 struct SolveTimeStatsView: View {
     @Query private var allResults: [GameResult]
     
-    private let games: [GameType] = [.signals, .archive, .cargo, .shift]
+    private let games: [GameType] = [.signals, .archive, .cargo, .shift, .circuit]
     private let gameColors: [GameType: Color] = [
         .signals: AppTheme.signals,
         .archive: AppTheme.archive,
         .cargo:   AppTheme.cargo,
-        .shift:   AppTheme.shift
+        .shift:   AppTheme.shift,
+        .circuit: AppTheme.circuit
     ]
     
     private func stats(for game: GameType) -> (avg: Double, best: Double, total: Int) {
