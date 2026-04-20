@@ -555,9 +555,17 @@ private struct LocalLevelCircuitUserState: View {
         .onAppear {
             guard let json = result?.circuitStateJSON,
                   let state = CircuitStateSerializer.deserialize(json) else { return }
-            
+
             let vm = CircuitGameViewModel(levelId: levelId)
-            vm.restoreState(from: state)
+            // If the saved state was captured against a previous version of the
+            // level (content regeneration), fall back to the canonical solution
+            // so the history view still renders a correct board.
+            if state.isCompatible(with: vm.level) {
+                vm.restoreState(from: state)
+            } else if let solutionJSON = CircuitLevelLoader.level(for: levelId)?.solutionStateJSON,
+                      let canonical = CircuitStateSerializer.deserialize(solutionJSON) {
+                vm.restoreState(from: canonical)
+            }
             self.viewModel = vm
         }
     }

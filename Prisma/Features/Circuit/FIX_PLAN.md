@@ -74,3 +74,27 @@ Locked into `PrismaTests/CircuitGameTests.swift`:
 - `scratch/redesign_levels.py` should be migrated into the main project or promoted to a real CI audit. Currently a throwaway.
 - Curated `solutionStateJSON` for older single-path levels does not include `pathOrder` — this is fine (they fall through to permutation search) but adding `pathOrder` across the catalog would let us remove the permutation fallback in a future cleanup.
 - Consider a per-level schema validator that runs at load time in debug builds and `fatalError`s on a §6 checklist violation, so authoring mistakes surface immediately instead of shipping to players.
+
+## Update — 2026-04-20 (shipped in the 100-level bundle)
+
+The items above are now partly obsolete:
+
+- The catalog was expanded from 25 to 100 curated levels via `scratch/build_catalog.py` (Python mirror of the Swift gate simulator) and `scratch/validate_catalog.py` (replay validator). Every curated `solutionStateJSON` carries `pathOrder`, so the permutation-search fallback only fires for pre-fix saves — the cleanup hinted at above is effectively ready. `CircuitLevelLoaderTests.allCuratedSolutionsReplayToSolvedState()` covers all 100.
+- The NOT gate was renamed to **Inverter** and a new **Spark** gate (inactive→active, idempotent on active) was added. Both are exhaustive across every switch over `GateType` in models, ViewModel, cell rendering, tutorial, serializer, and tests.
+
+## Update — 2026-04-20 (second pass: flat selector + full-vocabulary early levels)
+
+After internal playtest, the 5-chapter map was pulled and the flat `LevelSelectorView` was restored for Circuit. Two drivers:
+
+1. Chaptering delayed exposure to the full vocabulary — players didn't meet the Bridge or Synthesizer until chapter 2/3. The new L1–L10 tour introduces every gate in the first ten levels.
+2. The soft lock gate (`won * 2 >= prevRange.count || played >= 5`) blocked testers from sampling late-game levels until they'd played through the early ones, which is the wrong shape for a puzzle catalog built around free exploration.
+
+Concretely:
+
+- `GameDetailView` routes `.circuit` → `LevelSelectorView(game: .circuit)` (same as the four other games) — no more Circuit-specific selector.
+- `CircuitChapterMapView.swift` was deleted.
+- The 100-level JSON catalog was regenerated with an L1–L10 full-vocabulary tour (Spark by L3, Inverter by L4, Bridge by L6, Synth OR by L7, Synth XOR by L8). L11–L100 reuses the gate set freely with a gradual difficulty curve.
+- Grid-size constraints per the updated `GRID_DESIGN.md` §7: ≤5×5 through L30, 6×6 from L31–L70, 7×7 reserved for L71+.
+- All 100 curated solutions still replay to a winning state through the Swift test suite.
+
+For the remaining, deferred UX / tooling work, see `CIRCUIT_FOLLOWUPS.md`.

@@ -46,6 +46,8 @@ struct CircuitCellData: Codable {
         case source
         case target
         case notGate
+        /// Player-facing: Spark. Inactive -> Active, no-op on active.
+        case sparkGate
         case bridge
         case synthesizer
     }
@@ -88,6 +90,8 @@ struct CircuitCellData: Codable {
             return .terminal(color: color ?? .blue, signal: signal ?? .active, isSource: false)
         case .notGate:
             return .gate(type: .notGate(direction: gateDirection), state: .idle)
+        case .sparkGate:
+            return .gate(type: .sparkGate, state: .idle)
         case .bridge:
             return .gate(type: .bridge, state: .bridgeLocked(horizontalSignal: nil, verticalSignal: nil))
         case .synthesizer:
@@ -114,6 +118,7 @@ struct CircuitCellData: Codable {
     static func notGate(_ direction: GateDirection? = nil) -> CircuitCellData {
         CircuitCellData(kind: .notGate, gateDirection: direction)
     }
+    static let sparkGate = CircuitCellData(kind: .sparkGate)
     static let bridge = CircuitCellData(kind: .bridge)
     static func synthesizer(logic: SynthesizerLogic, outputSignal: SignalState) -> CircuitCellData {
         CircuitCellData(kind: .synthesizer, outputSignal: outputSignal, synthLogic: logic)

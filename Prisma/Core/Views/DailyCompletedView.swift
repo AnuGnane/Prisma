@@ -603,14 +603,23 @@ struct DailyCompletedCircuitUserState: View {
         .onAppear {
             guard let json = result.circuitStateJSON,
                   let state = CircuitStateSerializer.deserialize(json) else { return }
-            
+
             let vm: CircuitGameViewModel
             if let id = result.levelId {
                 vm = CircuitGameViewModel(levelId: id)
             } else {
                 vm = CircuitGameViewModel(date: result.date)
             }
-            vm.restoreState(from: state)
+            // Saved state can be stale after a level-content regeneration.
+            // Fall back to the canonical solution if the stored path no
+            // longer fits the current grid — otherwise the board would
+            // render a phantom half-drawn attempt instead of the win.
+            if state.isCompatible(with: vm.level) {
+                vm.restoreState(from: state)
+            } else if let solutionJSON = vm.level.solutionStateJSON,
+                      let canonical = CircuitStateSerializer.deserialize(solutionJSON) {
+                vm.restoreState(from: canonical)
+            }
             self.viewModel = vm
         }
     }

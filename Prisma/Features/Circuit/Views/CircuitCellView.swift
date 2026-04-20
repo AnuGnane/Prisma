@@ -170,7 +170,8 @@ private struct GateCellView: View {
     private var gateIcon: some View {
         let name: String
         switch gateType {
-        case .notGate:      name = "exclamationmark.circle"
+        case .notGate:      name = "arrow.triangle.2.circlepath"   // Inverter
+        case .sparkGate:    name = "bolt.fill"                      // Spark
         case .bridge:       name = "arrow.triangle.branch"
         case .synthesizer:  name = "arrow.triangle.merge"
         }
@@ -180,6 +181,7 @@ private struct GateCellView: View {
     private var gateBgColor: Color {
         switch gateType {
         case .notGate:      return Color.primary.opacity(isActive ? 0.22 : 0.1)
+        case .sparkGate:    return Color.yellow.opacity(isActive ? 0.28 : 0.12)
         case .bridge:       return Color.primary.opacity(isActive ? 0.22 : 0.1)
         case .synthesizer:  return Color.purple.opacity(isActive ? 0.25 : 0.1)
         }
@@ -192,6 +194,7 @@ private struct GateCellView: View {
     private var gateIconColor: Color {
         switch gateType {
         case .notGate:      return isActive ? .orange : .primary.opacity(0.55)
+        case .sparkGate:    return isActive ? .yellow : Color.yellow.opacity(0.7)
         case .bridge:       return isActive ? .cyan : .primary.opacity(0.55)
         case .synthesizer:  return isActive ? .purple : .primary.opacity(0.55)
         }

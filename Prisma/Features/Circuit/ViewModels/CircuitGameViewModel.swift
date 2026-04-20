@@ -462,6 +462,16 @@ final class CircuitGameViewModel: PrismaGameViewModel {
                     return incoming // Wrong direction for a constrained gate: pass through.
                 }
 
+            case .sparkGate:
+                // Strictly one-way: inactive -> active. No-op on already-active signals.
+                // Because Spark never changes an active signal, traversing it with an
+                // active line is a legal no-op (used occasionally in routing puzzles).
+                if incoming.signal == .inactive {
+                    return PathSignal(color: incoming.color, signal: .active, wasTransformed: true)
+                } else {
+                    return incoming
+                }
+
             case .bridge:
                 // Bridge passes the signal through on the entering axis without modification.
                 return incoming

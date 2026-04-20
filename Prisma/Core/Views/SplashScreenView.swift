@@ -69,7 +69,7 @@ struct SplashScreenView: View {
                     .opacity(logoOpacity)
 
                 // Tagline
-                Text("Four games. One daily challenge each.")
+                Text("Five games. One daily challenge each.")
                     .font(.callout.weight(.medium))
                     .foregroundStyle(.primary.opacity(0.5))
                     .opacity(taglineOpacity)

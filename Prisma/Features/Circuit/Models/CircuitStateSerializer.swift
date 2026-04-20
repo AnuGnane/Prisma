@@ -75,6 +75,37 @@ struct CircuitState: Codable {
     }
 }
 
+extension CircuitState {
+    /// Validates that this persisted state can still be replayed on the given
+    /// level. Used by history views to detect state that was captured against
+    /// a previous version of the level (e.g. after a content regeneration).
+    ///
+    /// Rules:
+    ///   - Every path's first segment must fall on a source terminal of the
+    ///     matching color on the current grid.
+    ///   - Every segment must be in-bounds.
+    ///
+    /// If this returns `false`, callers should fall back to the canonical
+    /// solution to avoid rendering a phantom half-drawn board.
+    func isCompatible(with level: CircuitLevel) -> Bool {
+        let size = level.size
+        for (color, path) in activePaths {
+            // Must have at least the source segment.
+            guard let first = path.segments.first else { return false }
+            // Bounds check all segments.
+            for seg in path.segments {
+                if seg.row < 0 || seg.row >= size || seg.col < 0 || seg.col >= size {
+                    return false
+                }
+            }
+            // The first segment must be a source of this color on the current grid.
+            let cell = level.grid[first.row][first.col]
+            guard cell.kind == .source, cell.color == color else { return false }
+        }
+        return true
+    }
+}
+
 struct CircuitStateSerializer {
     /// Serialise the current active paths. Callers should pass the draw order
     /// so Synthesizer-bearing boards replay identically to the original game.

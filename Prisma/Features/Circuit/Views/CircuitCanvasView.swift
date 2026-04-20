@@ -43,85 +43,109 @@ struct CircuitCanvasView: View {
             return
         }
 
-        // ── Pass 1 & 2: draw the full path in source color (halo + core) ──
-        // We draw the full stroke in one pass first, then overlay transformed
-        // segments so color changes after gates are clearly visible.
-        var fullPath = Path()
-        for (index, position) in path.segments.enumerated() {
-            let center = cellCenter(for: position)
-            if index == 0 { fullPath.move(to: center) }
-            else          { fullPath.addLine(to: center) }
+        // Group the path into runs of (color, signal) pairs so every run can be
+        // styled for its current signal state (active = solid glow, inactive =
+        // solid + dimmed). Inactive runs "wake up" (brighten) once the path
+        // has reached its matching target — so a path intentionally wired to
+        // an inactive target renders at full brightness on completion.
+        let runs = buildSegmentRuns(for: path)
+        for run in runs {
+            drawRun(run, path: path, in: context)
         }
 
-        let baseColor = path.sourceColor.swiftUIColor
-
-        // Halo pass
-        var glowContext = context
-        glowContext.opacity = 0.3
-        glowContext.stroke(
-            fullPath,
-            with: .color(baseColor),
-            style: StrokeStyle(lineWidth: cellSize * 0.55, lineCap: .round, lineJoin: .round)
-        )
-
-        // Core pass
-        context.stroke(
-            fullPath,
-            with: .color(baseColor),
-            style: StrokeStyle(lineWidth: cellSize * 0.28, lineCap: .round, lineJoin: .round)
-        )
-
-        // ── Per-segment color overlay for gate-transformed sections ──
-        // Groups consecutive segments that share the same signal color into runs
-        // and draws each run with its actual transformed color.
-        drawPerSegmentColorOverlay(path, in: context)
-
         // ── Transformed-segment dashed overlay (white shimmer) ──
+        // Retained for the subtle "something changed here" cue at gate cells.
         drawTransformedOverlay(path, in: context)
     }
 
-    /// Draws colored overlays on top of the base path to show gate-transformed color changes.
-    private func drawPerSegmentColorOverlay(_ path: ActivePath, in context: GraphicsContext) {
-        // Walk segments grouping by color. When the color changes, flush the current run.
-        var runStart: Int = 0
-        var runColor: Color? = nil
-        var runIsTransformed = false
+    // MARK: - Run Construction
 
-        func flushRun(upTo end: Int) {
-            guard let color = runColor, runIsTransformed, end > runStart else { return }
-            var runPath = Path()
-            for i in runStart...end {
-                let center = cellCenter(for: path.segments[i])
-                if i == runStart { runPath.move(to: center) }
-                else             { runPath.addLine(to: center) }
-            }
-            // Halo
-            var glowCtx = context
-            glowCtx.opacity = 0.35
-            glowCtx.stroke(runPath, with: .color(color),
-                           style: StrokeStyle(lineWidth: cellSize * 0.55, lineCap: .round, lineJoin: .round))
-            // Core
-            context.stroke(runPath, with: .color(color),
-                           style: StrokeStyle(lineWidth: cellSize * 0.28, lineCap: .round, lineJoin: .round))
-        }
+    /// A contiguous stretch of segments that share the same color AND signal state.
+    private struct SegmentRun {
+        let startIndex: Int
+        let endIndex: Int
+        let color: NeonColor
+        let signal: SignalState
+        let wasTransformed: Bool
+    }
 
-        for (index, _) in path.segments.enumerated() {
-            let signal = signalAt(index: index, in: path)
-            let color  = signal.color.swiftUIColor
+    private func buildSegmentRuns(for path: ActivePath) -> [SegmentRun] {
+        var runs: [SegmentRun] = []
+        guard !path.segments.isEmpty else { return runs }
 
-            if runColor == nil {
-                runColor = color
-                runIsTransformed = signal.wasTransformed
-                runStart = index
-            } else if color != runColor {
-                flushRun(upTo: index)
-                runColor = color
-                runIsTransformed = signal.wasTransformed
-                runStart = index
+        var runStart = 0
+        var currentSignal = signalAt(index: 0, in: path)
+
+        for i in 1..<path.segments.count {
+            let sig = signalAt(index: i, in: path)
+            if sig.color != currentSignal.color || sig.signal != currentSignal.signal {
+                runs.append(SegmentRun(
+                    startIndex: runStart,
+                    endIndex: i - 1,
+                    color: currentSignal.color,
+                    signal: currentSignal.signal,
+                    wasTransformed: currentSignal.wasTransformed
+                ))
+                runStart = i - 1  // overlap by one segment so lines connect
+                currentSignal = sig
             }
         }
-        // Flush last run
-        flushRun(upTo: path.segments.count - 1)
+        runs.append(SegmentRun(
+            startIndex: runStart,
+            endIndex: path.segments.count - 1,
+            color: currentSignal.color,
+            signal: currentSignal.signal,
+            wasTransformed: currentSignal.wasTransformed
+        ))
+        return runs
+    }
+
+    private func drawRun(_ run: SegmentRun, path: ActivePath, in context: GraphicsContext) {
+        guard run.endIndex > run.startIndex else { return }
+
+        var runPath = Path()
+        for i in run.startIndex...run.endIndex {
+            let center = cellCenter(for: path.segments[i])
+            if i == run.startIndex { runPath.move(to: center) }
+            else                   { runPath.addLine(to: center) }
+        }
+
+        let color = run.color.swiftUIColor
+        let isInactive = run.signal == .inactive
+        // An inactive run "wakes up" when the path has successfully reached
+        // its matching target — at that point the whole path reads as solved
+        // and should brighten, even if the final signal is inactive (because
+        // the target requires an inactive signal).
+        let isSolvedInactive = isInactive && path.isComplete
+
+        // Stroke is always solid. Inactive signals are rendered solid-but-dim
+        // so the visual difference is a dimming cue, not a dash pattern.
+        let haloOpacity: Double
+        let coreOpacity: Double
+        if isInactive && !isSolvedInactive {
+            haloOpacity = 0.10
+            coreOpacity = 0.40
+        } else {
+            haloOpacity = 0.30
+            coreOpacity = 1.00
+        }
+
+        let coreStyle = StrokeStyle(
+            lineWidth: cellSize * 0.28,
+            lineCap: .round, lineJoin: .round
+        )
+
+        var glowCtx = context
+        glowCtx.opacity = haloOpacity
+        glowCtx.stroke(
+            runPath,
+            with: .color(color),
+            style: StrokeStyle(lineWidth: cellSize * 0.55, lineCap: .round, lineJoin: .round)
+        )
+
+        var coreCtx = context
+        coreCtx.opacity = coreOpacity
+        coreCtx.stroke(runPath, with: .color(color), style: coreStyle)
     }
 
     /// Draws a dashed white shimmer on segments that were transformed by a gate.

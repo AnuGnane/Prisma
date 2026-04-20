@@ -159,7 +159,11 @@ enum SynthesizerLogic: String, Codable, Hashable {
 /// The type of a logic gate cell.
 enum GateType: Codable, Hashable {
     /// Inverts the SignalState. Direction constraint is optional; nil = unconstrained.
+    /// Surfaced to players as the **Inverter** gate. Bidirectional active↔inactive.
     case notGate(direction: GateDirection?)
+    /// Energizes a signal: inactive → active. No-op on already-active signals.
+    /// Surfaced to players as the **Spark** gate. Strictly one-way (never de-energizes).
+    case sparkGate
     /// Allows one horizontal and one vertical path to cross without mixing.
     case bridge
     /// Requires two input paths; emits a merged output with color from mix logic.

@@ -83,14 +83,22 @@ Passable, no effect on signal. Use sparingly — usually for path shaping / aest
 
 Allows two paths to cross: one horizontal, one vertical. Each path passes through unchanged. A path may enter a bridge only in straight-line direction (no turning on a bridge). Using two paths through the same bridge is required by design for "bridge teaching" levels.
 
-### `.notGate(direction:)`
+### `.notGate(direction:)` — surfaced to players as **Inverter**
 
 Inverts `SignalState` (active ↔ inactive), color unchanged. `direction` is optional:
 
 - `nil`: any direction traversal inverts.
 - Set (e.g. `.topToBottom`): inversion only applies when the path enters-exit aligns with that direction. Wrong-direction traversal passes through unchanged — `wasTransformed` stays `false`.
 
-Use directional NOT gates to force a specific routing — the canonical L25 capstone uses `.topToBottom` to force the blue path to descend through the gate, producing `blue/inactive`, which then XOR-combines with `red/active` at a downstream synth.
+Use directional Inverters to force a specific routing — the capstone chapter uses `.topToBottom` to force the blue path to descend through the gate, producing `blue/inactive`, which then XOR-combines with `red/active` at a downstream synth.
+
+Why the rename: internally the case is still `notGate` (keeps the JSON schema stable and the symmetric active↔inactive semantics explicit), but tutorials, tooltips, and the level palette call it **Inverter**. Player testing showed "NOT" felt like an error icon (exclamation mark) and the symmetric flip made some players assume it only *turned lines on* — splitting off the `.sparkGate` (see below) and renaming NOT to Inverter resolves that confusion.
+
+### `.sparkGate` — surfaced to players as **Spark**
+
+Strictly one-way: `inactive → active`. No-op on already-active signals (legal to traverse). Color never changes. `wasTransformed` flips to `true` only when the signal actually changed.
+
+Use Spark whenever the authoring intent is *"energize this line"*. Keep Inverter for levels that actually require the symmetric flip (active becomes inactive). Mixing the two cleanly signals the level's puzzle: Spark = charge it up, Inverter = toggle polarity.
 
 ### `.synthesizer(logic, outputSignal)`
 
@@ -165,22 +173,34 @@ Run through every item. Anything unchecked = don't ship.
 
 Shipping levels that fail #3 or #7 is a common class of unwinnable-level bug. Every curated level ships with a test-enforced solution replay — the audit is cheap, run it.
 
-## 7. Gate-teaching progression (curated level design heuristic)
+## 7. Progression (100-level catalog)
 
-The curated ladder should introduce concepts one at a time. Suggested ramp:
+The catalog ships 100 curated levels surfaced through a single flat selector (`LevelSelectorView`). All levels are always unlocked — players can jump to any level from the grid. Progression is carried by the level content itself, not by gates in the UI.
 
-| Range   | New concept                                    |
-|---------|------------------------------------------------|
-| 1–5     | Source→target, single color, no gates          |
-| 6–10    | Two terminal pairs, no interactions            |
-| 11–13   | First NOT gate (unconstrained)                 |
-| 14–15   | Directional NOT (teaches routing constraint)    |
-| 16–18   | First synth (OR), primary+primary → secondary  |
-| 19–20   | Synth + bridge crossing                        |
-| 21–23   | Multiple synths, different mix targets         |
-| 24–25   | Synth + NOT interplay (XOR capstone)           |
+**L1–L10 — full-vocabulary tour.** The first ten levels each introduce one new concept, so a new player sees every logic gate within the first ten puzzles. None of the tour levels is larger than 5×5 and each new gate is isolated on a mostly-empty board so the transform is obvious.
 
-Anything that combines a new concept with a large grid (6×6+) before teaching it standalone is a learnability red flag. L25 intentionally combines XOR + directional NOT — it is a *capstone*, not an introduction.
+| Level | Concept introduced                                 | Grid |
+|-------|----------------------------------------------------|------|
+| L1    | Basic routing — one pair, one path                 | 4×4  |
+| L2    | Two pairs, no gates                                | 4×4  |
+| L3    | **Spark** — inactive → active                       | 5×5  |
+| L4    | **Inverter** (unconstrained) — flips signal state  | 5×5  |
+| L5    | **Directional Inverter** — only inverts one-way    | 5×5  |
+| L6    | **Bridge** — two colors cross in perpendicular dirs| 5×5  |
+| L7    | **Synthesizer (OR)** — primary+primary → secondary | 5×5  |
+| L8    | **Synthesizer (XOR)** — active ⊕ active → inactive | 5×5  |
+| L9    | Spark + Inverter combo                             | 5×5  |
+| L10   | Bridge + Synth + Inverter capstone                 | 6×6  |
+
+**L11–L100 — mixed-difficulty catalog.** Each level reuses gates seen in L1–L10. Grids grow from 5×5 to 7×7 in the back third. Levels are ordered so difficulty rises gradually but not monotonically — harder levels are sprinkled through so a stuck player can find a winnable alternative nearby.
+
+Design invariants for the full catalog:
+
+- Every gate must be introduced in a visually obvious, isolated context before appearing in a compound puzzle.
+- No unlockable / locked level cells. All 100 are playable from the first launch.
+- Grid size constraint: ≤5×5 through L30, 6×6 from L31–L70, 7×7 reserved for L71+.
+- Every curated level ships with a `solutionStateJSON` that `CircuitLevelLoaderTests.allCuratedSolutionsReplayToSolvedState()` proves winning.
+- For any level with a Synthesizer or a Bridge, `pathOrder` must appear in `solutionStateJSON` so the save/restore round-trip renders identically.
 
 ## 8. Common traps
 

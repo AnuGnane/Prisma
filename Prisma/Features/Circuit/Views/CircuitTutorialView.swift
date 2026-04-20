@@ -64,9 +64,15 @@ struct CircuitTutorialView: View {
                     
                     VStack(spacing: 16) {
                         logicElementItem(
-                            title: "NOT Gate",
-                            description: "Inverts an incoming signal. Active becomes Inactive, and vice versa. The path color is unchanged.",
-                            symbol: "exclamationmark.circle.fill",
+                            title: "Spark",
+                            description: "Energizes a signal. An inactive path becomes active after passing through. Has no effect on a path that is already active.",
+                            symbol: "bolt.fill",
+                            color: .yellow
+                        )
+                        logicElementItem(
+                            title: "Inverter",
+                            description: "Flips a signal's state. Active becomes inactive and inactive becomes active. The path color is unchanged. Some Inverters only trigger when entered from a specific direction.",
+                            symbol: "arrow.triangle.2.circlepath",
                             color: .orange
                         )
                         logicElementItem(
@@ -77,7 +83,7 @@ struct CircuitTutorialView: View {
                         )
                         logicElementItem(
                             title: "Synthesizer",
-                            description: "Requires two input paths. Combines their colors into a mixed output (Blue+Red → Purple, Red+Yellow → Orange, Blue+Yellow → Green). Signal output uses OR/XOR logic.",
+                            description: "Requires two input paths. Combines their colors into a mixed output (Blue+Red → Purple, Red+Yellow → Orange, Blue+Yellow → Green). Signal output uses OR or XOR logic.",
                             symbol: "arrow.triangle.merge",
                             color: .purple
                         )

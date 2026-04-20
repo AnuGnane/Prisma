@@ -68,7 +68,7 @@ struct GamesHomeView: View {
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.primary.opacity(0.8))
 
-            Text("Four games. One daily challenge each.")
+            Text("Five games. One daily challenge each.")
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.primary.opacity(0.4))
         }

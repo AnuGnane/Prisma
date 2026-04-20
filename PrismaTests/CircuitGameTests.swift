@@ -113,6 +113,28 @@ struct CircuitGateTransformTests {
         #expect(result.signal == .active)
     }
 
+    @Test func sparkGateEnergizesInactive() {
+        let gate = CellState.gate(type: .sparkGate, state: .idle)
+        let incoming = PathSignal(color: .green, signal: .inactive)
+
+        let result = applyTransform(gate, incoming, entry: .leftToRight)
+
+        #expect(result.color == .green)
+        #expect(result.signal == .active)
+        #expect(result.wasTransformed == true)
+    }
+
+    @Test func sparkGateIsNoOpOnActive() {
+        let gate = CellState.gate(type: .sparkGate, state: .idle)
+        let incoming = PathSignal(color: .orange, signal: .active)
+
+        let result = applyTransform(gate, incoming, entry: .bottomToTop)
+
+        #expect(result.color == .orange)
+        #expect(result.signal == .active)
+        #expect(result.wasTransformed == false)
+    }
+
     @Test func bridgePassesThroughUnchanged() {
         let gate = CellState.gate(type: .bridge, state: .bridgeLocked(horizontalSignal: nil, verticalSignal: nil))
         let incoming = PathSignal(color: .blue, signal: .active)
@@ -147,6 +169,11 @@ struct CircuitGateTransformTests {
                 if shouldInvert {
                     let flipped: SignalState = incoming.signal == .active ? .inactive : .active
                     return PathSignal(color: incoming.color, signal: flipped, wasTransformed: true)
+                }
+                return incoming
+            case .sparkGate:
+                if incoming.signal == .inactive {
+                    return PathSignal(color: incoming.color, signal: .active, wasTransformed: true)
                 }
                 return incoming
             case .bridge:
