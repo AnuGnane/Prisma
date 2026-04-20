@@ -518,8 +518,7 @@ struct LocalLevelSolutionView: View {
     // MARK: - Circuit Views
 
     private var circuitSolution: some View {
-        // Show the player's own final grid — it IS the solution.
-        circuitUserState
+        LocalLevelCircuitSolutionState(levelId: levelId)
     }
 
     private var circuitUserState: some View {
@@ -559,6 +558,43 @@ private struct LocalLevelCircuitUserState: View {
             
             let vm = CircuitGameViewModel(levelId: levelId)
             vm.restoreState(from: state)
+            self.viewModel = vm
+        }
+    }
+}
+
+private struct LocalLevelCircuitSolutionState: View {
+    let levelId: Int
+    @State private var viewModel: CircuitGameViewModel? = nil
+
+    var body: some View {
+        Group {
+            if let vm = viewModel {
+                CircuitGridView(viewModel: vm)
+                    .aspectRatio(1, contentMode: .fit)
+                    .disabled(true)
+                    .padding(16)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
+            } else {
+                VStack(spacing: 8) {
+                    Text("Solution unavailable for this level")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(16)
+                .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+            }
+        }
+        .onAppear {
+            guard let solutionJSON = CircuitLevelLoader.level(for: levelId)?.solutionStateJSON,
+                  let solutionState = CircuitStateSerializer.deserialize(solutionJSON) else {
+                return
+            }
+
+            let vm = CircuitGameViewModel(levelId: levelId)
+            vm.restoreState(from: solutionState)
             self.viewModel = vm
         }
     }

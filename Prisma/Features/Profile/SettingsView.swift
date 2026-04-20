@@ -27,7 +27,8 @@ struct SettingsView: View {
         (.signals, "Signals", "antenna.radiowaves.left.and.right", AppTheme.signals),
         (.archive, "Archive", "clock.arrow.circlepath", AppTheme.archive),
         (.cargo,   "Cargo",   "shippingbox.fill", AppTheme.cargo),
-        (.shift,   "Shift",   "slider.horizontal.3", AppTheme.shift)
+        (.shift,   "Shift",   "slider.horizontal.3", AppTheme.shift),
+        (.circuit, "Circuit", "bolt.fill", AppTheme.circuit)
     ]
 
     var body: some View {

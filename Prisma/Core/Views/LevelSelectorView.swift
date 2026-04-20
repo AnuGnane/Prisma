@@ -83,6 +83,7 @@ struct LevelSelectorView: View {
                 if isPlayed {
                     NavigationLink(value: LevelSelectorRoute.solution(levelId)) {
                         LevelSelectorPlayedCell(
+                            game: game,
                             levelId: levelId,
                             won: progress?.won ?? false,
                             score: progress?.score ?? 0,
@@ -251,6 +252,7 @@ struct LevelSelectorUnplayedCell: View {
 }
 
 struct LevelSelectorPlayedCell: View {
+    let game: GameType
     let levelId: Int
     let won: Bool
     let score: Int
@@ -304,9 +306,16 @@ struct LevelSelectorPlayedCell: View {
     
     /// Returns 1–3 stars based on score tier (unified across all games)
     private func starRating(score: Int, guesses: Int) -> Int {
-        if score >= 700 { return 3 }
-        if score >= 400 { return 2 }
-        return 1
+        switch game {
+        case .circuit:
+            if score >= 300 { return 3 }
+            if score >= 200 { return 2 }
+            return score > 0 ? 1 : 0
+        default:
+            if score >= 700 { return 3 }
+            if score >= 400 { return 2 }
+            return score > 0 ? 1 : 0
+        }
     }
     
     private func formatTime(_ seconds: Double) -> String {

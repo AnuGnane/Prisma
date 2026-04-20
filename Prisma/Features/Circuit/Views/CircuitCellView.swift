@@ -4,7 +4,7 @@
 //
 //  Renders the static, non-path entity for a single grid cell:
 //    - Terminal rings (source and target)
-//    - Gate icons (NOT, ColorShift, Bridge, Synthesizer)
+//    - Gate icons (NOT, Bridge, Synthesizer)
 //    - Waypoint markers
 //    - Empty cells (transparent, gesture hit-targets only)
 //
@@ -171,7 +171,6 @@ private struct GateCellView: View {
         let name: String
         switch gateType {
         case .notGate:      name = "exclamationmark.circle"
-        case .colorShift:   name = "paintpalette"
         case .bridge:       name = "arrow.triangle.branch"
         case .synthesizer:  name = "arrow.triangle.merge"
         }
@@ -181,7 +180,6 @@ private struct GateCellView: View {
     private var gateBgColor: Color {
         switch gateType {
         case .notGate:      return Color.primary.opacity(isActive ? 0.22 : 0.1)
-        case .colorShift(let out): return out.swiftUIColor.opacity(isActive ? 0.25 : 0.1)
         case .bridge:       return Color.primary.opacity(isActive ? 0.22 : 0.1)
         case .synthesizer:  return Color.purple.opacity(isActive ? 0.25 : 0.1)
         }
@@ -194,7 +192,6 @@ private struct GateCellView: View {
     private var gateIconColor: Color {
         switch gateType {
         case .notGate:      return isActive ? .orange : .primary.opacity(0.55)
-        case .colorShift(let out): return out.swiftUIColor
         case .bridge:       return isActive ? .cyan : .primary.opacity(0.55)
         case .synthesizer:  return isActive ? .purple : .primary.opacity(0.55)
         }
@@ -257,11 +254,12 @@ private struct WaypointMarker: View {
 extension NeonColor {
     var swiftUIColor: Color {
         switch self {
-        case .cyan:    return Color(red: 0.0,  green: 0.78, blue: 1.0)
-        case .magenta: return Color(red: 0.88, green: 0.25, blue: 0.98)
-        case .amber:   return Color(red: 1.0,  green: 0.70, blue: 0.0)
-        case .violet:  return Color(red: 0.49, green: 0.30, blue: 1.0)
-        case .coral:   return Color(red: 1.0,  green: 0.43, blue: 0.43)
+        case .blue:   return Color(red: 0.16, green: 0.54, blue: 0.98)
+        case .red:    return Color(red: 0.93, green: 0.28, blue: 0.32)
+        case .yellow: return Color(red: 0.98, green: 0.76, blue: 0.20)
+        case .green:  return Color(red: 0.24, green: 0.78, blue: 0.39)
+        case .orange: return Color(red: 0.98, green: 0.56, blue: 0.18)
+        case .purple: return Color(red: 0.55, green: 0.43, blue: 0.98)
         }
     }
 }

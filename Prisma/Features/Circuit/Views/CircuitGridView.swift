@@ -111,7 +111,9 @@ extension CircuitGameViewModel {
         guard let color = activeDrawColor,
               let path = activePaths[color],
               let head = path.headPosition,
-              head.isAdjacent(to: position) else { return false }
+              head.isAdjacent(to: position),
+              position.row >= 0, position.row < level.size,
+              position.col >= 0, position.col < level.size else { return false }
         return liveGrid[position.row][position.col].isGate
     }
 
@@ -119,7 +121,9 @@ extension CircuitGameViewModel {
     func previewGateOutput(at position: GridPosition) -> PathSignal? {
         guard let color = activeDrawColor,
               let path = activePaths[color],
-              let head = path.headPosition else { return nil }
+              let head = path.headPosition,
+              position.row >= 0, position.row < level.size,
+              position.col >= 0, position.col < level.size else { return nil }
         let cell = liveGrid[position.row][position.col]
         guard cell.isGate else { return nil }
         let entryDir = head.directionTo(position)

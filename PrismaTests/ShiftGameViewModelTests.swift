@@ -20,7 +20,7 @@ private func blankGrid() -> ShiftGrid {
 
 /// Returns a ShiftPuzzle with a known initial grid and no target words.
 private func simplePuzzle(grid: ShiftGrid = blankGrid()) -> ShiftPuzzle {
-    ShiftPuzzle(id: 0, initialGrid: grid, solutionGrid: nil, targetWords: [])
+    ShiftPuzzle(id: 0, initialGrid: grid, targetWords: [], optimalMoveCount: 10, solutionGrid: nil)
 }
 
 // MARK: - ShiftGrid Move Tests
@@ -146,7 +146,7 @@ struct ShiftGameViewModelTests {
     func notCompletedWithoutWords() {
         // Puzzle with a target word that blank grid can't satisfy
         let word = TargetWord(word: "SWIFT")
-        let puzzle = ShiftPuzzle(id: 0, initialGrid: blankGrid(), solutionGrid: nil, targetWords: [word])
+        let puzzle = ShiftPuzzle(id: 0, initialGrid: blankGrid(), targetWords: [word], optimalMoveCount: 10, solutionGrid: nil)
         let vm = ShiftGameViewModel(puzzle: puzzle, isDaily: false)
         #expect(vm.allWordsCompleted == false)
     }

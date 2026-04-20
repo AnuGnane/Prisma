@@ -16,8 +16,6 @@ struct CircuitLevel: Codable, Identifiable {
     let id: Int
     /// Grid dimension (grid is always square: size × size).
     let size: Int
-    /// The minimal total path length (sum of all segment cells) for 3-star rating.
-    let parPathLength: Int
     /// RNG seed used to generate this level (stored for reproducibility).
     let seed: Int
     /// Initial cell states for all cells in row-major order (size × size).
@@ -48,7 +46,6 @@ struct CircuitCellData: Codable {
         case source
         case target
         case notGate
-        case colorShiftGate
         case bridge
         case synthesizer
     }
@@ -86,20 +83,17 @@ struct CircuitCellData: Codable {
         case .waypoint:
             return .waypoint(visited: false)
         case .source:
-            return .terminal(color: color ?? .cyan, signal: signal ?? .active, isSource: true)
+            return .terminal(color: color ?? .blue, signal: signal ?? .active, isSource: true)
         case .target:
-            return .terminal(color: color ?? .cyan, signal: signal ?? .active, isSource: false)
+            return .terminal(color: color ?? .blue, signal: signal ?? .active, isSource: false)
         case .notGate:
             return .gate(type: .notGate(direction: gateDirection), state: .idle)
-        case .colorShiftGate:
-            return .gate(type: .colorShift(outputColor: outputColor ?? .cyan), state: .idle)
         case .bridge:
             return .gate(type: .bridge, state: .bridgeLocked(horizontalSignal: nil, verticalSignal: nil))
         case .synthesizer:
             return .gate(
                 type: .synthesizer(
                     logic: synthLogic ?? .or,
-                    outputColor: outputColor ?? .cyan,
                     outputSignal: outputSignal ?? .active
                 ),
                 state: .idle
@@ -120,12 +114,9 @@ struct CircuitCellData: Codable {
     static func notGate(_ direction: GateDirection? = nil) -> CircuitCellData {
         CircuitCellData(kind: .notGate, gateDirection: direction)
     }
-    static func colorShift(to outputColor: NeonColor) -> CircuitCellData {
-        CircuitCellData(kind: .colorShiftGate, outputColor: outputColor)
-    }
     static let bridge = CircuitCellData(kind: .bridge)
-    static func synthesizer(logic: SynthesizerLogic, outputColor: NeonColor, outputSignal: SignalState) -> CircuitCellData {
-        CircuitCellData(kind: .synthesizer, outputColor: outputColor, outputSignal: outputSignal, synthLogic: logic)
+    static func synthesizer(logic: SynthesizerLogic, outputSignal: SignalState) -> CircuitCellData {
+        CircuitCellData(kind: .synthesizer, outputSignal: outputSignal, synthLogic: logic)
     }
 }
 
@@ -171,40 +162,40 @@ struct CircuitLevelLoader {
     /// These are intentionally simple and act as the smoke-test during development.
     private static func hardcodedFallbackLevels() -> [CircuitLevel] {
         // Level 1: 5×5, two pairs, NOT gate in the middle
-        // Cyan active: (0,0) → (4,4)  |  Magenta inactive: (0,4) → (4,0)
+        // Blue active: (0,0) → (4,4)  |  Red inactive: (0,4) → (4,0)
         // NOT gate at (2,2)
         typealias C = CircuitCellData
         let g1: [[C]] = [
-            [.source(.cyan, .active),    .empty, .empty, .empty, .source(.magenta, .inactive)],
+            [.source(.blue, .active),    .empty, .empty, .empty, .source(.red, .inactive)],
             [.empty,                     .empty, .empty, .empty, .empty                      ],
             [.empty,                     .empty, .notGate(), .empty, .empty                 ],
             [.empty,                     .empty, .empty, .empty, .empty                      ],
-            [.target(.cyan, .active),    .empty, .empty, .empty, .target(.magenta, .inactive)],
+            [.target(.blue, .active),    .empty, .empty, .empty, .target(.red, .inactive)],
         ]
         let level1 = CircuitLevel(
-            id: 1, size: 5, parPathLength: 18, seed: 1001,
+            id: 1, size: 5, seed: 1001,
             grid: g1,
             terminalPairs: [
-                TerminalPair(source: GridPosition(0, 0), target: GridPosition(4, 4), color: .cyan, signal: .active),
-                TerminalPair(source: GridPosition(0, 4), target: GridPosition(4, 0), color: .magenta, signal: .inactive),
+                TerminalPair(source: GridPosition(0, 0), target: GridPosition(4, 4), color: .blue, signal: .active),
+                TerminalPair(source: GridPosition(0, 4), target: GridPosition(4, 0), color: .red, signal: .inactive),
             ]
         )
 
         // Level 2: 5×5, single pair with forced NOT gate traversal
-        // Cyan active source at (0,0), target at (4,4) requiring INACTIVE cyan
+        // Blue active source at (0,0), target at (4,4) requiring INACTIVE blue
         // NOT gate at (2,2) inverts: active → inactive
         let g2: [[C]] = [
-            [.source(.cyan, .active),    .empty, .empty, .empty, .empty],
+            [.source(.blue, .active),    .empty, .empty, .empty, .empty],
             [.empty,                     .empty, .empty, .empty, .empty],
             [.empty,                     .empty, .notGate(), .empty, .empty],
             [.empty,                     .empty, .empty, .empty, .empty],
-            [.empty,                     .empty, .empty, .empty, .target(.cyan, .inactive)],
+            [.empty,                     .empty, .empty, .empty, .target(.blue, .inactive)],
         ]
         let level2 = CircuitLevel(
-            id: 2, size: 5, parPathLength: 9, seed: 1002,
+            id: 2, size: 5, seed: 1002,
             grid: g2,
             terminalPairs: [
-                TerminalPair(source: GridPosition(0, 0), target: GridPosition(4, 4), color: .cyan, signal: .inactive),
+                TerminalPair(source: GridPosition(0, 0), target: GridPosition(4, 4), color: .blue, signal: .inactive),
             ]
         )
 

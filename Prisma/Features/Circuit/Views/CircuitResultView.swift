@@ -52,11 +52,13 @@ struct CircuitResultView: View {
 
             // Stats row
             HStack(spacing: 0) {
+                Spacer()
                 StatCell(label: "Time", value: viewModel.timerString)
+                Spacer()
                 Divider().frame(height: 36)
+                Spacer()
                 StatCell(label: "Coverage", value: "\(Int(viewModel.coveragePercent * 100))%")
-                Divider().frame(height: 36)
-                StatCell(label: "Efficiency", value: efficiencyText)
+                Spacer()
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
@@ -126,27 +128,18 @@ struct CircuitResultView: View {
 
     private var headerTitle: String {
         switch stars {
-        case 3: return "Max Efficiency! ⚡"
-        case 2: return "Perfect Flow! ✓"
+        case 3: return "Full Circuit! ⚡"
+        case 2: return "Circuit Complete ✓"
         default: return "Circuit Complete!"
         }
     }
 
     private var headerSubtitle: String {
         switch stars {
-        case 3: return "Optimal solution — all cells used"
-        case 2: return "All cells covered"
+        case 3: return "100% cell coverage"
+        case 2: return "80%+ cell coverage"
         default: return "All terminals powered"
         }
-    }
-
-    private var efficiencyText: String {
-        let par = viewModel.level.parPathLength
-        let used = viewModel.totalPathLength
-        if par > 0 {
-            return "\(used)/\(par)"
-        }
-        return "–"
     }
 
     private func revealStarsSequentially() {
@@ -163,25 +156,6 @@ struct CircuitResultView: View {
                 }
             }
         }
-    }
-}
-
-// MARK: - Stat Cell
-
-private struct StatCell: View {
-    let label: String
-    let value: String
-
-    var body: some View {
-        VStack(spacing: 3) {
-            Text(value)
-                .font(.title3.bold().monospacedDigit())
-                .foregroundStyle(.primary)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity)
     }
 }
 

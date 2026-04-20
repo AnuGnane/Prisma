@@ -20,12 +20,38 @@ struct CircuitTutorialView: View {
                         ruleItem(
                             icon: "point.bottomleft.forward.to.arrow.triangle.uturn.scurvepath.fill",
                             title: "Connect the Terminals",
-                            description: "Draw paths to connect matching colored terminals. Ensure the signal matches the target terminal's state (Active or Inactive)."
+                            description: "Draw paths to connect matching colored terminals. The arriving signal must match the target's expected state (Active or Inactive)."
                         )
                         ruleItem(
-                            icon: "square.grid.2x2",
-                            title: "100% Coverage (3 Stars)",
-                            description: "The ultimate goal is to connect all terminals AND cover every single tile on the grid for a 3-star perfect clear."
+                            icon: "location.fill",
+                            title: "Visit Waypoints",
+                            description: "Some levels have mandatory waypoints that your path must pass through to win."
+                        )
+                    }
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+
+                    // Star Goals
+                    Text("Star Goals")
+                        .font(.title2.weight(.bold))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 8)
+
+                    VStack(spacing: 12) {
+                        starGoalItem(
+                            stars: 1,
+                            title: "Circuit Complete",
+                            description: "All terminals powered with correct signal + all waypoints visited."
+                        )
+                        starGoalItem(
+                            stars: 2,
+                            title: "Good Flow",
+                            description: "Complete the circuit and cover at least 80% of the grid."
+                        )
+                        starGoalItem(
+                            stars: 3,
+                            title: "Full Circuit",
+                            description: "Complete the circuit using 100% of the board's cells."
                         )
                     }
                     .padding()
@@ -39,35 +65,43 @@ struct CircuitTutorialView: View {
                     VStack(spacing: 16) {
                         logicElementItem(
                             title: "NOT Gate",
-                            description: "Inverts an incoming signal. Active becomes Inactive, and vice versa.",
+                            description: "Inverts an incoming signal. Active becomes Inactive, and vice versa. The path color is unchanged.",
                             symbol: "exclamationmark.circle.fill",
-                            color: .red
-                        )
-                        logicElementItem(
-                            title: "ColorShift Gate",
-                            description: "Changes the color of the signal passing through to match the gate's output color.",
-                            symbol: "drop.fill",
-                            color: .blue
+                            color: .orange
                         )
                         logicElementItem(
                             title: "Bridge",
-                            description: "Allows two paths of different colors to cross each other without mixing their signals.",
-                            symbol: "point.topleft.down.curvedto.point.bottomright.up",
-                            color: .gray
+                            description: "Allows two paths of different colors to cross each other without mixing their signals or colors.",
+                            symbol: "arrow.triangle.branch",
+                            color: .cyan
                         )
                         logicElementItem(
                             title: "Synthesizer",
-                            description: "Combines two separate paths using boolean logic (OR / XOR) to emit a single new signal.",
-                            symbol: "arrow.merge",
+                            description: "Requires two input paths. Combines their colors into a mixed output (Blue+Red → Purple, Red+Yellow → Orange, Blue+Yellow → Green). Signal output uses OR/XOR logic.",
+                            symbol: "arrow.triangle.merge",
                             color: .purple
                         )
                         logicElementItem(
                             title: "Waypoint",
-                            description: "A mandatory checkpoint that your path must pass through to win the level.",
+                            description: "A mandatory checkpoint that your path must pass through to complete the level.",
                             symbol: "circle.circle.fill",
-                            color: .orange
+                            color: .green
                         )
                     }
+
+                    // Color mixing reference
+                    Text("Color Mixing")
+                        .font(.title2.weight(.bold))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 8)
+
+                    VStack(spacing: 8) {
+                        colorMixRow(lhs: .blue, rhs: .red, result: .purple)
+                        colorMixRow(lhs: .red, rhs: .yellow, result: .orange)
+                        colorMixRow(lhs: .blue, rhs: .yellow, result: .green)
+                    }
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
                 }
                 .padding()
             }
@@ -77,7 +111,7 @@ struct CircuitTutorialView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
-                        .fontWeight(.semibold)
+                        .bold()
                 }
             }
         }
@@ -141,6 +175,46 @@ struct CircuitTutorialView: View {
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemGroupedBackground)))
+    }
+
+    private func starGoalItem(stars: Int, title: String, description: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            HStack(spacing: 2) {
+                ForEach(1...3, id: \.self) { i in
+                    Image(systemName: i <= stars ? "star.fill" : "star")
+                        .font(.caption)
+                        .foregroundStyle(i <= stars ? .yellow : .primary.opacity(0.2))
+                }
+            }
+            .frame(width: 50)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                Text(description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func colorMixRow(lhs: NeonColor, rhs: NeonColor, result: NeonColor) -> some View {
+        HStack(spacing: 8) {
+            Circle().fill(lhs.swiftUIColor).frame(width: 24, height: 24)
+            Text("+")
+                .font(.caption.bold())
+                .foregroundStyle(.secondary)
+            Circle().fill(rhs.swiftUIColor).frame(width: 24, height: 24)
+            Text("=")
+                .font(.caption.bold())
+                .foregroundStyle(.secondary)
+            Circle().fill(result.swiftUIColor).frame(width: 24, height: 24)
+            Text(result.rawValue.capitalized)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.primary)
+            Spacer()
+        }
     }
 }
 

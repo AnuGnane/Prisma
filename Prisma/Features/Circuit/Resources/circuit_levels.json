@@ -2,8 +2,73 @@
   {
     "id": 1,
     "size": 4,
-    "parPathLength": 8,
-    "seed": 1,
+    "seed": 10,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "target",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
     "terminalPairs": [
       {
         "source": {
@@ -11,121 +76,350 @@
           "col": 0
         },
         "target": {
-          "row": 0,
-          "col": 3
+          "row": 3,
+          "col": 0
         },
-        "color": "cyan",
+        "color": "blue",
         "signal": "active"
       },
       {
         "source": {
-          "row": 3,
-          "col": 0
+          "row": 0,
+          "col": 2
         },
         "target": {
           "row": 3,
-          "col": 3
+          "col": 2
         },
-        "color": "magenta",
-        "signal": "inactive"
+        "color": "red",
+        "signal": "active"
       }
     ],
-    "grid": [
-      [
-        {
-          "kind": "source",
-          "color": "cyan",
-          "signal": "active"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "target",
-          "color": "cyan",
-          "signal": "active"
-        }
-      ],
-      [
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ],
-      [
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ],
-      [
-        {
-          "kind": "source",
-          "color": "magenta",
-          "signal": "inactive"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "target",
-          "color": "magenta",
-          "signal": "inactive"
-        }
-      ]
-    ],
-    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 0, \"col\": 0}, {\"row\": 0, \"col\": 1}, {\"row\": 0, \"col\": 2}, {\"row\": 0, \"col\": 3}], \"currentSignal\": {\"color\": \"cyan\", \"signal\": \"active\", \"wasTransformed\": false}, \"isComplete\": true}, \"magenta\": {\"sourceColor\": \"magenta\", \"sourceSignal\": \"inactive\", \"segments\": [{\"row\": 3, \"col\": 0}, {\"row\": 3, \"col\": 1}, {\"row\": 3, \"col\": 2}, {\"row\": 3, \"col\": 3}], \"currentSignal\": {\"color\": \"magenta\", \"signal\": \"inactive\", \"wasTransformed\": false}, \"isComplete\": true}}}"
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2}],\"currentSignal\":{\"color\":\"red\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
   },
   {
     "id": 2,
     "size": 4,
-    "parPathLength": 4,
-    "seed": 2,
+    "seed": 20,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "yellow",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "target",
+          "color": "yellow",
+          "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
     "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 3,
+          "col": 0
+        },
+        "color": "yellow",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"yellow\":{\"sourceColor\":\"yellow\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0}],\"currentSignal\":{\"color\":\"yellow\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 3,
+    "size": 5,
+    "seed": 30,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "blue",
+          "signal": "inactive"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "yellow",
+          "signal": "active"
+        },
+        {
+          "kind": "target",
+          "color": "yellow",
+          "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 2,
+          "col": 4
+        },
+        "color": "blue",
+        "signal": "inactive"
+      },
+      {
+        "source": {
+          "row": 4,
+          "col": 0
+        },
+        "target": {
+          "row": 4,
+          "col": 1
+        },
+        "color": "yellow",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true},\"yellow\":{\"sourceColor\":\"yellow\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":0},{\"row\":3,\"col\":0},{\"row\":3,\"col\":1},{\"row\":3,\"col\":2},{\"row\":3,\"col\":3},{\"row\":3,\"col\":4},{\"row\":4,\"col\":4},{\"row\":4,\"col\":3},{\"row\":4,\"col\":2},{\"row\":4,\"col\":1}],\"currentSignal\":{\"color\":\"yellow\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 4,
+    "size": 4,
+    "seed": 40,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "source",
+          "color": "yellow",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "blue",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "bridge"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "yellow",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 3
+        },
+        "color": "blue",
+        "signal": "active"
+      },
       {
         "source": {
           "row": 0,
           "col": 1
         },
         "target": {
-          "row": 3,
+          "row": 2,
           "col": 1
         },
-        "color": "amber",
-        "signal": "inactive"
+        "color": "yellow",
+        "signal": "active"
       }
     ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":1,\"col\":2},{\"row\":1,\"col\":3},{\"row\":0,\"col\":3}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"yellow\":{\"sourceColor\":\"yellow\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":1,\"col\":2},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1}],\"currentSignal\":{\"color\":\"yellow\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 5,
+    "size": 5,
+    "seed": 50,
     "grid": [
       [
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        },
         {
           "kind": "empty"
         },
         {
-          "kind": "source",
-          "color": "amber",
-          "signal": "active"
+          "kind": "empty"
         },
         {
           "kind": "empty"
@@ -135,6 +429,252 @@
         }
       ],
       [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "red",
+          "signal": "active"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 4,
+          "col": 4
+        },
+        "color": "red",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":3,\"col\":4},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":4,\"col\":4}],\"currentSignal\":{\"color\":\"red\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 6,
+    "size": 5,
+    "seed": 60,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "synthesizer",
+          "synthLogic": "or",
+          "outputSignal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 4
+        },
+        "color": "purple",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":1,\"col\":2},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":3,\"col\":3},{\"row\":4,\"col\":3},{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":2,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"active\",\"wasTransformed\":true},\"isComplete\":true},\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":0},{\"row\":3,\"col\":0},{\"row\":2,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":2,\"col\":1},{\"row\":3,\"col\":1},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2},{\"row\":3,\"col\":2},{\"row\":2,\"col\":2}],\"currentSignal\":{\"color\":\"red\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 7,
+    "size": 5,
+    "seed": 70,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
         {
           "kind": "empty"
         },
@@ -160,6 +700,9 @@
         },
         {
           "kind": "empty"
+        },
+        {
+          "kind": "empty"
         }
       ],
       [
@@ -167,177 +710,85 @@
           "kind": "empty"
         },
         {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
           "kind": "target",
-          "color": "amber",
+          "color": "blue",
           "signal": "inactive"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
         }
       ]
     ],
-    "solutionStateJSON": "{\"activePaths\": {\"amber\": {\"sourceColor\": \"amber\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 0, \"col\": 1}, {\"row\": 1, \"col\": 1}, {\"row\": 2, \"col\": 1}, {\"row\": 3, \"col\": 1}], \"currentSignal\": {\"color\": \"amber\", \"signal\": \"inactive\", \"wasTransformed\": true}, \"isComplete\": true}}}"
-  },
-  {
-    "id": 3,
-    "size": 4,
-    "parPathLength": 4,
-    "seed": 3,
     "terminalPairs": [
-      {
-        "source": {
-          "row": 1,
-          "col": 0
-        },
-        "target": {
-          "row": 1,
-          "col": 3
-        },
-        "color": "magenta",
-        "signal": "active"
-      }
-    ],
-    "grid": [
-      [
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ],
-      [
-        {
-          "kind": "source",
-          "color": "cyan",
-          "signal": "active"
-        },
-        {
-          "kind": "colorShiftGate",
-          "outputColor": "magenta"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "target",
-          "color": "magenta",
-          "signal": "active"
-        }
-      ],
-      [
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ],
-      [
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ]
-    ],
-    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 1, \"col\": 0}, {\"row\": 1, \"col\": 1}, {\"row\": 1, \"col\": 2}, {\"row\": 1, \"col\": 3}], \"currentSignal\": {\"color\": \"magenta\", \"signal\": \"active\", \"wasTransformed\": true}, \"isComplete\": true}}}"
-  },
-  {
-    "id": 4,
-    "size": 5,
-    "parPathLength": 10,
-    "seed": 4,
-    "terminalPairs": [
-      {
-        "source": {
-          "row": 2,
-          "col": 0
-        },
-        "target": {
-          "row": 2,
-          "col": 4
-        },
-        "color": "cyan",
-        "signal": "active"
-      },
       {
         "source": {
           "row": 0,
-          "col": 2
+          "col": 0
         },
         "target": {
           "row": 4,
-          "col": 2
+          "col": 4
         },
-        "color": "amber",
+        "color": "blue",
         "signal": "inactive"
       }
     ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":3,\"col\":4},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":4,\"col\":4}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 8,
+    "size": 5,
+    "seed": 80,
     "grid": [
       [
         {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
           "kind": "source",
-          "color": "amber",
-          "signal": "inactive"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ],
-      [
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ],
-      [
-        {
-          "kind": "source",
-          "color": "cyan",
+          "color": "blue",
           "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "target",
+          "color": "blue",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
         },
         {
           "kind": "empty"
@@ -349,8 +800,355 @@
           "kind": "empty"
         },
         {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
           "kind": "target",
-          "color": "cyan",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 4
+        },
+        "color": "blue",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 0,
+          "col": 2
+        },
+        "target": {
+          "row": 4,
+          "col": 0
+        },
+        "color": "red",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":3,\"col\":1},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":1,\"col\":4},{\"row\":0,\"col\":4}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":2,\"col\":2},{\"row\":3,\"col\":2},{\"row\":3,\"col\":3},{\"row\":3,\"col\":4},{\"row\":4,\"col\":4},{\"row\":4,\"col\":3},{\"row\":4,\"col\":2},{\"row\":4,\"col\":1},{\"row\":4,\"col\":0}],\"currentSignal\":{\"color\":\"red\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 9,
+    "size": 5,
+    "seed": 90,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "yellow",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "yellow",
+          "signal": "inactive"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 4,
+          "col": 4
+        },
+        "color": "yellow",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"yellow\":{\"sourceColor\":\"yellow\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":3,\"col\":4},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":4,\"col\":4}],\"currentSignal\":{\"color\":\"yellow\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 10,
+    "size": 6,
+    "seed": 100,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "active"
+        },
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "synthesizer",
+          "synthLogic": "or",
+          "outputSignal": "active"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "bridge"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 1
+        },
+        "color": "purple",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":4,\"col\":0},{\"row\":5,\"col\":0},{\"row\":5,\"col\":1},{\"row\":4,\"col\":1},{\"row\":3,\"col\":1},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":3,\"col\":2},{\"row\":4,\"col\":2},{\"row\":5,\"col\":2},{\"row\":5,\"col\":3},{\"row\":4,\"col\":3},{\"row\":3,\"col\":3},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":0,\"col\":1}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"active\",\"wasTransformed\":true},\"isComplete\":true},\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4},{\"row\":0,\"col\":5},{\"row\":1,\"col\":5},{\"row\":2,\"col\":5},{\"row\":3,\"col\":5},{\"row\":4,\"col\":5},{\"row\":5,\"col\":5},{\"row\":5,\"col\":4},{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":2,\"col\":4}],\"currentSignal\":{\"color\":\"red\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 11,
+    "size": 4,
+    "seed": 110,
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "orange",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "green",
           "signal": "active"
         }
       ],
@@ -366,6 +1164,99 @@
         },
         {
           "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "orange",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "green",
+          "signal": "active"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 3
+        },
+        "target": {
+          "row": 3,
+          "col": 3
+        },
+        "color": "green",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 0,
+          "col": 1
+        },
+        "target": {
+          "row": 3,
+          "col": 1
+        },
+        "color": "orange",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"green\":{\"sourceColor\":\"green\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":3},{\"row\":0,\"col\":2},{\"row\":1,\"col\":2},{\"row\":1,\"col\":3},{\"row\":2,\"col\":3},{\"row\":2,\"col\":2},{\"row\":3,\"col\":2},{\"row\":3,\"col\":3}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"orange\":{\"sourceColor\":\"orange\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":1},{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":2,\"col\":1},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":3,\"col\":1}],\"currentSignal\":{\"color\":\"orange\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 12,
+    "size": 4,
+    "seed": 120,
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "purple",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
         },
         {
           "kind": "empty"
@@ -379,51 +1270,49 @@
           "kind": "empty"
         },
         {
-          "kind": "target",
-          "color": "amber",
-          "signal": "inactive"
-        },
-        {
-          "kind": "empty"
+          "kind": "notGate"
         },
         {
           "kind": "empty"
         }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "inactive"
+        }
       ]
     ],
-    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 2, \"col\": 0}, {\"row\": 2, \"col\": 1}, {\"row\": 2, \"col\": 2}, {\"row\": 2, \"col\": 3}, {\"row\": 2, \"col\": 4}], \"currentSignal\": {\"color\": \"cyan\", \"signal\": \"active\", \"wasTransformed\": false}, \"isComplete\": true}, \"amber\": {\"sourceColor\": \"amber\", \"sourceSignal\": \"inactive\", \"segments\": [{\"row\": 0, \"col\": 2}, {\"row\": 1, \"col\": 2}, {\"row\": 2, \"col\": 2}, {\"row\": 3, \"col\": 2}, {\"row\": 4, \"col\": 2}], \"currentSignal\": {\"color\": \"amber\", \"signal\": \"inactive\", \"wasTransformed\": false}, \"isComplete\": true}}}"
-  },
-  {
-    "id": 5,
-    "size": 5,
-    "parPathLength": 10,
-    "seed": 5,
     "terminalPairs": [
       {
         "source": {
-          "row": 1,
-          "col": 0
+          "row": 0,
+          "col": 3
         },
         "target": {
-          "row": 2,
-          "col": 4
-        },
-        "color": "amber",
-        "signal": "active"
-      },
-      {
-        "source": {
           "row": 3,
-          "col": 0
+          "col": 3
         },
-        "target": {
-          "row": 2,
-          "col": 2
-        },
-        "color": "magenta",
-        "signal": "active"
+        "color": "purple",
+        "signal": "inactive"
       }
     ],
+    "solutionStateJSON": "{\"activePaths\":{\"purple\":{\"sourceColor\":\"purple\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":3},{\"row\":0,\"col\":2},{\"row\":0,\"col\":1},{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":1,\"col\":2},{\"row\":1,\"col\":3},{\"row\":2,\"col\":3},{\"row\":2,\"col\":2},{\"row\":2,\"col\":1},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":3,\"col\":1},{\"row\":3,\"col\":2},{\"row\":3,\"col\":3}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 13,
+    "size": 5,
+    "seed": 130,
     "grid": [
       [
         {
@@ -439,14 +1328,350 @@
           "kind": "empty"
         },
         {
+          "kind": "source",
+          "color": "green",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
           "kind": "empty"
         }
       ],
       [
         {
-          "kind": "source",
-          "color": "cyan",
+          "kind": "target",
+          "color": "green",
           "signal": "inactive"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "inactive"
+        },
+        {
+          "kind": "source",
+          "color": "purple",
+          "signal": "active"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 4
+        },
+        "target": {
+          "row": 2,
+          "col": 0
+        },
+        "color": "green",
+        "signal": "inactive"
+      },
+      {
+        "source": {
+          "row": 4,
+          "col": 4
+        },
+        "target": {
+          "row": 4,
+          "col": 3
+        },
+        "color": "purple",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"green\":{\"sourceColor\":\"green\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":4},{\"row\":0,\"col\":3},{\"row\":0,\"col\":2},{\"row\":0,\"col\":1},{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":1,\"col\":2},{\"row\":1,\"col\":3},{\"row\":1,\"col\":4},{\"row\":2,\"col\":4},{\"row\":2,\"col\":3},{\"row\":2,\"col\":2},{\"row\":2,\"col\":1},{\"row\":2,\"col\":0}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true},\"purple\":{\"sourceColor\":\"purple\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 14,
+    "size": 4,
+    "seed": 140,
+    "grid": [
+      [
+        {
+          "kind": "target",
+          "color": "green",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "purple",
+          "signal": "active"
+        },
+        {
+          "kind": "source",
+          "color": "green",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "bridge"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 3
+        },
+        "target": {
+          "row": 0,
+          "col": 0
+        },
+        "color": "green",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 0,
+          "col": 2
+        },
+        "target": {
+          "row": 2,
+          "col": 2
+        },
+        "color": "purple",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"green\":{\"sourceColor\":\"green\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":3},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":0,\"col\":0}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"purple\":{\"sourceColor\":\"purple\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":2},{\"row\":0,\"col\":1},{\"row\":1,\"col\":1},{\"row\":2,\"col\":1},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":3,\"col\":1},{\"row\":3,\"col\":2},{\"row\":3,\"col\":3},{\"row\":2,\"col\":3},{\"row\":2,\"col\":2}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 15,
+    "size": 5,
+    "seed": 150,
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "orange",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "target",
+          "color": "orange",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 4
+        },
+        "target": {
+          "row": 4,
+          "col": 0
+        },
+        "color": "orange",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"orange\":{\"sourceColor\":\"orange\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":4},{\"row\":0,\"col\":3},{\"row\":0,\"col\":2},{\"row\":0,\"col\":1},{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":1,\"col\":2},{\"row\":1,\"col\":3},{\"row\":1,\"col\":4},{\"row\":2,\"col\":4},{\"row\":2,\"col\":3},{\"row\":2,\"col\":2},{\"row\":2,\"col\":1},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":3,\"col\":1},{\"row\":3,\"col\":2},{\"row\":3,\"col\":3},{\"row\":3,\"col\":4},{\"row\":4,\"col\":4},{\"row\":4,\"col\":3},{\"row\":4,\"col\":2},{\"row\":4,\"col\":1},{\"row\":4,\"col\":0}],\"currentSignal\":{\"color\":\"orange\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 16,
+    "size": 5,
+    "seed": 160,
+    "grid": [
+      [
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
         },
         {
           "kind": "empty"
@@ -470,41 +1695,151 @@
         },
         {
           "kind": "synthesizer",
-          "outputColor": "amber",
-          "outputSignal": "active",
-          "synthLogic": "or"
+          "synthLogic": "or",
+          "outputSignal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 4,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 0
+        },
+        "color": "purple",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":0},{\"row\":3,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":2,\"col\":2},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":0,\"col\":0}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"active\",\"wasTransformed\":true},\"isComplete\":true}},\"pathOrder\":[\"blue\",\"red\"]}"
+  },
+  {
+    "id": 17,
+    "size": 5,
+    "seed": 170,
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
         },
         {
           "kind": "empty"
         },
         {
           "kind": "target",
-          "color": "amber",
-          "signal": "active"
+          "color": "green",
+          "signal": "inactive"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
         }
       ],
       [
         {
           "kind": "source",
-          "color": "magenta",
+          "color": "green",
           "signal": "active"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        },
-        {
-          "kind": "empty"
-        }
-      ],
-      [
-        {
-          "kind": "empty"
         },
         {
           "kind": "empty"
@@ -520,6 +1855,1023 @@
         }
       ]
     ],
-    "solutionStateJSON": "{\"activePaths\": {\"cyan\": {\"sourceColor\": \"cyan\", \"sourceSignal\": \"inactive\", \"segments\": [{\"row\": 1, \"col\": 0}, {\"row\": 1, \"col\": 1}, {\"row\": 1, \"col\": 2}, {\"row\": 2, \"col\": 2}, {\"row\": 2, \"col\": 3}, {\"row\": 2, \"col\": 4}], \"currentSignal\": {\"color\": \"amber\", \"signal\": \"active\", \"wasTransformed\": true}, \"isComplete\": true}, \"magenta\": {\"sourceColor\": \"magenta\", \"sourceSignal\": \"active\", \"segments\": [{\"row\": 3, \"col\": 0}, {\"row\": 3, \"col\": 1}, {\"row\": 3, \"col\": 2}, {\"row\": 2, \"col\": 2}], \"currentSignal\": {\"color\": \"magenta\", \"signal\": \"active\", \"wasTransformed\": false}, \"isComplete\": true}}}"
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 4,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 4
+        },
+        "color": "green",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"green\":{\"sourceColor\":\"green\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 18,
+    "size": 5,
+    "seed": 180,
+    "grid": [
+      [
+        {
+          "kind": "target",
+          "color": "orange",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "bridge"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "green",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "orange",
+          "signal": "active"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "target",
+          "color": "green",
+          "signal": "active"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 4,
+          "col": 0
+        },
+        "target": {
+          "row": 4,
+          "col": 4
+        },
+        "color": "green",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 4,
+          "col": 2
+        },
+        "target": {
+          "row": 0,
+          "col": 0
+        },
+        "color": "orange",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"green\":{\"sourceColor\":\"green\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":2,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":3,\"col\":4},{\"row\":4,\"col\":4}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"orange\":{\"sourceColor\":\"orange\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":2,\"col\":2},{\"row\":1,\"col\":2},{\"row\":1,\"col\":3},{\"row\":1,\"col\":4},{\"row\":0,\"col\":4},{\"row\":0,\"col\":3},{\"row\":0,\"col\":2},{\"row\":0,\"col\":1},{\"row\":0,\"col\":0}],\"currentSignal\":{\"color\":\"orange\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 19,
+    "size": 5,
+    "seed": 190,
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "inactive"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "purple",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 4,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 4
+        },
+        "color": "purple",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"purple\":{\"sourceColor\":\"purple\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":3,\"col\":3},{\"row\":3,\"col\":2},{\"row\":3,\"col\":1},{\"row\":3,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":1,\"col\":4},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":1,\"col\":1},{\"row\":1,\"col\":0},{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 20,
+    "size": 6,
+    "seed": 200,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "yellow",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "bridge"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "synthesizer",
+          "synthLogic": "or",
+          "outputSignal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "orange",
+          "signal": "active"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 5,
+          "col": 5
+        },
+        "color": "orange",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":2,\"col\":4},{\"row\":3,\"col\":4},{\"row\":4,\"col\":4},{\"row\":4,\"col\":3}],\"currentSignal\":{\"color\":\"red\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"yellow\":{\"sourceColor\":\"yellow\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":1,\"col\":3},{\"row\":2,\"col\":3},{\"row\":3,\"col\":3},{\"row\":4,\"col\":3},{\"row\":5,\"col\":3},{\"row\":5,\"col\":4},{\"row\":5,\"col\":5}],\"currentSignal\":{\"color\":\"orange\",\"signal\":\"active\",\"wasTransformed\":true},\"isComplete\":true}},\"pathOrder\":[\"red\",\"yellow\"]}"
+  },
+  {
+    "id": 21,
+    "size": 5,
+    "seed": 210,
+    "grid": [
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "green",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "synthesizer",
+          "synthLogic": "or",
+          "outputSignal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "yellow",
+          "signal": "active"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 4,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 4
+        },
+        "color": "green",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":0},{\"row\":3,\"col\":0},{\"row\":2,\"col\":0},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"yellow\":{\"sourceColor\":\"yellow\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":2,\"col\":4},{\"row\":2,\"col\":3},{\"row\":2,\"col\":2},{\"row\":1,\"col\":2},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"active\",\"wasTransformed\":true},\"isComplete\":true}},\"pathOrder\":[\"blue\",\"yellow\"]}"
+  },
+  {
+    "id": 22,
+    "size": 5,
+    "seed": 220,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "green",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "green",
+          "signal": "inactive"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 4,
+          "col": 4
+        },
+        "color": "green",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"green\":{\"sourceColor\":\"green\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":3,\"col\":1},{\"row\":2,\"col\":1},{\"row\":1,\"col\":1},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":1,\"col\":2},{\"row\":2,\"col\":2},{\"row\":3,\"col\":2},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":3,\"col\":3},{\"row\":2,\"col\":3},{\"row\":1,\"col\":3},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4},{\"row\":1,\"col\":4},{\"row\":2,\"col\":4},{\"row\":3,\"col\":4},{\"row\":4,\"col\":4}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 23,
+    "size": 5,
+    "seed": 230,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "green",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "orange",
+          "signal": "active"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "orange",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "bridge"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "waypoint"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "target",
+          "color": "green",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 4,
+          "col": 0
+        },
+        "color": "green",
+        "signal": "active"
+      },
+      {
+        "source": {
+          "row": 2,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 4
+        },
+        "color": "orange",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"green\":{\"sourceColor\":\"green\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":0,\"col\":3},{\"row\":1,\"col\":3},{\"row\":1,\"col\":2},{\"row\":2,\"col\":2},{\"row\":3,\"col\":2},{\"row\":4,\"col\":2},{\"row\":4,\"col\":1},{\"row\":4,\"col\":0}],\"currentSignal\":{\"color\":\"green\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true},\"orange\":{\"sourceColor\":\"orange\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":3,\"col\":1},{\"row\":2,\"col\":1},{\"row\":2,\"col\":2},{\"row\":2,\"col\":3},{\"row\":3,\"col\":3},{\"row\":4,\"col\":3},{\"row\":4,\"col\":4},{\"row\":3,\"col\":4},{\"row\":2,\"col\":4},{\"row\":1,\"col\":4},{\"row\":0,\"col\":4}],\"currentSignal\":{\"color\":\"orange\",\"signal\":\"active\",\"wasTransformed\":false},\"isComplete\":true}}}"
+  },
+  {
+    "id": 24,
+    "size": 5,
+    "seed": 240,
+    "grid": [
+      [
+        {
+          "kind": "source",
+          "color": "purple",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "inactive"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 0,
+          "col": 0
+        },
+        "target": {
+          "row": 4,
+          "col": 4
+        },
+        "color": "purple",
+        "signal": "inactive"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"purple\":{\"sourceColor\":\"purple\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":0,\"col\":0},{\"row\":1,\"col\":0},{\"row\":2,\"col\":0},{\"row\":3,\"col\":0},{\"row\":4,\"col\":0},{\"row\":4,\"col\":1},{\"row\":3,\"col\":1},{\"row\":2,\"col\":1},{\"row\":1,\"col\":1},{\"row\":0,\"col\":1},{\"row\":0,\"col\":2},{\"row\":1,\"col\":2},{\"row\":2,\"col\":2},{\"row\":3,\"col\":2},{\"row\":4,\"col\":2},{\"row\":4,\"col\":3},{\"row\":3,\"col\":3},{\"row\":2,\"col\":3},{\"row\":1,\"col\":3},{\"row\":0,\"col\":3},{\"row\":0,\"col\":4},{\"row\":1,\"col\":4},{\"row\":2,\"col\":4},{\"row\":3,\"col\":4},{\"row\":4,\"col\":4}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true}}}"
+  },
+  {
+    "id": 25,
+    "size": 6,
+    "seed": 250,
+    "grid": [
+      [
+        {
+          "kind": "target",
+          "color": "purple",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "source",
+          "color": "blue",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "notGate",
+          "gateDirection": "topToBottom"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "synthesizer",
+          "synthLogic": "xor",
+          "outputSignal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ],
+      [
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "source",
+          "color": "red",
+          "signal": "active"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        },
+        {
+          "kind": "empty"
+        }
+      ]
+    ],
+    "terminalPairs": [
+      {
+        "source": {
+          "row": 1,
+          "col": 0
+        },
+        "target": {
+          "row": 0,
+          "col": 0
+        },
+        "color": "purple",
+        "signal": "active"
+      }
+    ],
+    "solutionStateJSON": "{\"activePaths\":{\"blue\":{\"sourceColor\":\"blue\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":1,\"col\":0},{\"row\":1,\"col\":1},{\"row\":2,\"col\":1},{\"row\":3,\"col\":1},{\"row\":4,\"col\":1},{\"row\":4,\"col\":2}],\"currentSignal\":{\"color\":\"blue\",\"signal\":\"inactive\",\"wasTransformed\":true},\"isComplete\":true},\"red\":{\"sourceColor\":\"red\",\"sourceSignal\":\"active\",\"segments\":[{\"row\":5,\"col\":2},{\"row\":4,\"col\":2},{\"row\":3,\"col\":2},{\"row\":2,\"col\":2},{\"row\":1,\"col\":2},{\"row\":0,\"col\":2},{\"row\":0,\"col\":1},{\"row\":0,\"col\":0}],\"currentSignal\":{\"color\":\"purple\",\"signal\":\"active\",\"wasTransformed\":true},\"isComplete\":true}},\"pathOrder\":[\"blue\",\"red\"]}"
   }
 ]

@@ -14,11 +14,88 @@ import Foundation
 /// The visual color of a circuit path.
 /// Drawn from Prisma's existing palette — restrained neon, not fully saturated.
 enum NeonColor: String, Codable, CaseIterable, Hashable {
-    case cyan     // deep electric cyan   (#00C8FF)
-    case magenta  // soft magenta         (#E040FB)
-    case amber    // warm amber           (#FFB300)
-    case violet   // muted violet         (#7C4DFF)
-    case coral    // coral                (#FF6E6E)
+    // Primary colors
+    case blue
+    case red
+    case yellow
+
+    // Secondary colors
+    case green
+    case orange
+    case purple
+
+    /// Backward-compatible decoding for legacy persisted values.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        if let resolved = NeonColor(legacyRawValue: rawValue) {
+            self = resolved
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Unknown NeonColor: \(rawValue)"
+            )
+        }
+    }
+
+    /// Maps a raw string (including legacy palette names) to a current `NeonColor`.
+    /// Returns `nil` for unknown values. Used by both `init(from:)` and by
+    /// `CircuitState.pathOrder` decoding so old saves still migrate cleanly.
+    init?(legacyRawValue rawValue: String) {
+        switch rawValue {
+        // Current palette
+        case "blue": self = .blue
+        case "red": self = .red
+        case "yellow": self = .yellow
+        case "green": self = .green
+        case "orange": self = .orange
+        case "purple": self = .purple
+
+        // Legacy palette mapping
+        case "cyan": self = .blue
+        case "magenta": self = .red
+        case "amber": self = .yellow
+        case "violet": self = .purple
+        case "coral": self = .orange
+        default: return nil
+        }
+    }
+
+    private enum PrimaryChannel: Hashable {
+        case blue
+        case red
+        case yellow
+    }
+
+    private var primaryChannels: Set<PrimaryChannel> {
+        switch self {
+        case .blue:   return [.blue]
+        case .red:    return [.red]
+        case .yellow: return [.yellow]
+        case .green:  return [.blue, .yellow]
+        case .orange: return [.red, .yellow]
+        case .purple: return [.blue, .red]
+        }
+    }
+
+    /// Deterministic additive-style color mixing used by Synthesizer gates.
+    func mixed(with other: NeonColor) -> NeonColor {
+        let union = primaryChannels.union(other.primaryChannels)
+        switch union {
+        case [.blue]:            return .blue
+        case [.red]:             return .red
+        case [.yellow]:          return .yellow
+        case [.blue, .red]:      return .purple
+        case [.red, .yellow]:    return .orange
+        case [.blue, .yellow]:   return .green
+        case [.blue, .red, .yellow]:
+            // Tertiary mixes are intentionally unsupported for v1 of the model.
+            // Keep current color to avoid surprising transformations.
+            return self
+        default:
+            return self
+        }
+    }
 }
 
 // MARK: - Signal Model
@@ -41,6 +118,19 @@ struct PathSignal: Codable, Hashable {
         self.color = color
         self.signal = signal
         self.wasTransformed = wasTransformed
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case color
+        case signal
+        case wasTransformed
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        color = try container.decode(NeonColor.self, forKey: .color)
+        signal = try container.decode(SignalState.self, forKey: .signal)
+        wasTransformed = try container.decodeIfPresent(Bool.self, forKey: .wasTransformed) ?? false
     }
 }
 
@@ -70,12 +160,10 @@ enum SynthesizerLogic: String, Codable, Hashable {
 enum GateType: Codable, Hashable {
     /// Inverts the SignalState. Direction constraint is optional; nil = unconstrained.
     case notGate(direction: GateDirection?)
-    /// Transforms the NeonColor of the passing signal to a fixed output color.
-    case colorShift(outputColor: NeonColor)
     /// Allows one horizontal and one vertical path to cross without mixing.
     case bridge
-    /// Requires two input paths; emits a merged output with preset color/signal.
-    case synthesizer(logic: SynthesizerLogic, outputColor: NeonColor, outputSignal: SignalState)
+    /// Requires two input paths; emits a merged output with color from mix logic.
+    case synthesizer(logic: SynthesizerLogic, outputSignal: SignalState)
 }
 
 /// The live runtime state of a gate cell.
@@ -270,6 +358,25 @@ struct ActivePath: Identifiable, Codable {
         self.sourceSignal = sourceSignal
         self.segments = [startPosition]
         self.currentSignal = PathSignal(color: sourceColor, signal: sourceSignal)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case sourceColor
+        case sourceSignal
+        case segments
+        case currentSignal
+        case isComplete
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        self.sourceColor = try container.decode(NeonColor.self, forKey: .sourceColor)
+        self.sourceSignal = try container.decode(SignalState.self, forKey: .sourceSignal)
+        self.segments = try container.decode([GridPosition].self, forKey: .segments)
+        self.currentSignal = try container.decode(PathSignal.self, forKey: .currentSignal)
+        self.isComplete = try container.decodeIfPresent(Bool.self, forKey: .isComplete) ?? false
     }
 
     var headPosition: GridPosition? { segments.last }

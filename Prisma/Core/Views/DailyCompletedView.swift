@@ -6,11 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DailyCompletedView: View {
     let result: GameResult
     @State private var displayMode: HistoryDisplayMode = .userState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+#if DEBUG
+    @State private var showDebugResetConfirmation = false
+#endif
 
     private var gameColor: Color {
         AppTheme.accent(for: result.gameType)
@@ -84,6 +90,24 @@ struct DailyCompletedView: View {
                         .padding(.horizontal, 12)
                     }
 
+#if DEBUG
+                    Button {
+                        showDebugResetConfirmation = true
+                    } label: {
+                        Label("Debug: Reset Today's Progress", systemImage: "arrow.counterclockwise")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(AppTheme.error)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(AppTheme.error.opacity(0.45), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 12)
+#endif
+
                     // Game board toggle + content
                     if hasUserState {
                         Divider()
@@ -110,6 +134,16 @@ struct DailyCompletedView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
+#if DEBUG
+        .alert("Reset Today's Progress?", isPresented: $showDebugResetConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Reset", role: .destructive) {
+                resetDailyProgressForDebug()
+            }
+        } message: {
+            Text("This removes today's saved \(result.gameType.displayName) result so you can replay the daily puzzle.")
+        }
+#endif
     }
 
     // MARK: - User State Views
@@ -140,6 +174,32 @@ struct DailyCompletedView: View {
         let m = Int(seconds) / 60
         let s = Int(seconds) % 60
         return "\(m):\(s.formatted(.number.precision(.integerLength(2))))"
+    }
+
+    private func resetDailyProgressForDebug() {
+        let gameTypeRaw = result.gameTypeRaw
+        let descriptor = FetchDescriptor<GameResult>(
+            predicate: #Predicate<GameResult> { entry in
+                entry.gameTypeRaw == gameTypeRaw && entry.isDaily
+            }
+        )
+
+        do {
+            let entries = try modelContext.fetch(descriptor)
+            let calendar = Calendar.current
+            let sameDayEntries = entries.filter { entry in
+                calendar.isDate(entry.date, inSameDayAs: result.date)
+            }
+
+            for entry in sameDayEntries {
+                modelContext.delete(entry)
+            }
+
+            try modelContext.save()
+            dismiss()
+        } catch {
+            print("[Debug] Failed to reset daily progress: \(error.localizedDescription)")
+        }
     }
 }
 
@@ -558,9 +618,43 @@ struct DailyCompletedCircuitUserState: View {
 
 struct DailyCompletedCircuitSolution: View {
     let result: GameResult
+    @State private var viewModel: CircuitGameViewModel? = nil
 
     var body: some View {
-        // Show the player's own final grid — it IS the solution.
-        DailyCompletedCircuitUserState(result: result)
+        Group {
+            if let vm = viewModel {
+                CircuitGridView(viewModel: vm)
+                    .aspectRatio(1, contentMode: .fit)
+                    .disabled(true)
+                    .padding(16)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(AppTheme.backgroundSecondary))
+            } else {
+                DailyCompletedUnavailableView()
+            }
+        }
+        .onAppear {
+            guard let solutionState = loadSolutionState() else { return }
+
+            let vm: CircuitGameViewModel
+            if let id = result.levelId {
+                vm = CircuitGameViewModel(levelId: id)
+            } else {
+                vm = CircuitGameViewModel(date: result.date)
+            }
+            vm.restoreState(from: solutionState)
+            self.viewModel = vm
+        }
+    }
+
+    private func loadSolutionState() -> CircuitState? {
+        let solutionJSON: String?
+        if let id = result.levelId {
+            solutionJSON = CircuitLevelLoader.level(for: id)?.solutionStateJSON
+        } else {
+            solutionJSON = CircuitLevelLoader.dailyLevel(for: result.date).solutionStateJSON
+        }
+
+        guard let json = solutionJSON else { return nil }
+        return CircuitStateSerializer.deserialize(json)
     }
 }
