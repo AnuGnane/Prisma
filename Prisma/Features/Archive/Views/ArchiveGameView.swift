@@ -159,7 +159,8 @@ struct ArchiveLocalResultOverlay: View {
                 title: didWin ? "DATE CRACKED!" : "TIME'S UP",
                 subtitle: "\(viewModel.secretEvent.event) (\(viewModel.secretEvent.dateString))"
             ),
-            stats: []
+            stats: [],
+            accentColor: AppTheme.archive
         ) {
             VStack(spacing: 6) {
                 Text(viewModel.secretEvent.funFact)
@@ -171,12 +172,12 @@ struct ArchiveLocalResultOverlay: View {
             .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(0.06)))
         } actions: {
             HStack(spacing: 16) {
-                ResultPrimaryButton(title: viewModel.activeLevelId == 100 ? "All Done" : "Done") {
+                ResultPrimaryButton(title: viewModel.activeLevelId == 100 ? "All Done" : "Done", accentColor: AppTheme.archive) {
                     dismiss()
                 }
 
                 if let levelId = viewModel.activeLevelId, levelId < 100 {
-                    ResultPrimaryButton(title: "Next Level") {
+                    ResultPrimaryButton(title: "Next Level", accentColor: AppTheme.archive) {
                         if reduceMotion {
                             viewModel.loadLevel(levelId + 1)
                         } else {
@@ -199,7 +200,8 @@ struct ArchiveGaveUpOverlay: View {
         ResultOverlayTemplate(
             style: .panel,
             header: .iconTitle(icon: "flag.fill", color: .red.opacity(0.7), title: "GAVE UP"),
-            stats: []
+            stats: [],
+            accentColor: AppTheme.archive
         ) {
             // Show the answer
             VStack(spacing: 6) {
@@ -224,7 +226,7 @@ struct ArchiveGaveUpOverlay: View {
                 ResultSecondaryButton(title: "Try Again") {
                     viewModel.reset()
                 }
-                ResultPrimaryButton(title: "Done") {
+                ResultPrimaryButton(title: "Done", accentColor: AppTheme.archive) {
                     dismiss()
                 }
             }

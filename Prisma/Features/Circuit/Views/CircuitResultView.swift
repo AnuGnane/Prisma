@@ -22,12 +22,13 @@ struct CircuitResultView: View {
             stats: [
                 ResultStat(label: "Time", value: viewModel.timerString),
                 ResultStat(label: "Coverage", value: "\(Int(viewModel.coveragePercent * 100))%")
-            ]
+            ],
+            accentColor: AppTheme.circuit
         ) {
             EmptyView()
         } actions: {
             VStack(spacing: 12) {
-                ResultShareButton(shareString: viewModel.generateShareString())
+                ResultShareButton(shareString: viewModel.generateShareString(), accentColor: AppTheme.circuit)
 
                 HStack(spacing: 12) {
                     ResultSecondaryButton(title: "Done") {
@@ -35,7 +36,7 @@ struct CircuitResultView: View {
                     }
 
                     if let onNext = onNextLevel {
-                        ResultPrimaryButton(title: "Next Level →") {
+                        ResultPrimaryButton(title: "Next Level →", accentColor: AppTheme.circuit) {
                             onNext()
                         }
                     }

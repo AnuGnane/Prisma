@@ -12,6 +12,8 @@ import SwiftUI
 struct AnimatedStarsView: View {
     let title: String
     var count: Int = 3
+    /// Tints the title label to match the completing game's brand colour.
+    var accentColor: Color = AppTheme.cascadeBlue
 
     @State private var visibleStars: [Bool] = [false, false, false]
     @State private var glowStars: [Bool]    = [false, false, false]
@@ -41,7 +43,7 @@ struct AnimatedStarsView: View {
 
             Text(title)
                 .font(.system(size: 22, weight: .black, design: .rounded))
-                .foregroundStyle(.primary)
+                .foregroundStyle(accentColor)
                 .opacity(visibleStars[min(count - 1, 2)] ? 1.0 : (reduceMotion ? 1.0 : 0.0))
                 .animation(reduceMotion ? nil : .easeIn(duration: 0.2), value: visibleStars[min(count - 1, 2)])
         }

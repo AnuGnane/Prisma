@@ -137,11 +137,11 @@ struct DailyCalendarView: View {
             if dayResults.isEmpty {
                 Circle().fill(Color.clear).frame(width: 4, height: 4)
             } else {
-                HStack(spacing: 2) {
+                HStack(spacing: 3) {
                     ForEach(dayResults, id: \.persistentModelID) { result in
                         Circle()
                             .fill(dotColor(for: result))
-                            .frame(width: 4, height: 4)
+                            .frame(width: 5, height: 5)
                     }
                 }
             }
@@ -223,7 +223,7 @@ struct DailyCalendarView: View {
                     HStack(spacing: 8) {
                         Circle()
                             .fill(dotColor(for: result))
-                            .frame(width: 6, height: 6)
+                            .frame(width: 8, height: 8)
                         
                         Text(result.gameType.displayName)
                             .font(.caption.weight(.semibold))

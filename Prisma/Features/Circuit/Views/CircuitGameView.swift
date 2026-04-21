@@ -229,6 +229,7 @@ private struct CircuitGameHeader: View {
                             .foregroundStyle(.primary.opacity(0.8))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 6)
+                            .frame(minHeight: 44)
                     }
                     .padding(.leading, 8)
 
@@ -249,6 +250,7 @@ private struct CircuitGameHeader: View {
                                 .foregroundStyle(.secondary)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 6)
+                                .frame(minHeight: 44)
                         }
                     }
                     .padding(.trailing, 8)
@@ -277,8 +279,8 @@ private struct CircuitGameHeader: View {
                         }
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(AppTheme.circuit)
-                        .frame(width: 36, height: 32)
-                        .background(RoundedRectangle(cornerRadius: 8).fill(AppTheme.circuit.opacity(0.1)))
+                        .frame(width: 44, height: 44)
+                        .background(RoundedRectangle(cornerRadius: 10).fill(AppTheme.circuit.opacity(0.1)))
                         .labelStyle(.iconOnly)
 
                         // Reset
@@ -287,8 +289,8 @@ private struct CircuitGameHeader: View {
                         }
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(.primary.opacity(0.6))
-                        .frame(width: 36, height: 32)
-                        .background(RoundedRectangle(cornerRadius: 8).fill(.primary.opacity(0.07)))
+                        .frame(width: 44, height: 44)
+                        .background(RoundedRectangle(cornerRadius: 10).fill(.primary.opacity(0.07)))
                         .labelStyle(.iconOnly)
 
                         // Give Up
@@ -300,6 +302,7 @@ private struct CircuitGameHeader: View {
                                 .foregroundStyle(.red.opacity(0.7))
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 5)
+                                .frame(minHeight: 44)
                         }
                     }
 
@@ -312,6 +315,7 @@ private struct CircuitGameHeader: View {
                                 .foregroundStyle(.orange)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 5)
+                                .frame(minHeight: 44)
                         }
                     }
                 }
@@ -396,6 +400,7 @@ private struct CircuitSolutionGridView: View {
 /// a star-threshold coverage bar. Visible during active play and solution view.
 private struct CircuitDashboardPanel: View {
     let viewModel: CircuitGameViewModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 14) {
@@ -494,7 +499,7 @@ private struct CircuitDashboardPanel: View {
                             )
                         )
                         .frame(width: geo.size.width * viewModel.coveragePercent, height: 8)
-                        .animation(.easeInOut(duration: 0.2), value: viewModel.coveragePercent)
+                        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: viewModel.coveragePercent)
 
                     // 80% threshold marker (2★)
                     thresholdMarker(at: 0.80, width: geo.size.width, label: "2★")
@@ -551,12 +556,13 @@ private struct CircuitGaveUpOverlay: View {
                 ResultStat(label: "Terminals Powered", value: "\(viewModel.poweredTerminalCount)/\(viewModel.level.terminalPairs.count)"),
                 ResultStat(label: "Time", value: viewModel.timerString),
                 ResultStat(label: "Coverage", value: "\(Int(viewModel.coveragePercent * 100))%")
-            ]
+            ],
+            accentColor: AppTheme.circuit
         ) {
             EmptyView()
         } actions: {
             VStack(spacing: 12) {
-                ResultPrimaryButton(title: "View Solution") {
+                ResultPrimaryButton(title: "View Solution", accentColor: AppTheme.circuit) {
                     viewModel.showSolution()
                 }
                 ResultSecondaryButton(title: "Exit") {

@@ -36,7 +36,7 @@ struct GamesHomeView: View {
                         .padding(.horizontal, 24)
 
                         // Footer tagline
-                        Text("Life is more fun with puzzles. ✨")
+                        Label("Life is more fun with puzzles.", systemImage: "sparkles")
                             .font(.footnote.weight(.medium))
                             .foregroundStyle(.primary.opacity(0.25))
                             .frame(maxWidth: .infinity)

@@ -196,6 +196,7 @@ struct ShiftGameHeader: View {
                             .foregroundStyle(.primary.opacity(0.8))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 6)
+                            .frame(minHeight: 44)
                     }
                     .padding(.leading, 8)
 
@@ -211,6 +212,7 @@ struct ShiftGameHeader: View {
                                     .foregroundStyle(.secondary)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .frame(minHeight: 44)
                             }
                             
                             Button {
@@ -221,6 +223,7 @@ struct ShiftGameHeader: View {
                                     .foregroundStyle(.red.opacity(0.7))
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .frame(minHeight: 44)
                             }
                         }
                         .padding(.trailing, 12)
@@ -362,13 +365,14 @@ struct ShiftGaveUpOverlay: View {
             stats: [
                 ResultStat(label: "Moves Made", value: "\(viewModel.moveCount)"),
                 ResultStat(label: "Time", value: viewModel.timerString)
-            ]
+            ],
+            accentColor: AppTheme.shift
         ) {
             EmptyView()
         } actions: {
             VStack(spacing: 10) {
                 if viewModel.solutionGrid != nil {
-                    ResultPrimaryButton(title: "View Solution") {
+                    ResultPrimaryButton(title: "View Solution", accentColor: AppTheme.shift) {
                         viewModel.showSolution()
                     }
                 }
@@ -393,7 +397,8 @@ struct ShiftCompletionOverlay: View {
                 ResultStat(label: "Moves", value: "\(viewModel.moveCount)"),
                 ResultStat(label: "Time", value: viewModel.timerString),
                 ResultStat(label: "Words Found", value: "\(viewModel.completedWords.count)/\(viewModel.puzzle.targetWords.count)")
-            ]
+            ],
+            accentColor: AppTheme.shift
         ) {
             EmptyView()
         } actions: {

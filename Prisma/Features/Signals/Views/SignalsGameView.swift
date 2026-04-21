@@ -177,6 +177,7 @@ struct SignalsHeader: View {
                             .foregroundStyle(.primary.opacity(0.8))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 6)
+                            .frame(minHeight: 44)
                     }
                     .padding(.leading, 8)
                     
@@ -193,6 +194,7 @@ struct SignalsHeader: View {
                                     .foregroundStyle(.secondary)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .frame(minHeight: 44)
                             }
                             
                             Button {
@@ -204,6 +206,7 @@ struct SignalsHeader: View {
                                     .foregroundStyle(viewModel.showPossibleCodes ? AppTheme.signals : .secondary)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .frame(minHeight: 44)
                                     .background(Capsule().fill(viewModel.showPossibleCodes ? AppTheme.signals.opacity(0.15) : Color.clear))
                             }
 
@@ -215,6 +218,7 @@ struct SignalsHeader: View {
                                     .foregroundStyle(.red.opacity(0.7))
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .frame(minHeight: 44)
                             }
                         }
                         .padding(.trailing, 12)
@@ -431,7 +435,8 @@ struct SignalsLocalResultOverlay: View {
                 color: didWin ? AppTheme.signals : AppTheme.error,
                 title: didWin ? "LEVEL \(viewModel.activeLevelId ?? 0) COMPLETED" : "SIGNAL LOST"
             ),
-            stats: []
+            stats: [],
+            accentColor: AppTheme.signals
         ) {
             EmptyView()
         } actions: {
@@ -441,7 +446,7 @@ struct SignalsLocalResultOverlay: View {
                 }
 
                 if let levelId = viewModel.activeLevelId, levelId < 100 {
-                    ResultPrimaryButton(title: "Next Level") {
+                    ResultPrimaryButton(title: "Next Level", accentColor: AppTheme.signals) {
                         if reduceMotion {
                             viewModel.loadLevel(levelId + 1)
                         } else {
@@ -464,7 +469,8 @@ struct SignalsGaveUpOverlay: View {
         ResultOverlayTemplate(
             style: .panel,
             header: .iconTitle(icon: "flag.fill", color: .red.opacity(0.7), title: "GAVE UP"),
-            stats: []
+            stats: [],
+            accentColor: AppTheme.signals
         ) {
             // Show the secret code
             VStack(spacing: 6) {
@@ -492,7 +498,7 @@ struct SignalsGaveUpOverlay: View {
                 ResultSecondaryButton(title: "Try Again") {
                     viewModel.reset()
                 }
-                ResultPrimaryButton(title: "Done") {
+                ResultPrimaryButton(title: "Done", accentColor: AppTheme.signals) {
                     dismiss()
                 }
             }

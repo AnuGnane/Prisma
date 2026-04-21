@@ -349,8 +349,8 @@ struct ProfileView: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
-            .font(.caption2.weight(.heavy).monospaced())
-            .foregroundStyle(.secondary)
+            .font(.caption.weight(.heavy).monospaced())
+            .foregroundStyle(.primary.opacity(0.55))
             .kerning(1.5)
     }
     
@@ -415,7 +415,8 @@ private struct StatCard: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 18).fill(Color.primary.opacity(0.12)))
+        .background(RoundedRectangle(cornerRadius: 18).fill(Color.primary.opacity(0.07)))
+        .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(accentColor.opacity(0.20), lineWidth: 1))
     }
 
     private func miniStat(label: String, value: String) -> some View {
@@ -438,6 +439,7 @@ private struct StreakPill: View {
     let color: Color
 
     @State private var flamePulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: 10) {
@@ -455,9 +457,9 @@ private struct StreakPill: View {
                     .foregroundStyle(streak > 0 ? color : Color.secondary.opacity(0.4))
                     .scaleEffect(streak >= 3 && flamePulse ? 1.08 : 1.0)
             }
-            .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: flamePulse)
+            .animation(reduceMotion ? nil : .easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: flamePulse)
             .onAppear {
-                if streak >= 3 { flamePulse = true }
+                if streak >= 3 && !reduceMotion { flamePulse = true }
             }
 
             VStack(alignment: .leading, spacing: 1) {
@@ -472,12 +474,13 @@ private struct StreakPill: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.12)))
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.07)))
         .overlay(
-            streak >= 3 ?
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(color.opacity(flamePulse ? 0.2 : 0.05), lineWidth: 1)
-                : nil
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(
+                    color.opacity(streak >= 3 ? (flamePulse ? 0.35 : 0.20) : 0.15),
+                    lineWidth: 1
+                )
         )
     }
 }

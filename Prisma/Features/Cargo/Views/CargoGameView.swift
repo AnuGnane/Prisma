@@ -150,6 +150,7 @@ struct CargoHeader: View {
                             .foregroundStyle(.primary.opacity(0.8))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 6)
+                            .frame(minHeight: 44)
                     }
                     .padding(.leading, 8)
                     
@@ -166,6 +167,7 @@ struct CargoHeader: View {
                                     .foregroundStyle(.secondary)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .frame(minHeight: 44)
                             }
 
                             Button {
@@ -177,6 +179,7 @@ struct CargoHeader: View {
                                     .foregroundStyle(.primary.opacity(0.6))
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 6)
+                                    .frame(minHeight: 44)
                             }
                         }
                         .padding(.trailing, 12)
@@ -421,7 +424,8 @@ struct CargoResultOverlay: View {
                     ResultStat(label: "Filled", value: "\(pct)%"),
                     ResultStat(label: "Score", value: "\(score)"),
                     ResultStat(label: "Time", value: viewModel.timerString)
-                ]
+                ],
+                accentColor: AppTheme.cargo
             ) {
                 EmptyView()
             } actions: {
@@ -429,8 +433,8 @@ struct CargoResultOverlay: View {
                     if !viewModel.isDaily {
                         CargoLocalResultActions(viewModel: viewModel, dismiss: dismiss, saveResult: saveResult)
                     } else {
-                        ResultShareButton(shareString: viewModel.generateShareString())
-                        ResultPrimaryButton(title: "Done") { dismiss() }
+                        ResultShareButton(shareString: viewModel.generateShareString(), accentColor: AppTheme.cargo)
+                        ResultPrimaryButton(title: "Done", accentColor: AppTheme.cargo) { dismiss() }
                     }
 
                     if !viewModel.showingSolution {
@@ -488,10 +492,10 @@ struct CargoLocalResultActions: View {
                     .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.08)))
             }
 
-            ResultPrimaryButton(title: "Done") { dismiss() }
+            ResultPrimaryButton(title: "Done", accentColor: AppTheme.cargo) { dismiss() }
 
             if let levelId = viewModel.activeLevelId, levelId < 100 {
-                ResultPrimaryButton(title: "Next Level →") {
+                ResultPrimaryButton(title: "Next Level →", accentColor: AppTheme.cargo) {
                     viewModel.loadLevel(levelId + 1)
                     saveResult()
                 }

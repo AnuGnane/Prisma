@@ -3,6 +3,8 @@
 //  Prisma
 //
 //  Shared result overlay used by all game views for completion/gave-up states.
+//  Pass `accentColor` to tint the backdrop, stats surface, and primary action
+//  with the completing game's brand colour.
 //
 
 import SwiftUI
@@ -11,9 +13,11 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
     let style: ResultOverlayStyle
     let header: ResultOverlayHeader
     let stats: [ResultStat]
+    /// The game's accent colour — drives backdrop tint, stat surface, and buttons.
+    var accentColor: Color = AppTheme.cascadeBlue
     @ViewBuilder let content: () -> Content
     @ViewBuilder let actions: () -> Actions
-    
+
     var body: some View {
         Group {
             switch style {
@@ -24,38 +28,42 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
             }
         }
     }
-    
+
     // MARK: - Panel Style (Signals, Archive, Cargo)
-    
+
     private var panelLayout: some View {
         VStack(spacing: 20) {
             headerView
-            
+
             if !stats.isEmpty {
                 statsView
             }
-            
+
             content()
-            
+
             actions()
         }
     }
-    
-    // MARK: - Full Screen Style (Shift)
-    
+
+    // MARK: - Full Screen Style (Shift, Circuit)
+
     private var fullScreenLayout: some View {
         ZStack {
-            Color.black.opacity(0.8).ignoresSafeArea()
-            
-            VStack(spacing: 24) {
+            // Dark backdrop with subtle per-game accent tint
+            Color.black.opacity(0.88)
+                .ignoresSafeArea()
+            accentColor.opacity(0.06)
+                .ignoresSafeArea()
+
+            VStack(spacing: 28) {
                 headerView
-                
+
                 if !stats.isEmpty {
                     statsView
                 }
-                
+
                 content()
-                
+
                 actions()
                     .padding(.horizontal, 20)
             }
@@ -63,28 +71,34 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
         }
         .transition(.opacity)
     }
-    
+
     // MARK: - Header
-    
+
     private var headerView: some View {
         Group {
             switch header {
             case .iconTitle(let icon, let iconColor, let title):
-                HStack(spacing: 12) {
-                    Image(systemName: icon)
-                        .font(.title3)
-                        .foregroundStyle(iconColor)
+                VStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(iconColor.opacity(0.12))
+                            .frame(width: 64, height: 64)
+                        Circle()
+                            .strokeBorder(iconColor.opacity(0.25), lineWidth: 1.5)
+                            .frame(width: 64, height: 64)
+                        Image(systemName: icon)
+                            .font(.title2.weight(.semibold))
+                            .foregroundStyle(iconColor)
+                    }
                     Text(title)
-                        .font(.footnote.weight(.bold).monospaced())
+                        .font(.system(size: 22, weight: .black, design: .rounded))
                         .foregroundStyle(.primary)
                 }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 20)
-                .background(Capsule().fill(Color.primary.opacity(0.08)))
-                
+                .padding(.vertical, 4)
+
             case .stars(let title, let count):
-                AnimatedStarsView(title: title, count: count)
-                
+                AnimatedStarsView(title: title, count: count, accentColor: accentColor)
+
             case .titleSubtitle(let title, let subtitle):
                 VStack(spacing: 8) {
                     Text(title)
@@ -96,7 +110,7 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
                             .foregroundStyle(.primary.opacity(0.5))
                     }
                 }
-                
+
             case .custom(let title, let subtitle):
                 VStack(spacing: 6) {
                     Text(title)
@@ -115,9 +129,9 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
             }
         }
     }
-    
+
     // MARK: - Stats
-    
+
     private var statsView: some View {
         VStack(spacing: 8) {
             ForEach(stats) { stat in
@@ -142,9 +156,17 @@ struct ResultOverlayTemplate<Content: View, Actions: View>: View {
             }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 14).fill(Color.primary.opacity(style == .fullScreen ? 0.12 : 0.07)))
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(style == .fullScreen
+                      ? accentColor.opacity(0.08)
+                      : Color.primary.opacity(0.07))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(accentColor.opacity(0.18), lineWidth: 1)
+                )
+        )
     }
-
 }
 
 // MARK: - Supporting Types
@@ -172,19 +194,20 @@ struct ResultStat: Identifiable {
 
 struct ResultPrimaryButton: View {
     let title: String
+    var accentColor: Color = AppTheme.cascadeBlue
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
                 .font(.headline)
-                .foregroundStyle(.primary)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
                     Capsule().fill(
                         LinearGradient(
-                            colors: [AppTheme.shift, AppTheme.cascadeBlue],
+                            colors: [accentColor, accentColor.opacity(0.7)],
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
@@ -196,7 +219,7 @@ struct ResultPrimaryButton: View {
 struct ResultSecondaryButton: View {
     let title: String
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -204,25 +227,26 @@ struct ResultSecondaryButton: View {
                 .foregroundStyle(.primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.12)))
+                .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.10)))
         }
     }
 }
 
 struct ResultShareButton: View {
     let shareString: String
-    
+    var accentColor: Color = AppTheme.cascadeBlue
+
     var body: some View {
         ShareLink(item: shareString) {
-            Label("Share", systemImage: "square.and.arrow.up")
+            Label("Share Result", systemImage: "square.and.arrow.up")
                 .font(.headline.weight(.semibold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(
                     Capsule().fill(
                         LinearGradient(
-                            colors: [AppTheme.shift, AppTheme.cascadeBlue],
+                            colors: [accentColor, accentColor.opacity(0.7)],
                             startPoint: .leading, endPoint: .trailing
                         )
                     )
