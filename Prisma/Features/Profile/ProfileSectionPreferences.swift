@@ -13,6 +13,14 @@ import SwiftUI
 final class ProfileSectionPreferences {
     static let shared = ProfileSectionPreferences()
 
+    private init() {
+        // One-shot: remove the legacy "profile.showLeaderboards" key that
+        // governed the old Game Center placeholder on the You tab. The
+        // placeholder has been removed — the Leaderboard now lives in its
+        // own tab. Harmless no-op on fresh installs.
+        UserDefaults.standard.removeObject(forKey: "profile.showLeaderboards")
+    }
+
     // Sections ON by default
     var showStatCards: Bool {
         get { UserDefaults.standard.object(forKey: "profile.showStatCards") as? Bool ?? true }
@@ -36,12 +44,9 @@ final class ProfileSectionPreferences {
         get { UserDefaults.standard.object(forKey: "profile.showSolveTimeStats") as? Bool ?? false }
         set { UserDefaults.standard.set(newValue, forKey: "profile.showSolveTimeStats") }
     }
-    var showLeaderboards: Bool {
-        get { UserDefaults.standard.object(forKey: "profile.showLeaderboards") as? Bool ?? false }
-        set { UserDefaults.standard.set(newValue, forKey: "profile.showLeaderboards") }
-    }
     var showBadges: Bool {
         get { UserDefaults.standard.object(forKey: "profile.showBadges") as? Bool ?? false }
         set { UserDefaults.standard.set(newValue, forKey: "profile.showBadges") }
     }
 }
+

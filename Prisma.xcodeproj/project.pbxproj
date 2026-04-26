@@ -111,8 +111,6 @@
 				6195A4762F51173F003F7D66 /* Prisma */,
 			);
 			name = Prisma;
-			packageProductDependencies = (
-			);
 			productName = Prisma;
 			productReference = 6195A4742F51173F003F7D66 /* Prisma.app */;
 			productType = "com.apple.product-type.application";
@@ -134,8 +132,6 @@
 				6195A4842F511741003F7D66 /* PrismaTests */,
 			);
 			name = PrismaTests;
-			packageProductDependencies = (
-			);
 			productName = PrismaTests;
 			productReference = 6195A4812F511741003F7D66 /* PrismaTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -157,8 +153,6 @@
 				6195A48E2F511741003F7D66 /* PrismaUITests */,
 			);
 			name = PrismaUITests;
-			packageProductDependencies = (
-			);
 			productName = PrismaUITests;
 			productReference = 6195A48B2F511741003F7D66 /* PrismaUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -403,8 +397,9 @@
 				DEVELOPMENT_TEAM = T2VJ6G7R9P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Prisma/Custom-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Prisma;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.strategy-games";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
 				INFOPLIST_KEY_NSGKFriendListUsageDescription = "Prisma uses Game Center to compare your scores with friends.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -440,8 +435,9 @@
 				DEVELOPMENT_TEAM = T2VJ6G7R9P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Prisma/Custom-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Prisma;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.strategy-games";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
 				INFOPLIST_KEY_NSGKFriendListUsageDescription = "Prisma uses Game Center to compare your scores with friends.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

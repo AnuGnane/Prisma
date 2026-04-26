@@ -3,8 +3,10 @@
 //  Prisma
 //
 //  Reusable level selector for offline progression.
-//  All 30 levels are accessible. Each level gets one attempt.
+//  All levels are accessible. Each level gets one attempt.
 //  Played levels show won (⭐) or lost (✗) state and are disabled.
+//  Level count is driven by `GameType.localLevelCount` so games can scale
+//  independently (e.g. Signals at 150, Circuit still at 100).
 //
 
 import SwiftUI
@@ -49,6 +51,7 @@ struct LevelSelectorView: View {
                     LevelSelectorStatsBar(
                         playedCount: playedCount,
                         wonCount: wonCount,
+                        totalCount: game.localLevelCount,
                         colorForGame: colorForGame
                     )
                     levelGrid
@@ -76,7 +79,7 @@ struct LevelSelectorView: View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 3)
         
         return LazyVGrid(columns: columns, spacing: 16) {
-            ForEach(1...100, id: \.self) { levelId in
+            ForEach(1...game.localLevelCount, id: \.self) { levelId in
                 let progress = progressList.first(where: { $0.levelId == levelId })
                 let isPlayed = progress?.isPlayed ?? false
                 
@@ -194,25 +197,31 @@ struct LevelSelectorHeader: View {
 struct LevelSelectorStatsBar: View {
     let playedCount: Int
     let wonCount: Int
+    let totalCount: Int
     let colorForGame: Color
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
+    private var progressFraction: CGFloat {
+        guard totalCount > 0 else { return 0 }
+        return CGFloat(playedCount) / CGFloat(totalCount)
+    }
+
     var body: some View {
         VStack(spacing: 8) {
-            Text("\(playedCount)/100 played · \(wonCount) won")
+            Text("\(playedCount)/\(totalCount) played · \(wonCount) won")
                 .font(.system(size: 13, weight: .semibold, design: .monospaced))
                 .foregroundStyle(.primary.opacity(0.5))
-            
+
             // Progress bar
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Color.primary.opacity(0.08))
                         .frame(height: 6)
-                    
+
                     RoundedRectangle(cornerRadius: 3)
                         .fill(colorForGame)
-                        .frame(width: geo.size.width * CGFloat(playedCount) / 100.0, height: 6)
+                        .frame(width: geo.size.width * progressFraction, height: 6)
                         .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: playedCount)
                 }
             }

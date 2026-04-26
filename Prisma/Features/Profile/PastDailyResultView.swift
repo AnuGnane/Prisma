@@ -76,8 +76,10 @@ struct PastDailyResultView: View {
                     }
                     HStack(spacing: 20) {
                         statBadge("Score", value: "\(result.score)")
-                        if result.gameType != .cargo {
+                        if result.gameType == .signals || result.gameType == .archive {
                             statBadge("Guesses", value: "\(result.guessCount)")
+                        } else if result.gameType == .shift {
+                            statBadge("Moves", value: "\(result.guessCount)")
                         }
                         if result.durationSeconds > 0 {
                             let m = Int(result.durationSeconds) / 60

@@ -76,7 +76,7 @@ struct ShiftPuzzleGenerator {
 
         return ShiftPuzzle(
             id: -Int(seed), initialGrid: scrambled,
-            targetWords: placed, optimalMoveCount: scrambleMoves,
+            targetWords: placed,
             solutionGrid: solGrid
         )
     }
@@ -188,6 +188,6 @@ struct ShiftPuzzleGenerator {
         let words = pickWords(count: 5, using: &rng)
         let (grid, placed) = buildSolutionGrid(words: words, using: &rng)
         let scrambled = randomMove(using: &rng).apply(to: grid)
-        return ShiftPuzzle(id: -Int(seed), initialGrid: scrambled, targetWords: placed, optimalMoveCount: 5, solutionGrid: grid)
+        return ShiftPuzzle(id: -Int(seed), initialGrid: scrambled, targetWords: placed, solutionGrid: grid)
     }
 }

@@ -5,13 +5,24 @@
 //  Draws all active path segments as glowing neon strokes using SwiftUI Canvas.
 //  Using Canvas (not per-cell views) keeps rendering smooth even on large grids.
 //
-//  Neon glow effect: two-pass rendering —
-//    Pass 1: wide blurred stroke at 35% opacity (halo)
-//    Pass 2: narrow sharp stroke at full opacity (core line)
+//  Neon glow effect: three-pass rendering (Cyberpunk / HUD-FUI style)
+//    Pass 1: ambient halo — very wide, very low opacity (0.46 × cellSize, ~8% active)
+//    Pass 2: bloom       — medium, semi-transparent  (0.34 × cellSize, ~30% active)
+//    Pass 3: core        — narrow, fully opaque       (0.24 × cellSize, 100% active)
 //
-//  pathLayer change: this view now reads per-segment signal color from
-//  `pathLayer` (the drawing layer) rather than `liveGrid`. This produces correct
-//  per-segment coloring when a gate mid-route transforms the signal color.
+//  Inactive signals render at reduced opacity so the path reads as "present but
+//  unlit" — core 58%, bloom 18%, ambient 3%.  A solved inactive path (matched
+//  target) snaps to full brightness.
+//
+//  Gate stub drawing:
+//    When a path enters or exits a gate cell the stroke terminates at the gate's
+//    visual border (portOffset = 0.42 × cellSize from the gate centre).
+//    GateCellView draws coloured edge-connector bars to bridge the remaining gap.
+//
+//  Color-transition fix:
+//    Run boundaries sit at the gate cell itself (not the pre-gate cell), so only
+//    one colour is ever painted in the pre-gate cell.  Each run's tail is extended
+//    to the adjacent gate's entry port so there is no visual gap at the boundary.
 //
 
 import SwiftUI
@@ -22,6 +33,9 @@ struct CircuitCanvasView: View {
     let pathLayer: [GridPosition: PathSignal]
     let gridSize: Int
     let cellSize: CGFloat
+    /// Positions of gate cells — stubs are drawn here so the gate icon is
+    /// visible in the gap rather than being obscured by the path stroke.
+    let gateCells: Set<GridPosition>
 
     var body: some View {
         Canvas { context, size in
@@ -43,19 +57,14 @@ struct CircuitCanvasView: View {
             return
         }
 
-        // Group the path into runs of (color, signal) pairs so every run can be
-        // styled for its current signal state (active = solid glow, inactive =
-        // solid + dimmed). Inactive runs "wake up" (brighten) once the path
-        // has reached its matching target — so a path intentionally wired to
-        // an inactive target renders at full brightness on completion.
         let runs = buildSegmentRuns(for: path)
         for run in runs {
             drawRun(run, path: path, in: context)
         }
-
-        // ── Transformed-segment dashed overlay (white shimmer) ──
-        // Retained for the subtle "something changed here" cue at gate cells.
-        drawTransformedOverlay(path, in: context)
+        // Note: the old dashed "transformed-segment shimmer" overlay has been removed.
+        // Round dashes at cellSize × 0.10 with lineCap .round collapse into evenly-
+        // spaced circles (the "bead" glitch). Gates communicate signal transformation
+        // through their own tint + glow — no additional overlay needed.
     }
 
     // MARK: - Run Construction
@@ -86,7 +95,11 @@ struct CircuitCanvasView: View {
                     signal: currentSignal.signal,
                     wasTransformed: currentSignal.wasTransformed
                 ))
-                runStart = i - 1  // overlap by one segment so lines connect
+                // Start the new run AT index i (the gate), not i-1.
+                // This prevents the pre-gate cell from being painted by two colours.
+                // buildStubPath extends each run's tail to the adjacent gate port so
+                // there is no visual gap at the boundary.
+                runStart = i
                 currentSignal = sig
             }
         }
@@ -100,102 +113,143 @@ struct CircuitCanvasView: View {
         return runs
     }
 
+    // MARK: - Three-Pass Neon Drawing
+
     private func drawRun(_ run: SegmentRun, path: ActivePath, in context: GraphicsContext) {
         guard run.endIndex > run.startIndex else { return }
 
-        var runPath = Path()
-        for i in run.startIndex...run.endIndex {
-            let center = cellCenter(for: path.segments[i])
-            if i == run.startIndex { runPath.move(to: center) }
-            else                   { runPath.addLine(to: center) }
-        }
-
-        let color = run.color.swiftUIColor
-        let isInactive = run.signal == .inactive
-        // An inactive run "wakes up" when the path has successfully reached
-        // its matching target — at that point the whole path reads as solved
-        // and should brighten, even if the final signal is inactive (because
-        // the target requires an inactive signal).
+        let runPath = buildStubPath(run: run, path: path)
+        let color   = run.color.swiftUIColor
+        let isInactive       = run.signal == .inactive
         let isSolvedInactive = isInactive && path.isComplete
 
-        // Stroke is always solid. Inactive signals are rendered solid-but-dim
-        // so the visual difference is a dimming cue, not a dash pattern.
-        let haloOpacity: Double
-        let coreOpacity: Double
-        if isInactive && !isSolvedInactive {
-            haloOpacity = 0.10
-            coreOpacity = 0.40
-        } else {
-            haloOpacity = 0.30
-            coreOpacity = 1.00
-        }
+        // ── Opacity values ────────────────────────────────────────────────────
+        // Active:          ambient 8%,  bloom 30%, core 100%
+        // Inactive:        ambient 3%,  bloom 18%, core 58%
+        //   → dim enough to read as "unlit", bright enough to track the wire
+        // Solved-inactive: treated identically to active (path is resolved)
+        let ambientOpacity: Double = (isInactive && !isSolvedInactive) ? 0.03 : 0.08
+        let bloomOpacity:   Double = (isInactive && !isSolvedInactive) ? 0.18 : 0.30
+        let coreOpacity:    Double = (isInactive && !isSolvedInactive) ? 0.58 : 1.00
 
-        let coreStyle = StrokeStyle(
-            lineWidth: cellSize * 0.28,
-            lineCap: .round, lineJoin: .round
-        )
+        // Pass 1 — ambient halo (sets the glow atmosphere without heavy bleed)
+        var ambientCtx = context
+        ambientCtx.opacity = ambientOpacity
+        ambientCtx.stroke(runPath, with: .color(color),
+                          style: StrokeStyle(lineWidth: cellSize * 0.46,
+                                            lineCap: .round, lineJoin: .round))
 
-        var glowCtx = context
-        glowCtx.opacity = haloOpacity
-        glowCtx.stroke(
-            runPath,
-            with: .color(color),
-            style: StrokeStyle(lineWidth: cellSize * 0.55, lineCap: .round, lineJoin: .round)
-        )
+        // Pass 2 — bloom (the bright aura that defines the neon tube shape)
+        var bloomCtx = context
+        bloomCtx.opacity = bloomOpacity
+        bloomCtx.stroke(runPath, with: .color(color),
+                        style: StrokeStyle(lineWidth: cellSize * 0.34,
+                                           lineCap: .round, lineJoin: .round))
 
+        // Pass 3 — core (crisp, sharp inner wire)
         var coreCtx = context
         coreCtx.opacity = coreOpacity
-        coreCtx.stroke(runPath, with: .color(color), style: coreStyle)
+        coreCtx.stroke(runPath, with: .color(color),
+                       style: StrokeStyle(lineWidth: cellSize * 0.24,
+                                          lineCap: .round, lineJoin: .round))
     }
 
-    /// Draws a dashed white shimmer on segments that were transformed by a gate.
-    private func drawTransformedOverlay(_ path: ActivePath, in context: GraphicsContext) {
-        guard path.segments.count >= 2 else { return }
+    // MARK: - Stub-aware Path Building
 
-        var transformedPath = Path()
-        var inTransformedRun = false
+    /// Builds a potentially-disconnected Path that creates visual stubs around gate cells.
+    /// When the run passes through a gate the pen is lifted so the gate icon is unobscured,
+    /// then resumed at the exit port on the other side.
+    ///
+    /// Color-transition tail extension:
+    ///   After the main loop, if the run ends immediately before a gate cell the path is
+    ///   extended to that gate's entry port in the run's colour so there is no gap.
+    private func buildStubPath(run: SegmentRun, path: ActivePath) -> Path {
+        var result  = Path()
+        var penIsUp = true
 
-        for (index, position) in path.segments.enumerated() {
-            guard index < path.segments.count - 1 else { break }
-            let signal     = signalAt(index: index, in: path)
-            let center     = cellCenter(for: position)
-            let nextCenter = cellCenter(for: path.segments[index + 1])
+        for i in run.startIndex...run.endIndex {
+            let pos    = path.segments[i]
+            let isGate = gateCells.contains(pos)
 
-            if signal.wasTransformed {
-                if !inTransformedRun {
-                    transformedPath.move(to: center)
-                    inTransformedRun = true
+            if isGate {
+                // ── Entry stub: draw from previous cell to the gate's entry port ──
+                if i > run.startIndex {
+                    let prev      = path.segments[i - 1]
+                    let entryPort = portPoint(of: pos, facing: prev)
+                    if penIsUp {
+                        result.move(to: entryPort)
+                        penIsUp = false
+                    } else {
+                        result.addLine(to: entryPort)
+                    }
                 }
-                transformedPath.addLine(to: nextCenter)
+                // Lift the pen — gate interior belongs to GateCellView
+                penIsUp = true
+
             } else {
-                inTransformedRun = false
+                // ── Normal (non-gate) cell ──
+                let center     = cellCenter(for: pos)
+                let prevIsGate = i > run.startIndex && gateCells.contains(path.segments[i - 1])
+
+                if penIsUp || prevIsGate {
+                    if prevIsGate {
+                        // Resume from the gate's exit port
+                        let exitPort = portPoint(of: path.segments[i - 1], facing: pos)
+                        result.move(to: exitPort)
+                        result.addLine(to: center)
+                    } else {
+                        result.move(to: center)
+                    }
+                    penIsUp = false
+                } else {
+                    result.addLine(to: center)
+                }
             }
         }
 
-        var overlayContext = context
-        overlayContext.opacity = 0.25
-        overlayContext.stroke(
-            transformedPath,
-            with: .color(.white),
-            style: StrokeStyle(
-                lineWidth: cellSize * 0.14,
-                lineCap: .round, lineJoin: .round,
-                dash: [cellSize * 0.12, cellSize * 0.08]
-            )
+        // ── Color-transition tail extension ──────────────────────────────────
+        // Extend the run to the next gate's entry port when the run ends just
+        // before a gate so the stub is flush with the gate's visual border.
+        if !penIsUp {
+            let nextIdx = run.endIndex + 1
+            if nextIdx < path.segments.count {
+                let gatePos = path.segments[nextIdx]
+                if gateCells.contains(gatePos) {
+                    let entryPort = portPoint(of: gatePos, facing: path.segments[run.endIndex])
+                    result.addLine(to: entryPort)
+                }
+            }
+        }
+
+        return result
+    }
+
+    /// Returns the point on the visual boundary of `special` (a gate cell) that faces
+    /// toward `other`.  Path stubs terminate here; the offset (42 % of cellSize) sits
+    /// just outside the gate's rounded-rectangle background (which ends at 39 %).
+    /// The gate's opaque dark base masks the stroke's round cap, which extends inward.
+    private func portPoint(of special: GridPosition, facing other: GridPosition) -> CGPoint {
+        let center = cellCenter(for: special)
+        let dx = CGFloat(other.col - special.col)
+        let dy = CGFloat(other.row - special.row)
+        return CGPoint(
+            x: center.x + dx * cellSize * 0.42,
+            y: center.y + dy * cellSize * 0.42
         )
     }
 
-    /// Draws a dot at the source terminal position when only the start tap has been registered.
+    // MARK: - Helpers
+
+    /// Draws a dot at the source terminal position when only the start tap is registered.
     private func drawStartDot(at position: GridPosition, signal: PathSignal, in context: GraphicsContext) {
         let center = cellCenter(for: position)
-        let radius = cellSize * 0.16
-        let rect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-        var dotContext = context
-        dotContext.opacity = 0.7
-        dotContext.fill(Path(ellipseIn: rect), with: .color(signal.color.swiftUIColor))
+        let radius = cellSize * 0.14
+        let rect   = CGRect(x: center.x - radius, y: center.y - radius,
+                            width: radius * 2, height: radius * 2)
+        var dotCtx = context
+        dotCtx.opacity = 0.70
+        dotCtx.fill(Path(ellipseIn: rect), with: .color(signal.color.swiftUIColor))
     }
-
-    // MARK: - Helpers
 
     private func cellCenter(for position: GridPosition) -> CGPoint {
         CGPoint(
@@ -205,9 +259,19 @@ struct CircuitCanvasView: View {
     }
 
     /// Returns the PathSignal at an index by reading the ViewModel's pathLayer.
-    /// Falls back to the path's current (final) signal for positions not yet in the layer.
+    ///
+    /// Fallback: Source terminals are never added to pathLayer by design. `currentSignal`
+    /// is the *evolved* post-gate signal at the draw head — using it as a fallback for
+    /// index 0 (the source terminal) creates a spurious run boundary between index 0 and
+    /// index 1, generating a single-cell Run[0,0] that silently fails the
+    /// `endIndex > startIndex` guard. The entire source-to-gate wire becomes invisible.
+    ///
+    /// Correct fallback: `PathSignal(color: sourceColor, signal: sourceSignal)` — the
+    /// pre-gate signal that the source terminal actually emits. This groups the source
+    /// cell into the same run as the cells leading up to the first gate.
     private func signalAt(index: Int, in path: ActivePath) -> PathSignal {
         let pos = path.segments[index]
-        return pathLayer[pos] ?? path.currentSignal
+        if let signal = pathLayer[pos] { return signal }
+        return PathSignal(color: path.sourceColor, signal: path.sourceSignal)
     }
 }

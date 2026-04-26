@@ -91,13 +91,14 @@ struct CargoGameView: View {
     // MARK: - Persistence
 
     private func saveResult() {
-        guard case .completed(let score, _) = viewModel.gameState else { return }
+        guard case .completed(let score, let isPerfect) = viewModel.gameState else { return }
+        let isWin = score >= 700
 
         if let levelId = viewModel.activeLevelId {
             PersistenceManager.markLevelPlayed(
                 gameType: .cargo,
                 levelId: levelId,
-                won: score >= 700,
+                won: isWin,
                 score: score,
                 guessesUsed: 0,
                 durationSeconds: Double(viewModel.elapsedSeconds),
@@ -108,15 +109,59 @@ struct CargoGameView: View {
             PersistenceManager.save(result, context: modelContext)
         }
         if viewModel.isDaily {
-            let gameDate = Calendar.current.startOfDay(for: Date())
-            if PersistenceManager.fetchDailyResult(for: .cargo, on: gameDate, context: modelContext) == nil {
-                let result = viewModel.buildGameResult(gameDate: gameDate)
-                PersistenceManager.save(result, context: modelContext)
+            // Only save a daily result on a real win (≥70% fill).
+            // Give-ups (score < 700) are intentionally not persisted so the player
+            // can retry the same day's puzzle — shown as "unplayed" to friends.
+            if isWin {
+                let gameDate = Calendar.current.startOfDay(for: Date())
+                if PersistenceManager.fetchDailyResult(for: .cargo, on: gameDate, context: modelContext) == nil {
+                    let result = viewModel.buildGameResult(gameDate: gameDate)
+                    PersistenceManager.save(result, context: modelContext)
+                }
             }
-            // Record daily streak
-            if score >= 700 {
-                _ = StreakManager.recordDailyWin(game: "cargo")
+        }
+
+        // Game Center (runs for both local and daily; idempotent for same-day calls)
+        reportToGameCenter(score: score, isPerfect: isPerfect)
+    }
+}
+
+// MARK: - Game Center Reporting
+
+extension CargoGameView {
+    private func reportToGameCenter(score: Int, isPerfect: Bool) {
+        let gc = GameCenterManager.shared
+        let isWin = score >= 700
+
+        // First-Cargo achievement fires on any win (GC deduplicates at 100%)
+        if isWin {
+            gc.reportAchievement(GameCenterManager.Achievement.firstCargo)
+        }
+
+        if viewModel.isDaily && isWin {
+            // Daily best: lower elapsed time is better
+            gc.submitScore(viewModel.elapsedSeconds,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.cargoDailyBest])
+
+            // Record the daily-win for the in-app streak counter. Streaks are
+            // intentionally app-only — no Game Center leaderboard, no GC
+            // achievements (Phase 4, 2026-04-25).
+            _ = StreakManager.recordDailyWin(game: "cargo")
+
+            // Perfect Cargo: every 100%-fill solve
+            if isPerfect {
+                gc.reportAchievement(GameCenterManager.Achievement.perfectCargo)
             }
+        }
+
+        if !viewModel.isDaily && isWin {
+            // Local Mastery leaderboard still updates — it's a real ranked
+            // board across all players. Local mastery *achievements* removed
+            // in Phase 4 (2026-04-25); milestones now live in
+            // `Badge.local25 / 50 / 100`.
+            let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
+            gc.submitScore(totalWon,
+                           leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
         }
     }
 }
@@ -461,12 +506,16 @@ struct CargoSolutionGrid: View {
     let viewModel: CargoGameViewModel
 
     var body: some View {
-        // The player's final grid IS the correct arrangement — show it directly.
-        // This avoids the bug where `solutionCells` is nil for JSON-loaded puzzles,
-        // which caused `populateSolutionMode` to paint pieces at (0,0) rather than
-        // their actual solved positions.
+        // Render the canonical 100%-fill solution. `solutionCells` is populated
+        // for every puzzle: the procedural generator sets them directly, and
+        // JSON-loaded levels get them from the offline solver that runs in
+        // `scratch/solve_cargo.py`. If any piece is missing a solution (e.g.
+        // fallback puzzle, corrupt JSON), we fall back to the player's final
+        // grid rather than painting everything at (0,0).
+        let solutionGrid = viewModel.buildSolutionGrid() ?? viewModel.grid
+
         CargoGridView(
-            grid: viewModel.grid,
+            grid: solutionGrid,
             ghostCells: [],
             ghostIsValid: false,
             pendingCells: [],
@@ -494,7 +543,7 @@ struct CargoLocalResultActions: View {
 
             ResultPrimaryButton(title: "Done", accentColor: AppTheme.cargo) { dismiss() }
 
-            if let levelId = viewModel.activeLevelId, levelId < 100 {
+            if let levelId = viewModel.activeLevelId, levelId < GameType.cargo.localLevelCount {
                 ResultPrimaryButton(title: "Next Level →", accentColor: AppTheme.cargo) {
                     viewModel.loadLevel(levelId + 1)
                     saveResult()

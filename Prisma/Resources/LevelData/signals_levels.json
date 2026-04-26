@@ -8,6 +8,1042 @@
   },
   {
     "id": 2,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 3,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 4,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 5,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 6,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 7,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 8,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 9,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 10,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 11,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 12,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 13,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 14,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 15,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 16,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 17,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 18,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 19,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 20,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 21,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 22,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 23,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 24,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 25,
+    "maxGuesses": 8,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 26,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 27,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 28,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 29,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 30,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 31,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 32,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 33,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 34,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 35,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 36,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 37,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 38,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 39,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 40,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 41,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 42,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 43,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 44,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 45,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 46,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 47,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 48,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 49,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 50,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 1,
+    "digitMax": 6
+  },
+  {
+    "id": 51,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 52,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 53,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 54,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 55,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 56,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 57,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 58,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 59,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 60,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 61,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 62,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 63,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 64,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 65,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 66,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 67,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 68,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 69,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 70,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 71,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 72,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 73,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 74,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 75,
+    "maxGuesses": 7,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 76,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 77,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 78,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 79,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 80,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 81,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 82,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 83,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 84,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 85,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 86,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 87,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 88,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 89,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 90,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 91,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 92,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 93,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 94,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 95,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 96,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 97,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 98,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 99,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 100,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 7
+  },
+  {
+    "id": 101,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 102,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 103,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 104,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 105,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 106,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 107,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 108,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 109,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 110,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 111,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 112,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 113,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 114,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 115,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 116,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 117,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 118,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 119,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 120,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 121,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 122,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 123,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 124,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 125,
+    "maxGuesses": 6,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 126,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 127,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 128,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 129,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 130,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 131,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 132,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 133,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 134,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 135,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 136,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 137,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 138,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 139,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 140,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 141,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 142,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 143,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 144,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 145,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 146,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 147,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 148,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 149,
+    "maxGuesses": 5,
+    "codeLength": 4,
+    "digitMin": 0,
+    "digitMax": 9
+  },
+  {
+    "id": 150,
     "maxGuesses": 5,
     "codeLength": 4,
     "digitMin": 0,

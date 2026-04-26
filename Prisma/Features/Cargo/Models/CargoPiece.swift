@@ -99,18 +99,25 @@ struct CargoPiece: Identifiable, Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id
         case cells
+        /// Canonical absolute grid coords for this piece in the solved puzzle.
+        /// Produced offline by `scratch/solve_cargo.py` for every level in
+        /// `cargo_puzzles.json`, so "Show Solution" can reconstruct a true
+        /// 100%-fill layout instead of the player's partial state.
+        case solution
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
         baseCells = try container.decode([CellCoord].self, forKey: .cells)
+        solutionCells = try container.decodeIfPresent([CellCoord].self, forKey: .solution)
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(baseCells, forKey: .cells)
+        try container.encodeIfPresent(solutionCells, forKey: .solution)
     }
 }
 

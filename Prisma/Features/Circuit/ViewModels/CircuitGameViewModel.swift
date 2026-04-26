@@ -132,8 +132,21 @@ final class CircuitGameViewModel: PrismaGameViewModel {
         return positions.count
     }
 
+    /// Coverage fraction for display (0.0 → 1.0).
+    ///
+    /// Source terminals are fixed start-nodes that are never written to `pathLayer` by design,
+    /// so we exclude them from both the numerator and denominator.  This ensures the bar starts
+    /// at exactly 0 % when the level loads (no paths drawn yet) and hits 100 % only when every
+    /// remaining cell has a path segment through it — regardless of how many color pairs a level
+    /// has.
+    ///
+    /// `calculateStarRating()` and `isPerfectFlow` each use their own union-based formula
+    /// (`usedCells`) and are unaffected by this change.
     var coveragePercent: Double {
-        Double(usedCells) / Double(totalCells)
+        let sourceCount = level.terminalPairs.count   // one source terminal per pair
+        let denominator = totalCells - sourceCount
+        guard denominator > 0 else { return 0 }
+        return min(1.0, Double(pathLayer.count) / Double(denominator))
     }
 
     var totalPathLength: Int {

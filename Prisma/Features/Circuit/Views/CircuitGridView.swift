@@ -37,7 +37,8 @@ struct CircuitGridView: View {
                     activePaths: viewModel.activePaths,
                     pathLayer: viewModel.pathLayer,
                     gridSize: viewModel.level.size,
-                    cellSize: computedCellSize
+                    cellSize: computedCellSize,
+                    gateCells: makeGateCells()
                 )
                 .frame(width: size, height: size)
 
@@ -124,11 +125,19 @@ struct CircuitGridView: View {
                     let isPreviewing = viewModel.isPreviewingGate(at: pos)
                     let previewSignal = isPreviewing ? viewModel.previewGateOutput(at: pos) : nil
 
+                    // Determine active path color for waypoints (tints the crosshair)
+                    let pathSignalColor: Color? = {
+                        guard case .waypoint = cell else { return nil }
+                        return viewModel.pathLayer[pos]?.color.swiftUIColor
+                    }()
+
                     CircuitCellView(
                         cell: cell,
                         cellSize: cellSize,
                         isPreviewingGateOutput: isPreviewing,
-                        previewOutputSignal: previewSignal
+                        previewOutputSignal: previewSignal,
+                        activeEdges: cell.isGate ? activeEdgesForGate(at: pos) : [:],
+                        activePathColor: pathSignalColor
                     )
                     .frame(width: cellSize, height: cellSize)
                     .background(cellBackground(for: cell, cellSize: cellSize))
@@ -154,6 +163,65 @@ struct CircuitGridView: View {
         let row = max(0, min(viewModel.level.size - 1, Int(point.y / cellSize)))
         let col = max(0, min(viewModel.level.size - 1, Int(point.x / cellSize)))
         return GridPosition(row, col)
+    }
+
+    // MARK: - Gate Cell Helpers
+
+    /// Collects all grid positions that contain gate cells, used by CircuitCanvasView
+    /// to draw path stubs (stopping at the gate's visual border) instead of
+    /// drawing through the gate icon.
+    private func makeGateCells() -> Set<GridPosition> {
+        var positions = Set<GridPosition>()
+        for row in 0..<viewModel.level.size {
+            for col in 0..<viewModel.level.size {
+                if viewModel.liveGrid[row][col].isGate {
+                    positions.insert(GridPosition(row, col))
+                }
+            }
+        }
+        return positions
+    }
+
+    /// Returns a map of `Edge → Color` for each side of a gate cell that has an
+    /// active path entering or leaving it.  Used by `GateCellView` to draw the
+    /// thin edge-connector lines that bridge the gap between the path stub and
+    /// the gate's rounded rectangle border.
+    private func activeEdgesForGate(at pos: GridPosition) -> [Edge: Color] {
+        var edges: [Edge: Color] = [:]
+
+        // Walk every active path and check if it passes through this gate.
+        for (_, path) in viewModel.activePaths {
+            guard let gateIdx = path.indexOfSegment(pos) else { continue }
+
+            // Previous neighbour → edge facing that neighbour
+            if gateIdx > 0 {
+                let prev = path.segments[gateIdx - 1]
+                if let edge = edgeFrom(pos, to: prev),
+                   let signal = viewModel.pathLayer[prev] {
+                    edges[edge] = signal.color.swiftUIColor
+                }
+            }
+
+            // Next neighbour → edge facing that neighbour
+            if gateIdx + 1 < path.segments.count {
+                let next = path.segments[gateIdx + 1]
+                if let edge = edgeFrom(pos, to: next),
+                   let signal = viewModel.pathLayer[next] {
+                    edges[edge] = signal.color.swiftUIColor
+                }
+            }
+        }
+
+        return edges
+    }
+
+    /// Maps the directional relationship between two adjacent positions to a SwiftUI `Edge`.
+    private func edgeFrom(_ pos: GridPosition, to neighbor: GridPosition) -> Edge? {
+        if neighbor.row == pos.row - 1 && neighbor.col == pos.col { return .top }
+        if neighbor.row == pos.row + 1 && neighbor.col == pos.col { return .bottom }
+        if neighbor.row == pos.row && neighbor.col == pos.col - 1 { return .leading }
+        if neighbor.row == pos.row && neighbor.col == pos.col + 1 { return .trailing }
+        return nil
     }
 }
 

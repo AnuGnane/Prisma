@@ -12,7 +12,16 @@ struct ShiftLevelData: Codable {
     let levelId: Int
     let initialGrid: [[String]]        // 8×8
     let targetWords: [TargetWordData]
-    let optimalMoves: Int
+
+    /// Derived scramble intensity for the level.
+    /// Keeps early levels forgiving and late levels thoroughly shuffled.
+    private var scrambleIntensity: Int {
+        // 4 moves up to L25, 6 to L75, 8 onward — good enough to guarantee no
+        // target words survive in the initial grid after the while-loop below.
+        if levelId <= 25 { return 4 }
+        if levelId <= 75 { return 6 }
+        return 8
+    }
 
     func toPuzzle() -> ShiftPuzzle? {
         let size = ShiftGrid.size
@@ -38,11 +47,12 @@ struct ShiftLevelData: Codable {
         // Scramble from the solution grid until NO words are found
         var scrambled = solutionGrid
         var scrambleAttempts = 0
+        let perPassMoves = scrambleIntensity
         while scrambleAttempts < 30 {
             let anyFound = targetWordObjs.contains { scrambled.findWord($0.word) != nil }
             if !anyFound { break }
 
-            for _ in 0..<max(4, optimalMoves) {
+            for _ in 0..<perPassMoves {
                 let t = Int.random(in: 0..<4, using: &rng)
                 let i = Int.random(in: 0..<size, using: &rng)
                 let move: ShiftMove
@@ -59,7 +69,7 @@ struct ShiftLevelData: Codable {
 
         return ShiftPuzzle(
             id: levelId, initialGrid: scrambled,
-            targetWords: targetWordObjs, optimalMoveCount: optimalMoves,
+            targetWords: targetWordObjs,
             solutionGrid: solutionGrid
         )
     }

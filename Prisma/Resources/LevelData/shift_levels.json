@@ -99,8 +99,7 @@
       {
         "word": "RUN"
       }
-    ],
-    "optimalMoves": 4
+    ]
   },
   {
     "levelId": 2,
@@ -202,8 +201,7 @@
       {
         "word": "RED"
       }
-    ],
-    "optimalMoves": 5
+    ]
   },
   {
     "levelId": 3,
@@ -305,8 +303,7 @@
       {
         "word": "OWL"
       }
-    ],
-    "optimalMoves": 5
+    ]
   },
   {
     "levelId": 4,
@@ -408,8 +405,7 @@
       {
         "word": "WAVE"
       }
-    ],
-    "optimalMoves": 6
+    ]
   },
   {
     "levelId": 5,
@@ -511,8 +507,7 @@
       {
         "word": "SEED"
       }
-    ],
-    "optimalMoves": 6
+    ]
   },
   {
     "levelId": 6,
@@ -614,8 +609,7 @@
       {
         "word": "DRUM"
       }
-    ],
-    "optimalMoves": 7
+    ]
   },
   {
     "levelId": 7,
@@ -717,8 +711,7 @@
       {
         "word": "LAMP"
       }
-    ],
-    "optimalMoves": 8
+    ]
   },
   {
     "levelId": 8,
@@ -820,8 +813,7 @@
       {
         "word": "BELL"
       }
-    ],
-    "optimalMoves": 8
+    ]
   },
   {
     "levelId": 9,
@@ -923,8 +915,7 @@
       {
         "word": "GLOW"
       }
-    ],
-    "optimalMoves": 9
+    ]
   },
   {
     "levelId": 10,
@@ -1026,8 +1017,7 @@
       {
         "word": "FROST"
       }
-    ],
-    "optimalMoves": 9
+    ]
   },
   {
     "levelId": 11,
@@ -1129,8 +1119,7 @@
       {
         "word": "VINE"
       }
-    ],
-    "optimalMoves": 10
+    ]
   },
   {
     "levelId": 12,
@@ -1232,8 +1221,7 @@
       {
         "word": "GLOW"
       }
-    ],
-    "optimalMoves": 10
+    ]
   },
   {
     "levelId": 13,
@@ -1335,8 +1323,7 @@
       {
         "word": "RAIN"
       }
-    ],
-    "optimalMoves": 10
+    ]
   },
   {
     "levelId": 14,
@@ -1438,8 +1425,7 @@
       {
         "word": "MUSIC"
       }
-    ],
-    "optimalMoves": 11
+    ]
   },
   {
     "levelId": 15,
@@ -1541,8 +1527,7 @@
       {
         "word": "DUST"
       }
-    ],
-    "optimalMoves": 11
+    ]
   },
   {
     "levelId": 16,
@@ -1644,8 +1629,7 @@
       {
         "word": "HAWK"
       }
-    ],
-    "optimalMoves": 12
+    ]
   },
   {
     "levelId": 17,
@@ -1747,8 +1731,7 @@
       {
         "word": "RIDGE"
       }
-    ],
-    "optimalMoves": 12
+    ]
   },
   {
     "levelId": 18,
@@ -1850,8 +1833,7 @@
       {
         "word": "BLOOM"
       }
-    ],
-    "optimalMoves": 13
+    ]
   },
   {
     "levelId": 19,
@@ -1953,8 +1935,7 @@
       {
         "word": "GOLD"
       }
-    ],
-    "optimalMoves": 14
+    ]
   },
   {
     "levelId": 20,
@@ -2059,8 +2040,7 @@
       {
         "word": "PHOENIX"
       }
-    ],
-    "optimalMoves": 15
+    ]
   },
   {
     "levelId": 21,
@@ -2165,8 +2145,7 @@
       {
         "word": "SWIM"
       }
-    ],
-    "optimalMoves": 14
+    ]
   },
   {
     "levelId": 22,
@@ -2271,8 +2250,7 @@
       {
         "word": "BAKE"
       }
-    ],
-    "optimalMoves": 14
+    ]
   },
   {
     "levelId": 23,
@@ -2377,8 +2355,7 @@
       {
         "word": "LUTE"
       }
-    ],
-    "optimalMoves": 14
+    ]
   },
   {
     "levelId": 24,
@@ -2483,8 +2460,7 @@
       {
         "word": "DRY"
       }
-    ],
-    "optimalMoves": 14
+    ]
   },
   {
     "levelId": 25,
@@ -2589,8 +2565,7 @@
       {
         "word": "PALM"
       }
-    ],
-    "optimalMoves": 15
+    ]
   },
   {
     "levelId": 26,
@@ -2695,8 +2670,7 @@
       {
         "word": "JADE"
       }
-    ],
-    "optimalMoves": 15
+    ]
   },
   {
     "levelId": 27,
@@ -2801,8 +2775,7 @@
       {
         "word": "SHAWL"
       }
-    ],
-    "optimalMoves": 15
+    ]
   },
   {
     "levelId": 28,
@@ -2907,8 +2880,7 @@
       {
         "word": "BARK"
       }
-    ],
-    "optimalMoves": 15
+    ]
   },
   {
     "levelId": 29,
@@ -3013,8 +2985,7 @@
       {
         "word": "NUT"
       }
-    ],
-    "optimalMoves": 15
+    ]
   },
   {
     "levelId": 30,
@@ -3119,8 +3090,7 @@
       {
         "word": "GLOW"
       }
-    ],
-    "optimalMoves": 16
+    ]
   },
   {
     "levelId": 31,
@@ -3225,8 +3195,7 @@
       {
         "word": "INK"
       }
-    ],
-    "optimalMoves": 16
+    ]
   },
   {
     "levelId": 32,
@@ -3331,8 +3300,7 @@
       {
         "word": "BONE"
       }
-    ],
-    "optimalMoves": 16
+    ]
   },
   {
     "levelId": 33,
@@ -3437,8 +3405,7 @@
       {
         "word": "CAKE"
       }
-    ],
-    "optimalMoves": 16
+    ]
   },
   {
     "levelId": 34,
@@ -3543,8 +3510,7 @@
       {
         "word": "GATE"
       }
-    ],
-    "optimalMoves": 16
+    ]
   },
   {
     "levelId": 35,
@@ -3649,8 +3615,7 @@
       {
         "word": "PLOT"
       }
-    ],
-    "optimalMoves": 17
+    ]
   },
   {
     "levelId": 36,
@@ -3755,8 +3720,7 @@
       {
         "word": "BEAT"
       }
-    ],
-    "optimalMoves": 17
+    ]
   },
   {
     "levelId": 37,
@@ -3861,8 +3825,7 @@
       {
         "word": "WHEAT"
       }
-    ],
-    "optimalMoves": 17
+    ]
   },
   {
     "levelId": 38,
@@ -3967,8 +3930,7 @@
       {
         "word": "SURF"
       }
-    ],
-    "optimalMoves": 17
+    ]
   },
   {
     "levelId": 39,
@@ -4073,8 +4035,7 @@
       {
         "word": "LARK"
       }
-    ],
-    "optimalMoves": 17
+    ]
   },
   {
     "levelId": 40,
@@ -4182,8 +4143,7 @@
       {
         "word": "SHRUB"
       }
-    ],
-    "optimalMoves": 19
+    ]
   },
   {
     "levelId": 41,
@@ -4291,8 +4251,7 @@
       {
         "word": "GEAR"
       }
-    ],
-    "optimalMoves": 19
+    ]
   },
   {
     "levelId": 42,
@@ -4400,8 +4359,7 @@
       {
         "word": "ION"
       }
-    ],
-    "optimalMoves": 19
+    ]
   },
   {
     "levelId": 43,
@@ -4509,8 +4467,7 @@
       {
         "word": "RAIL"
       }
-    ],
-    "optimalMoves": 19
+    ]
   },
   {
     "levelId": 44,
@@ -4618,8 +4575,7 @@
       {
         "word": "BLEND"
       }
-    ],
-    "optimalMoves": 19
+    ]
   },
   {
     "levelId": 45,
@@ -4727,8 +4683,7 @@
       {
         "word": "DRIFT"
       }
-    ],
-    "optimalMoves": 20
+    ]
   },
   {
     "levelId": 46,
@@ -4836,8 +4791,7 @@
       {
         "word": "THORN"
       }
-    ],
-    "optimalMoves": 20
+    ]
   },
   {
     "levelId": 47,
@@ -4945,8 +4899,7 @@
       {
         "word": "BUG"
       }
-    ],
-    "optimalMoves": 20
+    ]
   },
   {
     "levelId": 48,
@@ -5054,8 +5007,7 @@
       {
         "word": "COVE"
       }
-    ],
-    "optimalMoves": 20
+    ]
   },
   {
     "levelId": 49,
@@ -5163,8 +5115,7 @@
       {
         "word": "KEEP"
       }
-    ],
-    "optimalMoves": 20
+    ]
   },
   {
     "levelId": 50,
@@ -5272,8 +5223,7 @@
       {
         "word": "DRUM"
       }
-    ],
-    "optimalMoves": 21
+    ]
   },
   {
     "levelId": 51,
@@ -5381,8 +5331,7 @@
       {
         "word": "FLOAT"
       }
-    ],
-    "optimalMoves": 21
+    ]
   },
   {
     "levelId": 52,
@@ -5490,8 +5439,7 @@
       {
         "word": "VALE"
       }
-    ],
-    "optimalMoves": 21
+    ]
   },
   {
     "levelId": 53,
@@ -5599,8 +5547,7 @@
       {
         "word": "CREEK"
       }
-    ],
-    "optimalMoves": 21
+    ]
   },
   {
     "levelId": 54,
@@ -5708,8 +5655,7 @@
       {
         "word": "ETCH"
       }
-    ],
-    "optimalMoves": 21
+    ]
   },
   {
     "levelId": 55,
@@ -5817,8 +5763,7 @@
       {
         "word": "LAPIS"
       }
-    ],
-    "optimalMoves": 22
+    ]
   },
   {
     "levelId": 56,
@@ -5926,8 +5871,7 @@
       {
         "word": "IDOL"
       }
-    ],
-    "optimalMoves": 22
+    ]
   },
   {
     "levelId": 57,
@@ -6035,8 +5979,7 @@
       {
         "word": "PEARL"
       }
-    ],
-    "optimalMoves": 22
+    ]
   },
   {
     "levelId": 58,
@@ -6144,8 +6087,7 @@
       {
         "word": "VOID"
       }
-    ],
-    "optimalMoves": 22
+    ]
   },
   {
     "levelId": 59,
@@ -6253,8 +6195,7 @@
       {
         "word": "ROOK"
       }
-    ],
-    "optimalMoves": 22
+    ]
   },
   {
     "levelId": 60,
@@ -6365,8 +6306,7 @@
       {
         "word": "FLOW"
       }
-    ],
-    "optimalMoves": 24
+    ]
   },
   {
     "levelId": 61,
@@ -6477,8 +6417,7 @@
       {
         "word": "STACK"
       }
-    ],
-    "optimalMoves": 24
+    ]
   },
   {
     "levelId": 62,
@@ -6589,8 +6528,7 @@
       {
         "word": "FLEET"
       }
-    ],
-    "optimalMoves": 24
+    ]
   },
   {
     "levelId": 63,
@@ -6701,8 +6639,7 @@
       {
         "word": "DEW"
       }
-    ],
-    "optimalMoves": 24
+    ]
   },
   {
     "levelId": 64,
@@ -6813,8 +6750,7 @@
       {
         "word": "BAT"
       }
-    ],
-    "optimalMoves": 24
+    ]
   },
   {
     "levelId": 65,
@@ -6925,8 +6861,7 @@
       {
         "word": "CHOP"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 66,
@@ -7037,8 +6972,7 @@
       {
         "word": "RIFF"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 67,
@@ -7149,8 +7083,7 @@
       {
         "word": "COOL"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 68,
@@ -7261,8 +7194,7 @@
       {
         "word": "PIER"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 69,
@@ -7373,8 +7305,7 @@
       {
         "word": "BLUE"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 70,
@@ -7485,8 +7416,7 @@
       {
         "word": "LACE"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 71,
@@ -7597,8 +7527,7 @@
       {
         "word": "SEED"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 72,
@@ -7709,8 +7638,7 @@
       {
         "word": "HOOK"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 73,
@@ -7821,8 +7749,7 @@
       {
         "word": "STAR"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 74,
@@ -7933,8 +7860,7 @@
       {
         "word": "BOOK"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 75,
@@ -8045,8 +7971,7 @@
       {
         "word": "BITE"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 76,
@@ -8157,8 +8082,7 @@
       {
         "word": "STEW"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 77,
@@ -8269,8 +8193,7 @@
       {
         "word": "WALK"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 78,
@@ -8381,8 +8304,7 @@
       {
         "word": "REEL"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 79,
@@ -8493,8 +8415,7 @@
       {
         "word": "LIFT"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 80,
@@ -8608,8 +8529,7 @@
       {
         "word": "HAY"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 81,
@@ -8723,8 +8643,7 @@
       {
         "word": "REEF"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 82,
@@ -8838,8 +8757,7 @@
       {
         "word": "OWL"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 83,
@@ -8953,8 +8871,7 @@
       {
         "word": "ROOT"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 84,
@@ -9068,8 +8985,7 @@
       {
         "word": "SITE"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 85,
@@ -9183,8 +9099,7 @@
       {
         "word": "GEL"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 86,
@@ -9298,8 +9213,7 @@
       {
         "word": "DOCK"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 87,
@@ -9413,8 +9327,7 @@
       {
         "word": "MIX"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 88,
@@ -9528,8 +9441,7 @@
       {
         "word": "GLOW"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 89,
@@ -9643,8 +9555,7 @@
       {
         "word": "THORN"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 90,
@@ -9758,8 +9669,7 @@
       {
         "word": "ROOT"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 91,
@@ -9873,8 +9783,7 @@
       {
         "word": "LOOT"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 92,
@@ -9988,8 +9897,7 @@
       {
         "word": "FORT"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 93,
@@ -10103,8 +10011,7 @@
       {
         "word": "MASK"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 94,
@@ -10218,8 +10125,7 @@
       {
         "word": "CREEK"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 95,
@@ -10333,8 +10239,7 @@
       {
         "word": "VALE"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 96,
@@ -10448,8 +10353,7 @@
       {
         "word": "FORD"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 97,
@@ -10563,8 +10467,7 @@
       {
         "word": "BRUSH"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 98,
@@ -10678,8 +10581,7 @@
       {
         "word": "SET"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 99,
@@ -10793,8 +10695,7 @@
       {
         "word": "DUST"
       }
-    ],
-    "optimalMoves": 25
+    ]
   },
   {
     "levelId": 100,
@@ -10911,7 +10812,5716 @@
       {
         "word": "RAY"
       }
+    ]
+  },
+  {
+    "levelId": 101,
+    "initialGrid": [
+      [
+        "V",
+        "V",
+        "H",
+        "O",
+        "Q",
+        "W",
+        "D",
+        "K"
+      ],
+      [
+        "E",
+        "J",
+        "O",
+        "U",
+        "N",
+        "S",
+        "U",
+        "S"
+      ],
+      [
+        "M",
+        "I",
+        "Q",
+        "Z",
+        "R",
+        "M",
+        "Y",
+        "S"
+      ],
+      [
+        "G",
+        "A",
+        "S",
+        "R",
+        "F",
+        "O",
+        "F",
+        "U"
+      ],
+      [
+        "E",
+        "H",
+        "H",
+        "P",
+        "C",
+        "S",
+        "R",
+        "R"
+      ],
+      [
+        "F",
+        "U",
+        "I",
+        "B",
+        "K",
+        "G",
+        "Z",
+        "Z"
+      ],
+      [
+        "G",
+        "I",
+        "S",
+        "O",
+        "E",
+        "E",
+        "T",
+        "I"
+      ],
+      [
+        "T",
+        "C",
+        "U",
+        "R",
+        "I",
+        "G",
+        "B",
+        "S"
+      ]
     ],
-    "optimalMoves": 25
+    "targetWords": [
+      {
+        "word": "BEE",
+        "direction": null
+      },
+      {
+        "word": "ROCK",
+        "direction": null
+      },
+      {
+        "word": "FISH",
+        "direction": null
+      },
+      {
+        "word": "ROOST",
+        "direction": null
+      },
+      {
+        "word": "MAGIC",
+        "direction": null
+      },
+      {
+        "word": "GEYSER",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 102,
+    "initialGrid": [
+      [
+        "L",
+        "N",
+        "E",
+        "R",
+        "O",
+        "L",
+        "T",
+        "B"
+      ],
+      [
+        "M",
+        "U",
+        "N",
+        "X",
+        "E",
+        "S",
+        "T",
+        "X"
+      ],
+      [
+        "T",
+        "V",
+        "R",
+        "W",
+        "H",
+        "E",
+        "M",
+        "Y"
+      ],
+      [
+        "V",
+        "I",
+        "M",
+        "A",
+        "G",
+        "X",
+        "O",
+        "C"
+      ],
+      [
+        "S",
+        "L",
+        "R",
+        "F",
+        "P",
+        "W",
+        "T",
+        "U"
+      ],
+      [
+        "D",
+        "E",
+        "O",
+        "E",
+        "G",
+        "O",
+        "A",
+        "R"
+      ],
+      [
+        "P",
+        "R",
+        "E",
+        "R",
+        "T",
+        "L",
+        "S",
+        "E"
+      ],
+      [
+        "P",
+        "F",
+        "D",
+        "V",
+        "W",
+        "D",
+        "Q",
+        "N"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "ROD",
+        "direction": null
+      },
+      {
+        "word": "REEF",
+        "direction": null
+      },
+      {
+        "word": "OPAL",
+        "direction": null
+      },
+      {
+        "word": "LIGHT",
+        "direction": null
+      },
+      {
+        "word": "PEARL",
+        "direction": null
+      },
+      {
+        "word": "FOREST",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 103,
+    "initialGrid": [
+      [
+        "T",
+        "D",
+        "R",
+        "Y",
+        "V",
+        "E",
+        "S",
+        "K"
+      ],
+      [
+        "Y",
+        "G",
+        "F",
+        "A",
+        "A",
+        "J",
+        "X",
+        "H"
+      ],
+      [
+        "R",
+        "U",
+        "Y",
+        "T",
+        "D",
+        "F",
+        "E",
+        "N"
+      ],
+      [
+        "A",
+        "M",
+        "A",
+        "N",
+        "A",
+        "W",
+        "U",
+        "A"
+      ],
+      [
+        "T",
+        "M",
+        "U",
+        "G",
+        "I",
+        "W",
+        "I",
+        "R"
+      ],
+      [
+        "H",
+        "Z",
+        "A",
+        "Z",
+        "R",
+        "C",
+        "G",
+        "T"
+      ],
+      [
+        "G",
+        "A",
+        "R",
+        "R",
+        "G",
+        "A",
+        "I",
+        "N"
+      ],
+      [
+        "P",
+        "U",
+        "O",
+        "T",
+        "L",
+        "Z",
+        "F",
+        "T"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "JAW",
+        "direction": null
+      },
+      {
+        "word": "DRUM",
+        "direction": null
+      },
+      {
+        "word": "RAIN",
+        "direction": null
+      },
+      {
+        "word": "HEART",
+        "direction": null
+      },
+      {
+        "word": "MAGIC",
+        "direction": null
+      },
+      {
+        "word": "TURTLE",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 104,
+    "initialGrid": [
+      [
+        "A",
+        "E",
+        "C",
+        "R",
+        "B",
+        "M",
+        "Q",
+        "E"
+      ],
+      [
+        "Z",
+        "P",
+        "A",
+        "I",
+        "L",
+        "W",
+        "A",
+        "F"
+      ],
+      [
+        "Z",
+        "C",
+        "M",
+        "F",
+        "I",
+        "Q",
+        "Y",
+        "G"
+      ],
+      [
+        "L",
+        "M",
+        "X",
+        "U",
+        "H",
+        "E",
+        "K",
+        "V"
+      ],
+      [
+        "P",
+        "H",
+        "S",
+        "R",
+        "S",
+        "X",
+        "C",
+        "E"
+      ],
+      [
+        "H",
+        "B",
+        "I",
+        "A",
+        "H",
+        "Q",
+        "I",
+        "M"
+      ],
+      [
+        "D",
+        "M",
+        "E",
+        "D",
+        "D",
+        "O",
+        "W",
+        "C"
+      ],
+      [
+        "Q",
+        "Q",
+        "B",
+        "N",
+        "K",
+        "K",
+        "R",
+        "T"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "SKY",
+        "direction": null
+      },
+      {
+        "word": "FIRE",
+        "direction": null
+      },
+      {
+        "word": "BIRD",
+        "direction": null
+      },
+      {
+        "word": "MUSIC",
+        "direction": null
+      },
+      {
+        "word": "EAGLE",
+        "direction": null
+      },
+      {
+        "word": "MEADOW",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 105,
+    "initialGrid": [
+      [
+        "T",
+        "P",
+        "T",
+        "T",
+        "S",
+        "O",
+        "V",
+        "R"
+      ],
+      [
+        "Z",
+        "N",
+        "U",
+        "H",
+        "M",
+        "F",
+        "A",
+        "Y"
+      ],
+      [
+        "X",
+        "S",
+        "Y",
+        "L",
+        "L",
+        "O",
+        "I",
+        "L"
+      ],
+      [
+        "L",
+        "F",
+        "S",
+        "T",
+        "S",
+        "D",
+        "W",
+        "R"
+      ],
+      [
+        "B",
+        "L",
+        "Y",
+        "O",
+        "R",
+        "E",
+        "E",
+        "E"
+      ],
+      [
+        "W",
+        "V",
+        "E",
+        "T",
+        "A",
+        "R",
+        "W",
+        "Y"
+      ],
+      [
+        "K",
+        "T",
+        "Y",
+        "U",
+        "M",
+        "M",
+        "I",
+        "H"
+      ],
+      [
+        "F",
+        "Y",
+        "H",
+        "V",
+        "U",
+        "G",
+        "R",
+        "P"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "FLY",
+        "direction": null
+      },
+      {
+        "word": "FIRE",
+        "direction": null
+      },
+      {
+        "word": "STAR",
+        "direction": null
+      },
+      {
+        "word": "TOWER",
+        "direction": null
+      },
+      {
+        "word": "STORM",
+        "direction": null
+      },
+      {
+        "word": "VALLEY",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 106,
+    "initialGrid": [
+      [
+        "H",
+        "K",
+        "P",
+        "L",
+        "G",
+        "U",
+        "V",
+        "I"
+      ],
+      [
+        "O",
+        "A",
+        "L",
+        "E",
+        "T",
+        "M",
+        "I",
+        "W"
+      ],
+      [
+        "H",
+        "G",
+        "K",
+        "D",
+        "O",
+        "V",
+        "H",
+        "Q"
+      ],
+      [
+        "A",
+        "R",
+        "O",
+        "W",
+        "X",
+        "P",
+        "A",
+        "N"
+      ],
+      [
+        "W",
+        "G",
+        "P",
+        "M",
+        "L",
+        "M",
+        "C",
+        "I"
+      ],
+      [
+        "Q",
+        "U",
+        "D",
+        "E",
+        "A",
+        "O",
+        "D",
+        "G"
+      ],
+      [
+        "F",
+        "E",
+        "X",
+        "L",
+        "R",
+        "P",
+        "C",
+        "K"
+      ],
+      [
+        "R",
+        "L",
+        "A",
+        "M",
+        "E",
+        "N",
+        "J",
+        "O"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OWL",
+        "direction": null
+      },
+      {
+        "word": "LAMP",
+        "direction": null
+      },
+      {
+        "word": "ROCK",
+        "direction": null
+      },
+      {
+        "word": "WHALE",
+        "direction": null
+      },
+      {
+        "word": "FLAME",
+        "direction": null
+      },
+      {
+        "word": "GARDEN",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 107,
+    "initialGrid": [
+      [
+        "M",
+        "T",
+        "N",
+        "E",
+        "K",
+        "W",
+        "M",
+        "N"
+      ],
+      [
+        "Y",
+        "V",
+        "P",
+        "D",
+        "R",
+        "P",
+        "A",
+        "E"
+      ],
+      [
+        "Z",
+        "X",
+        "O",
+        "R",
+        "J",
+        "H",
+        "X",
+        "X"
+      ],
+      [
+        "F",
+        "T",
+        "D",
+        "W",
+        "U",
+        "M",
+        "D",
+        "I"
+      ],
+      [
+        "C",
+        "S",
+        "B",
+        "U",
+        "N",
+        "D",
+        "O",
+        "O"
+      ],
+      [
+        "D",
+        "E",
+        "T",
+        "S",
+        "K",
+        "T",
+        "T",
+        "W"
+      ],
+      [
+        "D",
+        "M",
+        "L",
+        "T",
+        "X",
+        "L",
+        "L",
+        "G"
+      ],
+      [
+        "U",
+        "N",
+        "S",
+        "E",
+        "A",
+        "G",
+        "K",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "DOG",
+        "direction": null
+      },
+      {
+        "word": "DUST",
+        "direction": null
+      },
+      {
+        "word": "DRUM",
+        "direction": null
+      },
+      {
+        "word": "STORM",
+        "direction": null
+      },
+      {
+        "word": "EAGLE",
+        "direction": null
+      },
+      {
+        "word": "MEADOW",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 108,
+    "initialGrid": [
+      [
+        "S",
+        "H",
+        "W",
+        "R",
+        "K",
+        "N",
+        "H",
+        "A"
+      ],
+      [
+        "V",
+        "Y",
+        "K",
+        "O",
+        "K",
+        "L",
+        "W",
+        "C"
+      ],
+      [
+        "V",
+        "W",
+        "C",
+        "K",
+        "T",
+        "I",
+        "S",
+        "V"
+      ],
+      [
+        "U",
+        "N",
+        "I",
+        "F",
+        "H",
+        "S",
+        "O",
+        "F"
+      ],
+      [
+        "X",
+        "Z",
+        "Q",
+        "R",
+        "F",
+        "R",
+        "R",
+        "V"
+      ],
+      [
+        "D",
+        "T",
+        "I",
+        "B",
+        "K",
+        "Z",
+        "W",
+        "H"
+      ],
+      [
+        "X",
+        "A",
+        "O",
+        "A",
+        "X",
+        "V",
+        "N",
+        "L"
+      ],
+      [
+        "G",
+        "Q",
+        "M",
+        "A",
+        "O",
+        "B",
+        "O",
+        "R"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OAK",
+        "direction": null
+      },
+      {
+        "word": "FISH",
+        "direction": null
+      },
+      {
+        "word": "MOTH",
+        "direction": null
+      },
+      {
+        "word": "CROWN",
+        "direction": null
+      },
+      {
+        "word": "CLOUD",
+        "direction": null
+      },
+      {
+        "word": "HARBOR",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 109,
+    "initialGrid": [
+      [
+        "N",
+        "O",
+        "I",
+        "F",
+        "C",
+        "L",
+        "L",
+        "F"
+      ],
+      [
+        "P",
+        "A",
+        "Q",
+        "B",
+        "E",
+        "V",
+        "H",
+        "B"
+      ],
+      [
+        "T",
+        "F",
+        "L",
+        "L",
+        "L",
+        "G",
+        "T",
+        "H"
+      ],
+      [
+        "H",
+        "A",
+        "R",
+        "A",
+        "E",
+        "I",
+        "H",
+        "O"
+      ],
+      [
+        "H",
+        "S",
+        "T",
+        "T",
+        "I",
+        "E",
+        "R",
+        "I"
+      ],
+      [
+        "Y",
+        "U",
+        "W",
+        "N",
+        "J",
+        "N",
+        "R",
+        "E"
+      ],
+      [
+        "Z",
+        "J",
+        "K",
+        "F",
+        "L",
+        "U",
+        "W",
+        "P"
+      ],
+      [
+        "D",
+        "R",
+        "H",
+        "F",
+        "K",
+        "P",
+        "S",
+        "O"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "RUN",
+        "direction": null
+      },
+      {
+        "word": "FIRE",
+        "direction": null
+      },
+      {
+        "word": "HAWK",
+        "direction": null
+      },
+      {
+        "word": "TRAIL",
+        "direction": null
+      },
+      {
+        "word": "FABLE",
+        "direction": null
+      },
+      {
+        "word": "POLLEN",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 110,
+    "initialGrid": [
+      [
+        "U",
+        "N",
+        "I",
+        "I",
+        "O",
+        "H",
+        "Q",
+        "L"
+      ],
+      [
+        "R",
+        "V",
+        "B",
+        "A",
+        "I",
+        "F",
+        "P",
+        "W"
+      ],
+      [
+        "K",
+        "Q",
+        "X",
+        "R",
+        "O",
+        "D",
+        "F",
+        "Q"
+      ],
+      [
+        "F",
+        "A",
+        "U",
+        "Y",
+        "F",
+        "A",
+        "L",
+        "P"
+      ],
+      [
+        "A",
+        "M",
+        "A",
+        "K",
+        "P",
+        "R",
+        "G",
+        "C"
+      ],
+      [
+        "L",
+        "L",
+        "B",
+        "R",
+        "K",
+        "D",
+        "Z",
+        "E"
+      ],
+      [
+        "C",
+        "P",
+        "F",
+        "L",
+        "Q",
+        "G",
+        "D",
+        "V"
+      ],
+      [
+        "Y",
+        "C",
+        "E",
+        "S",
+        "I",
+        "N",
+        "H",
+        "O"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "ICE",
+        "direction": null
+      },
+      {
+        "word": "OPAL",
+        "direction": null
+      },
+      {
+        "word": "BARK",
+        "direction": null
+      },
+      {
+        "word": "RIDGE",
+        "direction": null
+      },
+      {
+        "word": "MARSH",
+        "direction": null
+      },
+      {
+        "word": "FALCON",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 111,
+    "initialGrid": [
+      [
+        "O",
+        "R",
+        "Y",
+        "W",
+        "A",
+        "O",
+        "L",
+        "V"
+      ],
+      [
+        "D",
+        "H",
+        "A",
+        "R",
+        "H",
+        "A",
+        "R",
+        "U"
+      ],
+      [
+        "B",
+        "W",
+        "T",
+        "G",
+        "B",
+        "U",
+        "Y",
+        "Z"
+      ],
+      [
+        "E",
+        "H",
+        "E",
+        "C",
+        "I",
+        "D",
+        "P",
+        "J"
+      ],
+      [
+        "S",
+        "P",
+        "H",
+        "G",
+        "A",
+        "S",
+        "F",
+        "O"
+      ],
+      [
+        "T",
+        "V",
+        "U",
+        "U",
+        "D",
+        "G",
+        "I",
+        "R"
+      ],
+      [
+        "F",
+        "H",
+        "K",
+        "B",
+        "Q",
+        "A",
+        "L",
+        "F"
+      ],
+      [
+        "K",
+        "N",
+        "L",
+        "A",
+        "M",
+        "B",
+        "T",
+        "K"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "HOT",
+        "direction": null
+      },
+      {
+        "word": "PUMA",
+        "direction": null
+      },
+      {
+        "word": "DUST",
+        "direction": null
+      },
+      {
+        "word": "TIDAL",
+        "direction": null
+      },
+      {
+        "word": "WHALE",
+        "direction": null
+      },
+      {
+        "word": "HARBOR",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 112,
+    "initialGrid": [
+      [
+        "V",
+        "S",
+        "E",
+        "S",
+        "R",
+        "O",
+        "B",
+        "X"
+      ],
+      [
+        "Z",
+        "R",
+        "F",
+        "F",
+        "T",
+        "E",
+        "K",
+        "G"
+      ],
+      [
+        "T",
+        "P",
+        "G",
+        "W",
+        "S",
+        "E",
+        "E",
+        "S"
+      ],
+      [
+        "X",
+        "E",
+        "N",
+        "T",
+        "O",
+        "R",
+        "H",
+        "V"
+      ],
+      [
+        "V",
+        "K",
+        "N",
+        "L",
+        "I",
+        "B",
+        "H",
+        "A"
+      ],
+      [
+        "O",
+        "S",
+        "F",
+        "E",
+        "S",
+        "X",
+        "K",
+        "U"
+      ],
+      [
+        "K",
+        "M",
+        "N",
+        "G",
+        "D",
+        "O",
+        "J",
+        "D"
+      ],
+      [
+        "T",
+        "L",
+        "N",
+        "I",
+        "W",
+        "W",
+        "O",
+        "S"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "NEW",
+        "direction": null
+      },
+      {
+        "word": "TREE",
+        "direction": null
+      },
+      {
+        "word": "NEST",
+        "direction": null
+      },
+      {
+        "word": "HAVEN",
+        "direction": null
+      },
+      {
+        "word": "ROOST",
+        "direction": null
+      },
+      {
+        "word": "FOREST",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 113,
+    "initialGrid": [
+      [
+        "N",
+        "N",
+        "G",
+        "J",
+        "R",
+        "Y",
+        "L",
+        "Y"
+      ],
+      [
+        "N",
+        "U",
+        "L",
+        "A",
+        "G",
+        "O",
+        "O",
+        "P"
+      ],
+      [
+        "N",
+        "D",
+        "Q",
+        "T",
+        "W",
+        "H",
+        "P",
+        "N"
+      ],
+      [
+        "V",
+        "R",
+        "N",
+        "E",
+        "S",
+        "E",
+        "B",
+        "H"
+      ],
+      [
+        "V",
+        "I",
+        "K",
+        "L",
+        "I",
+        "T",
+        "F",
+        "C"
+      ],
+      [
+        "E",
+        "T",
+        "B",
+        "E",
+        "Y",
+        "E",
+        "R",
+        "E"
+      ],
+      [
+        "R",
+        "Z",
+        "L",
+        "J",
+        "L",
+        "A",
+        "L",
+        "J"
+      ],
+      [
+        "F",
+        "A",
+        "D",
+        "F",
+        "Y",
+        "R",
+        "J",
+        "X"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "KEY",
+        "direction": null
+      },
+      {
+        "word": "VINE",
+        "direction": null
+      },
+      {
+        "word": "BEAR",
+        "direction": null
+      },
+      {
+        "word": "FABLE",
+        "direction": null
+      },
+      {
+        "word": "RIVER",
+        "direction": null
+      },
+      {
+        "word": "LAGOON",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 114,
+    "initialGrid": [
+      [
+        "X",
+        "B",
+        "H",
+        "T",
+        "Z",
+        "L",
+        "Z",
+        "N"
+      ],
+      [
+        "B",
+        "O",
+        "L",
+        "F",
+        "Z",
+        "F",
+        "B",
+        "P"
+      ],
+      [
+        "V",
+        "R",
+        "Q",
+        "O",
+        "B",
+        "R",
+        "X",
+        "P"
+      ],
+      [
+        "U",
+        "O",
+        "E",
+        "S",
+        "O",
+        "Y",
+        "R",
+        "N"
+      ],
+      [
+        "U",
+        "E",
+        "S",
+        "B",
+        "E",
+        "U",
+        "M",
+        "I"
+      ],
+      [
+        "B",
+        "M",
+        "I",
+        "Z",
+        "N",
+        "V",
+        "D",
+        "G"
+      ],
+      [
+        "U",
+        "S",
+        "I",
+        "A",
+        "R",
+        "E",
+        "E",
+        "D"
+      ],
+      [
+        "N",
+        "L",
+        "Z",
+        "X",
+        "D",
+        "R",
+        "T",
+        "R"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "SUN",
+        "direction": null
+      },
+      {
+        "word": "ROSE",
+        "direction": null
+      },
+      {
+        "word": "BIRD",
+        "direction": null
+      },
+      {
+        "word": "RIVER",
+        "direction": null
+      },
+      {
+        "word": "BLOOM",
+        "direction": null
+      },
+      {
+        "word": "BREEZE",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 115,
+    "initialGrid": [
+      [
+        "V",
+        "M",
+        "D",
+        "J",
+        "K",
+        "D",
+        "F",
+        "D"
+      ],
+      [
+        "G",
+        "Z",
+        "Q",
+        "R",
+        "E",
+        "B",
+        "W",
+        "T"
+      ],
+      [
+        "Y",
+        "Q",
+        "J",
+        "A",
+        "H",
+        "N",
+        "V",
+        "J"
+      ],
+      [
+        "A",
+        "B",
+        "A",
+        "I",
+        "C",
+        "W",
+        "C",
+        "I"
+      ],
+      [
+        "U",
+        "D",
+        "A",
+        "L",
+        "D",
+        "L",
+        "M",
+        "L"
+      ],
+      [
+        "W",
+        "H",
+        "B",
+        "W",
+        "K",
+        "O",
+        "T",
+        "C"
+      ],
+      [
+        "G",
+        "R",
+        "J",
+        "I",
+        "N",
+        "U",
+        "G",
+        "A"
+      ],
+      [
+        "D",
+        "C",
+        "U",
+        "R",
+        "I",
+        "D",
+        "W",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OWL",
+        "direction": null
+      },
+      {
+        "word": "BARK",
+        "direction": null
+      },
+      {
+        "word": "HAWK",
+        "direction": null
+      },
+      {
+        "word": "CLOUD",
+        "direction": null
+      },
+      {
+        "word": "GRAIN",
+        "direction": null
+      },
+      {
+        "word": "BRIDGE",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 116,
+    "initialGrid": [
+      [
+        "Y",
+        "A",
+        "D",
+        "O",
+        "M",
+        "P",
+        "A",
+        "S"
+      ],
+      [
+        "R",
+        "A",
+        "W",
+        "M",
+        "Z",
+        "J",
+        "H",
+        "J"
+      ],
+      [
+        "D",
+        "G",
+        "E",
+        "R",
+        "A",
+        "V",
+        "S",
+        "E"
+      ],
+      [
+        "B",
+        "U",
+        "I",
+        "P",
+        "N",
+        "M",
+        "C",
+        "U"
+      ],
+      [
+        "U",
+        "B",
+        "X",
+        "V",
+        "R",
+        "U",
+        "X",
+        "N"
+      ],
+      [
+        "C",
+        "J",
+        "V",
+        "E",
+        "T",
+        "V",
+        "H",
+        "N"
+      ],
+      [
+        "Z",
+        "A",
+        "G",
+        "G",
+        "I",
+        "T",
+        "J",
+        "V"
+      ],
+      [
+        "M",
+        "H",
+        "M",
+        "C",
+        "E",
+        "N",
+        "W",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "JAR",
+        "direction": null
+      },
+      {
+        "word": "CAVE",
+        "direction": null
+      },
+      {
+        "word": "BIRD",
+        "direction": null
+      },
+      {
+        "word": "HEART",
+        "direction": null
+      },
+      {
+        "word": "HAVEN",
+        "direction": null
+      },
+      {
+        "word": "COMPAS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 117,
+    "initialGrid": [
+      [
+        "H",
+        "Y",
+        "S",
+        "A",
+        "J",
+        "V",
+        "A",
+        "W"
+      ],
+      [
+        "K",
+        "A",
+        "D",
+        "I",
+        "E",
+        "D",
+        "R",
+        "S"
+      ],
+      [
+        "A",
+        "I",
+        "O",
+        "U",
+        "L",
+        "H",
+        "A",
+        "M"
+      ],
+      [
+        "H",
+        "L",
+        "T",
+        "R",
+        "B",
+        "A",
+        "T",
+        "N"
+      ],
+      [
+        "B",
+        "D",
+        "F",
+        "M",
+        "E",
+        "Z",
+        "O",
+        "L"
+      ],
+      [
+        "B",
+        "H",
+        "Y",
+        "G",
+        "S",
+        "O",
+        "S",
+        "N"
+      ],
+      [
+        "E",
+        "W",
+        "O",
+        "N",
+        "T",
+        "T",
+        "U",
+        "C"
+      ],
+      [
+        "S",
+        "S",
+        "T",
+        "R",
+        "O",
+        "R",
+        "M",
+        "C"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OLD",
+        "direction": null
+      },
+      {
+        "word": "BARK",
+        "direction": null
+      },
+      {
+        "word": "MOON",
+        "direction": null
+      },
+      {
+        "word": "TRAIL",
+        "direction": null
+      },
+      {
+        "word": "STORM",
+        "direction": null
+      },
+      {
+        "word": "STREAM",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 118,
+    "initialGrid": [
+      [
+        "N",
+        "C",
+        "A",
+        "P",
+        "D",
+        "L",
+        "E",
+        "V"
+      ],
+      [
+        "Y",
+        "E",
+        "L",
+        "Q",
+        "I",
+        "Q",
+        "I",
+        "E"
+      ],
+      [
+        "H",
+        "B",
+        "Q",
+        "O",
+        "O",
+        "M",
+        "G",
+        "W"
+      ],
+      [
+        "I",
+        "R",
+        "C",
+        "S",
+        "T",
+        "L",
+        "T",
+        "X"
+      ],
+      [
+        "B",
+        "O",
+        "S",
+        "U",
+        "Z",
+        "E",
+        "S",
+        "H"
+      ],
+      [
+        "H",
+        "O",
+        "V",
+        "X",
+        "I",
+        "I",
+        "V",
+        "A"
+      ],
+      [
+        "Q",
+        "Z",
+        "Q",
+        "A",
+        "E",
+        "F",
+        "L",
+        "C"
+      ],
+      [
+        "S",
+        "C",
+        "N",
+        "T",
+        "S",
+        "W",
+        "E",
+        "L"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "RIB",
+        "direction": null
+      },
+      {
+        "word": "ROSE",
+        "direction": null
+      },
+      {
+        "word": "FISH",
+        "direction": null
+      },
+      {
+        "word": "QUILL",
+        "direction": null
+      },
+      {
+        "word": "BLOOM",
+        "direction": null
+      },
+      {
+        "word": "CANDLE",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 119,
+    "initialGrid": [
+      [
+        "D",
+        "F",
+        "B",
+        "U",
+        "L",
+        "A",
+        "F",
+        "A"
+      ],
+      [
+        "I",
+        "R",
+        "J",
+        "O",
+        "P",
+        "R",
+        "H",
+        "N"
+      ],
+      [
+        "V",
+        "K",
+        "O",
+        "A",
+        "J",
+        "E",
+        "U",
+        "E"
+      ],
+      [
+        "R",
+        "Y",
+        "P",
+        "S",
+        "I",
+        "S",
+        "E",
+        "W"
+      ],
+      [
+        "J",
+        "R",
+        "B",
+        "E",
+        "N",
+        "G",
+        "B",
+        "S"
+      ],
+      [
+        "X",
+        "C",
+        "L",
+        "F",
+        "Q",
+        "I",
+        "K",
+        "V"
+      ],
+      [
+        "A",
+        "B",
+        "A",
+        "E",
+        "B",
+        "V",
+        "T",
+        "T"
+      ],
+      [
+        "R",
+        "C",
+        "N",
+        "E",
+        "B",
+        "G",
+        "F",
+        "C"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "BEE",
+        "direction": null
+      },
+      {
+        "word": "RAIN",
+        "direction": null
+      },
+      {
+        "word": "BLUE",
+        "direction": null
+      },
+      {
+        "word": "CRANE",
+        "direction": null
+      },
+      {
+        "word": "FABLE",
+        "direction": null
+      },
+      {
+        "word": "FOREST",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 120,
+    "initialGrid": [
+      [
+        "Y",
+        "Q",
+        "X",
+        "L",
+        "L",
+        "O",
+        "W",
+        "O"
+      ],
+      [
+        "A",
+        "O",
+        "I",
+        "H",
+        "K",
+        "H",
+        "G",
+        "I"
+      ],
+      [
+        "J",
+        "W",
+        "P",
+        "D",
+        "E",
+        "B",
+        "W",
+        "R"
+      ],
+      [
+        "M",
+        "E",
+        "T",
+        "W",
+        "L",
+        "U",
+        "G",
+        "I"
+      ],
+      [
+        "O",
+        "O",
+        "P",
+        "P",
+        "T",
+        "E",
+        "B",
+        "M"
+      ],
+      [
+        "Y",
+        "U",
+        "S",
+        "F",
+        "Z",
+        "W",
+        "P",
+        "H"
+      ],
+      [
+        "L",
+        "U",
+        "M",
+        "S",
+        "I",
+        "O",
+        "J",
+        "Q"
+      ],
+      [
+        "F",
+        "B",
+        "K",
+        "T",
+        "C",
+        "T",
+        "O",
+        "X"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "FOX",
+        "direction": null
+      },
+      {
+        "word": "MOTH",
+        "direction": null
+      },
+      {
+        "word": "KELP",
+        "direction": null
+      },
+      {
+        "word": "TOWER",
+        "direction": null
+      },
+      {
+        "word": "MUSIC",
+        "direction": null
+      },
+      {
+        "word": "WILLOW",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 121,
+    "initialGrid": [
+      [
+        "J",
+        "P",
+        "M",
+        "W",
+        "O",
+        "Z",
+        "Q",
+        "J"
+      ],
+      [
+        "A",
+        "E",
+        "E",
+        "E",
+        "T",
+        "U",
+        "O",
+        "B"
+      ],
+      [
+        "N",
+        "W",
+        "S",
+        "A",
+        "D",
+        "C",
+        "W",
+        "G"
+      ],
+      [
+        "A",
+        "V",
+        "W",
+        "U",
+        "T",
+        "D",
+        "S",
+        "J"
+      ],
+      [
+        "A",
+        "D",
+        "A",
+        "I",
+        "H",
+        "O",
+        "S",
+        "U"
+      ],
+      [
+        "S",
+        "K",
+        "H",
+        "N",
+        "D",
+        "T",
+        "Q",
+        "A"
+      ],
+      [
+        "S",
+        "H",
+        "B",
+        "A",
+        "N",
+        "T",
+        "N",
+        "R"
+      ],
+      [
+        "W",
+        "L",
+        "W",
+        "R",
+        "V",
+        "N",
+        "E",
+        "M"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "PEN",
+        "direction": null
+      },
+      {
+        "word": "WIND",
+        "direction": null
+      },
+      {
+        "word": "VINE",
+        "direction": null
+      },
+      {
+        "word": "BRONZ",
+        "direction": null
+      },
+      {
+        "word": "HAVEN",
+        "direction": null
+      },
+      {
+        "word": "MEADOW",
+        "direction": null
+      },
+      {
+        "word": "JAGUARS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 122,
+    "initialGrid": [
+      [
+        "Z",
+        "K",
+        "B",
+        "S",
+        "L",
+        "C",
+        "Z",
+        "K"
+      ],
+      [
+        "C",
+        "Q",
+        "A",
+        "Y",
+        "I",
+        "M",
+        "R",
+        "S"
+      ],
+      [
+        "E",
+        "E",
+        "F",
+        "R",
+        "B",
+        "I",
+        "E",
+        "R"
+      ],
+      [
+        "K",
+        "C",
+        "R",
+        "I",
+        "S",
+        "B",
+        "M",
+        "Y"
+      ],
+      [
+        "G",
+        "V",
+        "Z",
+        "D",
+        "T",
+        "R",
+        "I",
+        "S"
+      ],
+      [
+        "O",
+        "B",
+        "P",
+        "G",
+        "F",
+        "O",
+        "L",
+        "T"
+      ],
+      [
+        "B",
+        "I",
+        "H",
+        "E",
+        "V",
+        "N",
+        "E",
+        "A"
+      ],
+      [
+        "L",
+        "G",
+        "G",
+        "O",
+        "W",
+        "D",
+        "M",
+        "Z"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "KEY",
+        "direction": null
+      },
+      {
+        "word": "MIST",
+        "direction": null
+      },
+      {
+        "word": "GOLD",
+        "direction": null
+      },
+      {
+        "word": "BRONZ",
+        "direction": null
+      },
+      {
+        "word": "SMILE",
+        "direction": null
+      },
+      {
+        "word": "BRIDGE",
+        "direction": null
+      },
+      {
+        "word": "CRYSTAL",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 123,
+    "initialGrid": [
+      [
+        "W",
+        "S",
+        "T",
+        "Z",
+        "P",
+        "G",
+        "A",
+        "D"
+      ],
+      [
+        "K",
+        "T",
+        "D",
+        "A",
+        "W",
+        "N",
+        "J",
+        "F"
+      ],
+      [
+        "D",
+        "V",
+        "S",
+        "T",
+        "R",
+        "J",
+        "V",
+        "P"
+      ],
+      [
+        "U",
+        "S",
+        "I",
+        "V",
+        "O",
+        "N",
+        "F",
+        "S"
+      ],
+      [
+        "F",
+        "E",
+        "A",
+        "Z",
+        "B",
+        "T",
+        "E",
+        "M"
+      ],
+      [
+        "F",
+        "O",
+        "M",
+        "B",
+        "L",
+        "Q",
+        "A",
+        "I"
+      ],
+      [
+        "E",
+        "D",
+        "A",
+        "U",
+        "I",
+        "D",
+        "L",
+        "I"
+      ],
+      [
+        "N",
+        "D",
+        "N",
+        "M",
+        "E",
+        "G",
+        "C",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "TAP",
+        "direction": null
+      },
+      {
+        "word": "SEED",
+        "direction": null
+      },
+      {
+        "word": "BLUE",
+        "direction": null
+      },
+      {
+        "word": "SMILE",
+        "direction": null
+      },
+      {
+        "word": "STONE",
+        "direction": null
+      },
+      {
+        "word": "PUFFIN",
+        "direction": null
+      },
+      {
+        "word": "DIAMOND",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 124,
+    "initialGrid": [
+      [
+        "Q",
+        "E",
+        "Q",
+        "I",
+        "P",
+        "J",
+        "C",
+        "D"
+      ],
+      [
+        "J",
+        "J",
+        "A",
+        "Q",
+        "X",
+        "I",
+        "N",
+        "A"
+      ],
+      [
+        "A",
+        "C",
+        "G",
+        "O",
+        "W",
+        "H",
+        "L",
+        "R"
+      ],
+      [
+        "G",
+        "E",
+        "Z",
+        "U",
+        "S",
+        "T",
+        "A",
+        "S"
+      ],
+      [
+        "W",
+        "F",
+        "G",
+        "I",
+        "B",
+        "L",
+        "E",
+        "W"
+      ],
+      [
+        "A",
+        "U",
+        "A",
+        "I",
+        "J",
+        "P",
+        "O",
+        "B"
+      ],
+      [
+        "R",
+        "B",
+        "T",
+        "R",
+        "D",
+        "A",
+        "E",
+        "S"
+      ],
+      [
+        "S",
+        "C",
+        "F",
+        "Y",
+        "X",
+        "P",
+        "L",
+        "Z"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "FOX",
+        "direction": null
+      },
+      {
+        "word": "BEAR",
+        "direction": null
+      },
+      {
+        "word": "WIND",
+        "direction": null
+      },
+      {
+        "word": "TIDAL",
+        "direction": null
+      },
+      {
+        "word": "EARTH",
+        "direction": null
+      },
+      {
+        "word": "CASTLE",
+        "direction": null
+      },
+      {
+        "word": "JAGUARS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 125,
+    "initialGrid": [
+      [
+        "E",
+        "M",
+        "G",
+        "N",
+        "W",
+        "S",
+        "J",
+        "F"
+      ],
+      [
+        "L",
+        "D",
+        "X",
+        "E",
+        "E",
+        "E",
+        "W",
+        "E"
+      ],
+      [
+        "N",
+        "M",
+        "B",
+        "U",
+        "O",
+        "L",
+        "L",
+        "F"
+      ],
+      [
+        "D",
+        "S",
+        "K",
+        "O",
+        "N",
+        "T",
+        "A",
+        "C"
+      ],
+      [
+        "U",
+        "X",
+        "R",
+        "P",
+        "K",
+        "P",
+        "A",
+        "T"
+      ],
+      [
+        "N",
+        "O",
+        "G",
+        "N",
+        "I",
+        "R",
+        "K",
+        "G"
+      ],
+      [
+        "H",
+        "S",
+        "E",
+        "G",
+        "L",
+        "R",
+        "U",
+        "L"
+      ],
+      [
+        "V",
+        "J",
+        "O",
+        "E",
+        "A",
+        "O",
+        "C",
+        "T"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OWL",
+        "direction": null
+      },
+      {
+        "word": "WOLF",
+        "direction": null
+      },
+      {
+        "word": "OPAL",
+        "direction": null
+      },
+      {
+        "word": "STONE",
+        "direction": null
+      },
+      {
+        "word": "EMBER",
+        "direction": null
+      },
+      {
+        "word": "SUNSET",
+        "direction": null
+      },
+      {
+        "word": "MONARCH",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 126,
+    "initialGrid": [
+      [
+        "X",
+        "B",
+        "U",
+        "I",
+        "F",
+        "D",
+        "P",
+        "M"
+      ],
+      [
+        "M",
+        "D",
+        "L",
+        "B",
+        "M",
+        "R",
+        "E",
+        "U"
+      ],
+      [
+        "M",
+        "B",
+        "E",
+        "G",
+        "A",
+        "C",
+        "I",
+        "S"
+      ],
+      [
+        "A",
+        "O",
+        "F",
+        "F",
+        "O",
+        "J",
+        "B",
+        "E"
+      ],
+      [
+        "O",
+        "R",
+        "R",
+        "O",
+        "D",
+        "R",
+        "L",
+        "S"
+      ],
+      [
+        "N",
+        "F",
+        "X",
+        "O",
+        "G",
+        "S",
+        "A",
+        "F"
+      ],
+      [
+        "S",
+        "T",
+        "B",
+        "R",
+        "W",
+        "L",
+        "N",
+        "O"
+      ],
+      [
+        "O",
+        "N",
+        "E",
+        "X",
+        "V",
+        "H",
+        "D",
+        "A"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OWL",
+        "direction": null
+      },
+      {
+        "word": "FROG",
+        "direction": null
+      },
+      {
+        "word": "MOON",
+        "direction": null
+      },
+      {
+        "word": "FLAME",
+        "direction": null
+      },
+      {
+        "word": "EMBER",
+        "direction": null
+      },
+      {
+        "word": "ISLAND",
+        "direction": null
+      },
+      {
+        "word": "SEAFOAM",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 127,
+    "initialGrid": [
+      [
+        "P",
+        "S",
+        "B",
+        "N",
+        "S",
+        "Z",
+        "R",
+        "K"
+      ],
+      [
+        "A",
+        "S",
+        "B",
+        "U",
+        "I",
+        "C",
+        "T",
+        "T"
+      ],
+      [
+        "M",
+        "U",
+        "L",
+        "X",
+        "E",
+        "D",
+        "S",
+        "U"
+      ],
+      [
+        "A",
+        "H",
+        "A",
+        "R",
+        "O",
+        "W",
+        "M",
+        "T"
+      ],
+      [
+        "U",
+        "W",
+        "I",
+        "M",
+        "R",
+        "G",
+        "L",
+        "N"
+      ],
+      [
+        "M",
+        "R",
+        "O",
+        "X",
+        "W",
+        "M",
+        "J",
+        "M"
+      ],
+      [
+        "I",
+        "K",
+        "H",
+        "T",
+        "A",
+        "R",
+        "H",
+        "L"
+      ],
+      [
+        "E",
+        "F",
+        "G",
+        "S",
+        "T",
+        "E",
+        "N",
+        "S"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "AXE",
+        "direction": null
+      },
+      {
+        "word": "STAR",
+        "direction": null
+      },
+      {
+        "word": "PUMA",
+        "direction": null
+      },
+      {
+        "word": "FROST",
+        "direction": null
+      },
+      {
+        "word": "LIGHT",
+        "direction": null
+      },
+      {
+        "word": "SUNSET",
+        "direction": null
+      },
+      {
+        "word": "AUTUMNS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 128,
+    "initialGrid": [
+      [
+        "T",
+        "T",
+        "O",
+        "W",
+        "C",
+        "O",
+        "L",
+        "D"
+      ],
+      [
+        "C",
+        "A",
+        "R",
+        "C",
+        "E",
+        "R",
+        "R",
+        "Y"
+      ],
+      [
+        "B",
+        "Y",
+        "U",
+        "W",
+        "H",
+        "P",
+        "E",
+        "M"
+      ],
+      [
+        "I",
+        "O",
+        "W",
+        "U",
+        "M",
+        "R",
+        "D",
+        "A"
+      ],
+      [
+        "L",
+        "L",
+        "C",
+        "W",
+        "N",
+        "K",
+        "T",
+        "N"
+      ],
+      [
+        "X",
+        "C",
+        "O",
+        "A",
+        "R",
+        "G",
+        "E",
+        "D"
+      ],
+      [
+        "M",
+        "B",
+        "O",
+        "D",
+        "O",
+        "Z",
+        "L",
+        "T"
+      ],
+      [
+        "C",
+        "Q",
+        "H",
+        "M",
+        "L",
+        "F",
+        "E",
+        "Y"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "CUP",
+        "direction": null
+      },
+      {
+        "word": "WOLF",
+        "direction": null
+      },
+      {
+        "word": "BARK",
+        "direction": null
+      },
+      {
+        "word": "BLOOM",
+        "direction": null
+      },
+      {
+        "word": "TOWER",
+        "direction": null
+      },
+      {
+        "word": "CANDLE",
+        "direction": null
+      },
+      {
+        "word": "ARCHERY",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 129,
+    "initialGrid": [
+      [
+        "N",
+        "D",
+        "F",
+        "G",
+        "I",
+        "O",
+        "R",
+        "P"
+      ],
+      [
+        "P",
+        "F",
+        "M",
+        "D",
+        "O",
+        "C",
+        "T",
+        "N"
+      ],
+      [
+        "O",
+        "S",
+        "H",
+        "B",
+        "R",
+        "G",
+        "Q",
+        "G"
+      ],
+      [
+        "F",
+        "A",
+        "H",
+        "E",
+        "A",
+        "R",
+        "U",
+        "T"
+      ],
+      [
+        "F",
+        "R",
+        "B",
+        "R",
+        "O",
+        "N",
+        "E",
+        "B"
+      ],
+      [
+        "I",
+        "B",
+        "L",
+        "E",
+        "Y",
+        "E",
+        "L",
+        "Q"
+      ],
+      [
+        "O",
+        "D",
+        "L",
+        "N",
+        "O",
+        "Z",
+        "Z",
+        "S"
+      ],
+      [
+        "H",
+        "R",
+        "C",
+        "Q",
+        "Y",
+        "A",
+        "M",
+        "P"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "NET",
+        "direction": null
+      },
+      {
+        "word": "FROG",
+        "direction": null
+      },
+      {
+        "word": "FISH",
+        "direction": null
+      },
+      {
+        "word": "PEARL",
+        "direction": null
+      },
+      {
+        "word": "BRONZ",
+        "direction": null
+      },
+      {
+        "word": "HARBOR",
+        "direction": null
+      },
+      {
+        "word": "DIAMOND",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 130,
+    "initialGrid": [
+      [
+        "P",
+        "D",
+        "O",
+        "E",
+        "N",
+        "W",
+        "H",
+        "C"
+      ],
+      [
+        "A",
+        "O",
+        "O",
+        "K",
+        "U",
+        "Q",
+        "E",
+        "J"
+      ],
+      [
+        "G",
+        "D",
+        "A",
+        "F",
+        "H",
+        "E",
+        "A",
+        "Q"
+      ],
+      [
+        "W",
+        "R",
+        "U",
+        "G",
+        "P",
+        "S",
+        "Z",
+        "O"
+      ],
+      [
+        "A",
+        "L",
+        "I",
+        "E",
+        "L",
+        "W",
+        "B",
+        "C"
+      ],
+      [
+        "R",
+        "I",
+        "E",
+        "X",
+        "O",
+        "I",
+        "L",
+        "H"
+      ],
+      [
+        "S",
+        "F",
+        "N",
+        "T",
+        "Y",
+        "Y",
+        "M",
+        "K"
+      ],
+      [
+        "R",
+        "T",
+        "R",
+        "A",
+        "I",
+        "M",
+        "X",
+        "B"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OAK",
+        "direction": null
+      },
+      {
+        "word": "FISH",
+        "direction": null
+      },
+      {
+        "word": "LAKE",
+        "direction": null
+      },
+      {
+        "word": "TOWER",
+        "direction": null
+      },
+      {
+        "word": "TRAIL",
+        "direction": null
+      },
+      {
+        "word": "BREEZE",
+        "direction": null
+      },
+      {
+        "word": "JAGUARS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 131,
+    "initialGrid": [
+      [
+        "L",
+        "J",
+        "K",
+        "P",
+        "L",
+        "X",
+        "O",
+        "D"
+      ],
+      [
+        "P",
+        "S",
+        "I",
+        "M",
+        "G",
+        "N",
+        "L",
+        "B"
+      ],
+      [
+        "H",
+        "P",
+        "E",
+        "P",
+        "A",
+        "E",
+        "U",
+        "L"
+      ],
+      [
+        "W",
+        "H",
+        "X",
+        "O",
+        "U",
+        "I",
+        "U",
+        "O"
+      ],
+      [
+        "A",
+        "P",
+        "A",
+        "G",
+        "S",
+        "G",
+        "E",
+        "E"
+      ],
+      [
+        "N",
+        "J",
+        "L",
+        "O",
+        "T",
+        "Z",
+        "H",
+        "D"
+      ],
+      [
+        "S",
+        "U",
+        "K",
+        "D",
+        "R",
+        "E",
+        "C",
+        "I"
+      ],
+      [
+        "T",
+        "W",
+        "R",
+        "T",
+        "L",
+        "I",
+        "X",
+        "X"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "LOG",
+        "direction": null
+      },
+      {
+        "word": "NEST",
+        "direction": null
+      },
+      {
+        "word": "BLUE",
+        "direction": null
+      },
+      {
+        "word": "PEARL",
+        "direction": null
+      },
+      {
+        "word": "MUSIC",
+        "direction": null
+      },
+      {
+        "word": "TURTLE",
+        "direction": null
+      },
+      {
+        "word": "PHOENIX",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 132,
+    "initialGrid": [
+      [
+        "J",
+        "Q",
+        "M",
+        "E",
+        "R",
+        "A",
+        "E",
+        "D"
+      ],
+      [
+        "A",
+        "N",
+        "G",
+        "I",
+        "M",
+        "E",
+        "L",
+        "G"
+      ],
+      [
+        "V",
+        "N",
+        "E",
+        "A",
+        "I",
+        "D",
+        "X",
+        "K"
+      ],
+      [
+        "R",
+        "S",
+        "P",
+        "L",
+        "A",
+        "O",
+        "Y",
+        "M"
+      ],
+      [
+        "U",
+        "I",
+        "Z",
+        "F",
+        "O",
+        "Y",
+        "O",
+        "N"
+      ],
+      [
+        "E",
+        "V",
+        "F",
+        "U",
+        "K",
+        "R",
+        "T",
+        "Y"
+      ],
+      [
+        "I",
+        "E",
+        "V",
+        "T",
+        "D",
+        "H",
+        "L",
+        "Z"
+      ],
+      [
+        "C",
+        "F",
+        "X",
+        "R",
+        "I",
+        "V",
+        "X",
+        "R"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OAK",
+        "direction": null
+      },
+      {
+        "word": "MOON",
+        "direction": null
+      },
+      {
+        "word": "FERN",
+        "direction": null
+      },
+      {
+        "word": "MUSIC",
+        "direction": null
+      },
+      {
+        "word": "RIVER",
+        "direction": null
+      },
+      {
+        "word": "TURTLE",
+        "direction": null
+      },
+      {
+        "word": "EMERALD",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 133,
+    "initialGrid": [
+      [
+        "M",
+        "R",
+        "B",
+        "E",
+        "W",
+        "S",
+        "X",
+        "C"
+      ],
+      [
+        "J",
+        "I",
+        "E",
+        "M",
+        "X",
+        "N",
+        "Q",
+        "Z"
+      ],
+      [
+        "T",
+        "I",
+        "A",
+        "E",
+        "O",
+        "I",
+        "O",
+        "G"
+      ],
+      [
+        "D",
+        "I",
+        "V",
+        "N",
+        "R",
+        "H",
+        "D",
+        "W"
+      ],
+      [
+        "R",
+        "S",
+        "O",
+        "U",
+        "G",
+        "B",
+        "H",
+        "B"
+      ],
+      [
+        "L",
+        "X",
+        "E",
+        "M",
+        "A",
+        "V",
+        "G",
+        "W"
+      ],
+      [
+        "O",
+        "E",
+        "L",
+        "D",
+        "D",
+        "Q",
+        "I",
+        "U"
+      ],
+      [
+        "R",
+        "N",
+        "A",
+        "E",
+        "O",
+        "A",
+        "S",
+        "G"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "BIG",
+        "direction": null
+      },
+      {
+        "word": "LION",
+        "direction": null
+      },
+      {
+        "word": "TREE",
+        "direction": null
+      },
+      {
+        "word": "RIVER",
+        "direction": null
+      },
+      {
+        "word": "MAGIC",
+        "direction": null
+      },
+      {
+        "word": "MEADOW",
+        "direction": null
+      },
+      {
+        "word": "DIAMOND",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 134,
+    "initialGrid": [
+      [
+        "R",
+        "O",
+        "O",
+        "G",
+        "R",
+        "R",
+        "D",
+        "P"
+      ],
+      [
+        "X",
+        "E",
+        "N",
+        "X",
+        "S",
+        "E",
+        "I",
+        "F"
+      ],
+      [
+        "Z",
+        "V",
+        "M",
+        "H",
+        "L",
+        "S",
+        "D",
+        "E"
+      ],
+      [
+        "I",
+        "X",
+        "P",
+        "M",
+        "V",
+        "E",
+        "O",
+        "D"
+      ],
+      [
+        "F",
+        "M",
+        "C",
+        "D",
+        "X",
+        "R",
+        "R",
+        "O"
+      ],
+      [
+        "R",
+        "W",
+        "A",
+        "B",
+        "J",
+        "O",
+        "I",
+        "R"
+      ],
+      [
+        "E",
+        "O",
+        "R",
+        "A",
+        "T",
+        "T",
+        "H",
+        "W"
+      ],
+      [
+        "M",
+        "H",
+        "H",
+        "F",
+        "B",
+        "C",
+        "H",
+        "U"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "HOT",
+        "direction": null
+      },
+      {
+        "word": "BIRD",
+        "direction": null
+      },
+      {
+        "word": "MOTH",
+        "direction": null
+      },
+      {
+        "word": "WHALE",
+        "direction": null
+      },
+      {
+        "word": "RIVER",
+        "direction": null
+      },
+      {
+        "word": "ORCHID",
+        "direction": null
+      },
+      {
+        "word": "MONARCH",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 135,
+    "initialGrid": [
+      [
+        "F",
+        "E",
+        "S",
+        "Y",
+        "A",
+        "R",
+        "P",
+        "Z"
+      ],
+      [
+        "Q",
+        "X",
+        "I",
+        "F",
+        "T",
+        "G",
+        "X",
+        "T"
+      ],
+      [
+        "E",
+        "E",
+        "A",
+        "E",
+        "L",
+        "B",
+        "M",
+        "U"
+      ],
+      [
+        "I",
+        "A",
+        "P",
+        "P",
+        "U",
+        "A",
+        "R",
+        "F"
+      ],
+      [
+        "L",
+        "R",
+        "A",
+        "R",
+        "G",
+        "D",
+        "I",
+        "E"
+      ],
+      [
+        "L",
+        "B",
+        "J",
+        "F",
+        "V",
+        "C",
+        "D",
+        "Q"
+      ],
+      [
+        "H",
+        "L",
+        "Z",
+        "F",
+        "G",
+        "X",
+        "A",
+        "G"
+      ],
+      [
+        "F",
+        "F",
+        "N",
+        "O",
+        "Y",
+        "D",
+        "E",
+        "S"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "AXE",
+        "direction": null
+      },
+      {
+        "word": "FIRE",
+        "direction": null
+      },
+      {
+        "word": "FROG",
+        "direction": null
+      },
+      {
+        "word": "GLADE",
+        "direction": null
+      },
+      {
+        "word": "QUILL",
+        "direction": null
+      },
+      {
+        "word": "BRIDGE",
+        "direction": null
+      },
+      {
+        "word": "JAGUARS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 136,
+    "initialGrid": [
+      [
+        "U",
+        "S",
+        "C",
+        "O",
+        "M",
+        "H",
+        "A",
+        "E"
+      ],
+      [
+        "P",
+        "T",
+        "A",
+        "R",
+        "A",
+        "R",
+        "S",
+        "E"
+      ],
+      [
+        "A",
+        "E",
+        "F",
+        "F",
+        "V",
+        "R",
+        "H",
+        "Z"
+      ],
+      [
+        "R",
+        "O",
+        "R",
+        "K",
+        "W",
+        "Q",
+        "S",
+        "H"
+      ],
+      [
+        "R",
+        "G",
+        "O",
+        "Q",
+        "B",
+        "H",
+        "P",
+        "E"
+      ],
+      [
+        "N",
+        "K",
+        "G",
+        "S",
+        "Y",
+        "L",
+        "W",
+        "E"
+      ],
+      [
+        "F",
+        "O",
+        "A",
+        "T",
+        "S",
+        "N",
+        "F",
+        "A"
+      ],
+      [
+        "Z",
+        "W",
+        "C",
+        "R",
+        "A",
+        "P",
+        "J",
+        "P"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "FAN",
+        "direction": null
+      },
+      {
+        "word": "HAWK",
+        "direction": null
+      },
+      {
+        "word": "STAR",
+        "direction": null
+      },
+      {
+        "word": "FROST",
+        "direction": null
+      },
+      {
+        "word": "CRANE",
+        "direction": null
+      },
+      {
+        "word": "COMPAS",
+        "direction": null
+      },
+      {
+        "word": "SPARROW",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 137,
+    "initialGrid": [
+      [
+        "E",
+        "H",
+        "Q",
+        "V",
+        "L",
+        "E",
+        "W",
+        "Y"
+      ],
+      [
+        "J",
+        "E",
+        "H",
+        "V",
+        "H",
+        "N",
+        "B",
+        "K"
+      ],
+      [
+        "R",
+        "P",
+        "S",
+        "S",
+        "G",
+        "R",
+        "C",
+        "A"
+      ],
+      [
+        "G",
+        "M",
+        "I",
+        "C",
+        "T",
+        "R",
+        "E",
+        "Y"
+      ],
+      [
+        "U",
+        "A",
+        "Q",
+        "A",
+        "B",
+        "G",
+        "E",
+        "I"
+      ],
+      [
+        "H",
+        "A",
+        "R",
+        "N",
+        "V",
+        "O",
+        "K",
+        "Z"
+      ],
+      [
+        "R",
+        "S",
+        "M",
+        "E",
+        "T",
+        "C",
+        "E",
+        "C"
+      ],
+      [
+        "S",
+        "H",
+        "K",
+        "A",
+        "V",
+        "E",
+        "N",
+        "O"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "NEW",
+        "direction": null
+      },
+      {
+        "word": "MIST",
+        "direction": null
+      },
+      {
+        "word": "CAVE",
+        "direction": null
+      },
+      {
+        "word": "MARSH",
+        "direction": null
+      },
+      {
+        "word": "HAVEN",
+        "direction": null
+      },
+      {
+        "word": "BREEZE",
+        "direction": null
+      },
+      {
+        "word": "JAGUARS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 138,
+    "initialGrid": [
+      [
+        "I",
+        "B",
+        "G",
+        "I",
+        "L",
+        "U",
+        "A",
+        "R"
+      ],
+      [
+        "L",
+        "D",
+        "N",
+        "A",
+        "Z",
+        "X",
+        "N",
+        "Z"
+      ],
+      [
+        "A",
+        "H",
+        "G",
+        "B",
+        "R",
+        "R",
+        "V",
+        "O"
+      ],
+      [
+        "K",
+        "S",
+        "A",
+        "G",
+        "B",
+        "L",
+        "K",
+        "E"
+      ],
+      [
+        "H",
+        "H",
+        "C",
+        "I",
+        "H",
+        "I",
+        "N",
+        "R"
+      ],
+      [
+        "L",
+        "H",
+        "X",
+        "N",
+        "A",
+        "O",
+        "O",
+        "R"
+      ],
+      [
+        "I",
+        "U",
+        "L",
+        "J",
+        "M",
+        "Q",
+        "N",
+        "X"
+      ],
+      [
+        "L",
+        "P",
+        "R",
+        "J",
+        "H",
+        "O",
+        "N",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OAK",
+        "direction": null
+      },
+      {
+        "word": "PUMA",
+        "direction": null
+      },
+      {
+        "word": "HILL",
+        "direction": null
+      },
+      {
+        "word": "RIVER",
+        "direction": null
+      },
+      {
+        "word": "GRAIN",
+        "direction": null
+      },
+      {
+        "word": "LAGOON",
+        "direction": null
+      },
+      {
+        "word": "BIGHORN",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 139,
+    "initialGrid": [
+      [
+        "S",
+        "W",
+        "U",
+        "F",
+        "O",
+        "G",
+        "Z",
+        "K"
+      ],
+      [
+        "H",
+        "T",
+        "U",
+        "R",
+        "I",
+        "F",
+        "T",
+        "Z"
+      ],
+      [
+        "L",
+        "A",
+        "L",
+        "Z",
+        "X",
+        "C",
+        "E",
+        "B"
+      ],
+      [
+        "U",
+        "V",
+        "H",
+        "R",
+        "R",
+        "K",
+        "E",
+        "P"
+      ],
+      [
+        "E",
+        "U",
+        "D",
+        "L",
+        "A",
+        "M",
+        "I",
+        "H"
+      ],
+      [
+        "T",
+        "Y",
+        "V",
+        "T",
+        "L",
+        "E",
+        "Y",
+        "E"
+      ],
+      [
+        "K",
+        "G",
+        "L",
+        "I",
+        "E",
+        "B",
+        "E",
+        "R"
+      ],
+      [
+        "W",
+        "W",
+        "S",
+        "S",
+        "R",
+        "W",
+        "L",
+        "S"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OWL",
+        "direction": null
+      },
+      {
+        "word": "BLUE",
+        "direction": null
+      },
+      {
+        "word": "FIRE",
+        "direction": null
+      },
+      {
+        "word": "WHALE",
+        "direction": null
+      },
+      {
+        "word": "FLAME",
+        "direction": null
+      },
+      {
+        "word": "TURTLE",
+        "direction": null
+      },
+      {
+        "word": "ZEPHYRS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 140,
+    "initialGrid": [
+      [
+        "G",
+        "C",
+        "S",
+        "G",
+        "G",
+        "C",
+        "B",
+        "T"
+      ],
+      [
+        "S",
+        "M",
+        "O",
+        "Q",
+        "G",
+        "C",
+        "E",
+        "Z"
+      ],
+      [
+        "R",
+        "C",
+        "D",
+        "C",
+        "M",
+        "U",
+        "Q",
+        "B"
+      ],
+      [
+        "U",
+        "U",
+        "O",
+        "I",
+        "R",
+        "E",
+        "A",
+        "N"
+      ],
+      [
+        "S",
+        "H",
+        "R",
+        "T",
+        "A",
+        "L",
+        "L",
+        "T"
+      ],
+      [
+        "M",
+        "R",
+        "U",
+        "E",
+        "B",
+        "M",
+        "L",
+        "Y"
+      ],
+      [
+        "M",
+        "N",
+        "D",
+        "R",
+        "U",
+        "F",
+        "T",
+        "B"
+      ],
+      [
+        "A",
+        "K",
+        "E",
+        "G",
+        "F",
+        "E",
+        "D",
+        "I"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "CAT",
+        "direction": null
+      },
+      {
+        "word": "BELL",
+        "direction": null
+      },
+      {
+        "word": "DRUM",
+        "direction": null
+      },
+      {
+        "word": "CORAL",
+        "direction": null
+      },
+      {
+        "word": "RIDGE",
+        "direction": null
+      },
+      {
+        "word": "SUMMIT",
+        "direction": null
+      },
+      {
+        "word": "AUTUMNS",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 141,
+    "initialGrid": [
+      [
+        "V",
+        "H",
+        "M",
+        "O",
+        "M",
+        "H",
+        "F",
+        "C"
+      ],
+      [
+        "A",
+        "J",
+        "P",
+        "F",
+        "A",
+        "O",
+        "X",
+        "V"
+      ],
+      [
+        "J",
+        "Q",
+        "N",
+        "M",
+        "R",
+        "H",
+        "N",
+        "D"
+      ],
+      [
+        "I",
+        "L",
+        "L",
+        "B",
+        "I",
+        "L",
+        "E",
+        "L"
+      ],
+      [
+        "E",
+        "C",
+        "G",
+        "T",
+        "E",
+        "O",
+        "T",
+        "O"
+      ],
+      [
+        "N",
+        "O",
+        "H",
+        "H",
+        "G",
+        "R",
+        "J",
+        "R"
+      ],
+      [
+        "Y",
+        "D",
+        "K",
+        "E",
+        "E",
+        "O",
+        "A",
+        "S"
+      ],
+      [
+        "S",
+        "A",
+        "S",
+        "P",
+        "T",
+        "I",
+        "R",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "LOG",
+        "direction": null
+      },
+      {
+        "word": "MOTH",
+        "direction": null
+      },
+      {
+        "word": "REEF",
+        "direction": null
+      },
+      {
+        "word": "STONE",
+        "direction": null
+      },
+      {
+        "word": "FROST",
+        "direction": null
+      },
+      {
+        "word": "VALLEY",
+        "direction": null
+      },
+      {
+        "word": "MONARCH",
+        "direction": null
+      },
+      {
+        "word": "SAPPHIRE",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 142,
+    "initialGrid": [
+      [
+        "D",
+        "C",
+        "E",
+        "A",
+        "E",
+        "R",
+        "L",
+        "L"
+      ],
+      [
+        "T",
+        "O",
+        "P",
+        "L",
+        "S",
+        "A",
+        "R",
+        "E"
+      ],
+      [
+        "J",
+        "R",
+        "I",
+        "Z",
+        "F",
+        "U",
+        "L",
+        "C"
+      ],
+      [
+        "J",
+        "R",
+        "V",
+        "I",
+        "F",
+        "F",
+        "A",
+        "R"
+      ],
+      [
+        "S",
+        "T",
+        "V",
+        "A",
+        "D",
+        "P",
+        "Z",
+        "N"
+      ],
+      [
+        "D",
+        "W",
+        "T",
+        "M",
+        "G",
+        "E",
+        "E",
+        "L"
+      ],
+      [
+        "V",
+        "K",
+        "R",
+        "R",
+        "K",
+        "T",
+        "L",
+        "R"
+      ],
+      [
+        "I",
+        "O",
+        "M",
+        "E",
+        "A",
+        "R",
+        "X",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "ZIP",
+        "direction": null
+      },
+      {
+        "word": "STAR",
+        "direction": null
+      },
+      {
+        "word": "REEF",
+        "direction": null
+      },
+      {
+        "word": "CORAL",
+        "direction": null
+      },
+      {
+        "word": "RIVER",
+        "direction": null
+      },
+      {
+        "word": "CANDLE",
+        "direction": null
+      },
+      {
+        "word": "EMERALD",
+        "direction": null
+      },
+      {
+        "word": "TREASURE",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 143,
+    "initialGrid": [
+      [
+        "T",
+        "P",
+        "O",
+        "W",
+        "K",
+        "W",
+        "I",
+        "C"
+      ],
+      [
+        "A",
+        "X",
+        "I",
+        "C",
+        "I",
+        "O",
+        "Y",
+        "M"
+      ],
+      [
+        "I",
+        "N",
+        "F",
+        "N",
+        "I",
+        "E",
+        "N",
+        "R"
+      ],
+      [
+        "Q",
+        "L",
+        "A",
+        "L",
+        "T",
+        "C",
+        "I",
+        "D"
+      ],
+      [
+        "P",
+        "P",
+        "D",
+        "N",
+        "A",
+        "C",
+        "E",
+        "N"
+      ],
+      [
+        "U",
+        "O",
+        "B",
+        "C",
+        "A",
+        "F",
+        "X",
+        "T"
+      ],
+      [
+        "F",
+        "L",
+        "M",
+        "V",
+        "V",
+        "X",
+        "V",
+        "S"
+      ],
+      [
+        "F",
+        "O",
+        "E",
+        "A",
+        "A",
+        "E",
+        "G",
+        "H"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OAK",
+        "direction": null
+      },
+      {
+        "word": "PUMA",
+        "direction": null
+      },
+      {
+        "word": "WIND",
+        "direction": null
+      },
+      {
+        "word": "STONE",
+        "direction": null
+      },
+      {
+        "word": "OCEAN",
+        "direction": null
+      },
+      {
+        "word": "POLLEN",
+        "direction": null
+      },
+      {
+        "word": "LANTERN",
+        "direction": null
+      },
+      {
+        "word": "MIDNIGHT",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 144,
+    "initialGrid": [
+      [
+        "A",
+        "I",
+        "R",
+        "U",
+        "Z",
+        "X",
+        "K",
+        "L"
+      ],
+      [
+        "L",
+        "N",
+        "E",
+        "D",
+        "W",
+        "I",
+        "B",
+        "D"
+      ],
+      [
+        "A",
+        "I",
+        "O",
+        "I",
+        "O",
+        "A",
+        "N",
+        "L"
+      ],
+      [
+        "O",
+        "X",
+        "V",
+        "L",
+        "T",
+        "R",
+        "B",
+        "G"
+      ],
+      [
+        "C",
+        "W",
+        "L",
+        "H",
+        "T",
+        "I",
+        "F",
+        "S"
+      ],
+      [
+        "E",
+        "O",
+        "P",
+        "S",
+        "U",
+        "R",
+        "I",
+        "S"
+      ],
+      [
+        "O",
+        "C",
+        "D",
+        "P",
+        "J",
+        "W",
+        "D",
+        "S"
+      ],
+      [
+        "T",
+        "D",
+        "G",
+        "U",
+        "X",
+        "N",
+        "H",
+        "M"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "OLD",
+        "direction": null
+      },
+      {
+        "word": "BIRD",
+        "direction": null
+      },
+      {
+        "word": "DUST",
+        "direction": null
+      },
+      {
+        "word": "TRAIL",
+        "direction": null
+      },
+      {
+        "word": "DANCE",
+        "direction": null
+      },
+      {
+        "word": "WILLOW",
+        "direction": null
+      },
+      {
+        "word": "BLOSSOM",
+        "direction": null
+      },
+      {
+        "word": "KINGFISH",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 145,
+    "initialGrid": [
+      [
+        "F",
+        "A",
+        "C",
+        "R",
+        "O",
+        "N",
+        "N",
+        "P"
+      ],
+      [
+        "L",
+        "E",
+        "C",
+        "M",
+        "R",
+        "N",
+        "G",
+        "F"
+      ],
+      [
+        "C",
+        "E",
+        "I",
+        "Q",
+        "E",
+        "I",
+        "C",
+        "V"
+      ],
+      [
+        "O",
+        "N",
+        "E",
+        "T",
+        "S",
+        "N",
+        "Q",
+        "E"
+      ],
+      [
+        "Z",
+        "O",
+        "V",
+        "A",
+        "M",
+        "N",
+        "A",
+        "G"
+      ],
+      [
+        "A",
+        "R",
+        "S",
+        "A",
+        "I",
+        "I",
+        "Z",
+        "F"
+      ],
+      [
+        "A",
+        "F",
+        "S",
+        "A",
+        "U",
+        "N",
+        "L",
+        "C"
+      ],
+      [
+        "C",
+        "L",
+        "T",
+        "L",
+        "I",
+        "D",
+        "A",
+        "R"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "ICE",
+        "direction": null
+      },
+      {
+        "word": "FIRE",
+        "direction": null
+      },
+      {
+        "word": "CAVE",
+        "direction": null
+      },
+      {
+        "word": "TIDAL",
+        "direction": null
+      },
+      {
+        "word": "FLAME",
+        "direction": null
+      },
+      {
+        "word": "FALCON",
+        "direction": null
+      },
+      {
+        "word": "LANTERN",
+        "direction": null
+      },
+      {
+        "word": "CROSSING",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 146,
+    "initialGrid": [
+      [
+        "Y",
+        "I",
+        "C",
+        "A",
+        "L",
+        "T",
+        "N",
+        "N"
+      ],
+      [
+        "D",
+        "H",
+        "L",
+        "G",
+        "H",
+        "E",
+        "A",
+        "R"
+      ],
+      [
+        "O",
+        "D",
+        "A",
+        "N",
+        "F",
+        "C",
+        "H",
+        "N"
+      ],
+      [
+        "B",
+        "U",
+        "P",
+        "T",
+        "H",
+        "M",
+        "G",
+        "F"
+      ],
+      [
+        "R",
+        "O",
+        "U",
+        "G",
+        "M",
+        "C",
+        "B",
+        "S"
+      ],
+      [
+        "R",
+        "A",
+        "Z",
+        "M",
+        "E",
+        "N",
+        "E",
+        "E"
+      ],
+      [
+        "N",
+        "Y",
+        "G",
+        "E",
+        "S",
+        "H",
+        "V",
+        "E"
+      ],
+      [
+        "Z",
+        "X",
+        "F",
+        "I",
+        "N",
+        "Y",
+        "O",
+        "E"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "BEE",
+        "direction": null
+      },
+      {
+        "word": "PUMA",
+        "direction": null
+      },
+      {
+        "word": "FISH",
+        "direction": null
+      },
+      {
+        "word": "EMBER",
+        "direction": null
+      },
+      {
+        "word": "BRONZ",
+        "direction": null
+      },
+      {
+        "word": "CANYON",
+        "direction": null
+      },
+      {
+        "word": "LANTERN",
+        "direction": null
+      },
+      {
+        "word": "HIGHLAND",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 147,
+    "initialGrid": [
+      [
+        "D",
+        "U",
+        "T",
+        "Z",
+        "O",
+        "W",
+        "R",
+        "N"
+      ],
+      [
+        "N",
+        "K",
+        "A",
+        "O",
+        "U",
+        "A",
+        "E",
+        "P"
+      ],
+      [
+        "K",
+        "R",
+        "K",
+        "Y",
+        "D",
+        "L",
+        "E",
+        "U"
+      ],
+      [
+        "W",
+        "G",
+        "E",
+        "H",
+        "L",
+        "A",
+        "P",
+        "H"
+      ],
+      [
+        "H",
+        "I",
+        "L",
+        "B",
+        "L",
+        "T",
+        "A",
+        "N"
+      ],
+      [
+        "N",
+        "A",
+        "N",
+        "N",
+        "G",
+        "T",
+        "M",
+        "K"
+      ],
+      [
+        "I",
+        "F",
+        "G",
+        "R",
+        "E",
+        "M",
+        "P",
+        "E"
+      ],
+      [
+        "H",
+        "R",
+        "O",
+        "G",
+        "W",
+        "N",
+        "R",
+        "D"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "KEY",
+        "direction": null
+      },
+      {
+        "word": "LAMP",
+        "direction": null
+      },
+      {
+        "word": "GLOW",
+        "direction": null
+      },
+      {
+        "word": "FABLE",
+        "direction": null
+      },
+      {
+        "word": "TOWER",
+        "direction": null
+      },
+      {
+        "word": "DRAGON",
+        "direction": null
+      },
+      {
+        "word": "KINDLER",
+        "direction": null
+      },
+      {
+        "word": "HIGHLAND",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 148,
+    "initialGrid": [
+      [
+        "A",
+        "U",
+        "J",
+        "F",
+        "S",
+        "H",
+        "D",
+        "A"
+      ],
+      [
+        "I",
+        "G",
+        "G",
+        "L",
+        "Z",
+        "E",
+        "P",
+        "P"
+      ],
+      [
+        "A",
+        "C",
+        "I",
+        "L",
+        "R",
+        "A",
+        "E",
+        "S"
+      ],
+      [
+        "W",
+        "E",
+        "F",
+        "N",
+        "B",
+        "E",
+        "M",
+        "H"
+      ],
+      [
+        "M",
+        "A",
+        "D",
+        "G",
+        "M",
+        "N",
+        "F",
+        "P"
+      ],
+      [
+        "I",
+        "P",
+        "L",
+        "N",
+        "C",
+        "Y",
+        "R",
+        "R"
+      ],
+      [
+        "E",
+        "N",
+        "F",
+        "I",
+        "I",
+        "Z",
+        "A",
+        "E"
+      ],
+      [
+        "N",
+        "M",
+        "L",
+        "O",
+        "E",
+        "N",
+        "L",
+        "S"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "ICE",
+        "direction": null
+      },
+      {
+        "word": "LAMP",
+        "direction": null
+      },
+      {
+        "word": "FISH",
+        "direction": null
+      },
+      {
+        "word": "MAGIC",
+        "direction": null
+      },
+      {
+        "word": "EAGLE",
+        "direction": null
+      },
+      {
+        "word": "PUFFIN",
+        "direction": null
+      },
+      {
+        "word": "EMERALD",
+        "direction": null
+      },
+      {
+        "word": "SAPPHIRE",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 149,
+    "initialGrid": [
+      [
+        "M",
+        "J",
+        "G",
+        "I",
+        "L",
+        "O",
+        "O",
+        "Z"
+      ],
+      [
+        "B",
+        "M",
+        "I",
+        "C",
+        "W",
+        "O",
+        "G",
+        "X"
+      ],
+      [
+        "D",
+        "R",
+        "L",
+        "S",
+        "A",
+        "V",
+        "R",
+        "H"
+      ],
+      [
+        "N",
+        "A",
+        "D",
+        "I",
+        "B",
+        "L",
+        "C",
+        "L"
+      ],
+      [
+        "I",
+        "N",
+        "M",
+        "O",
+        "N",
+        "R",
+        "A",
+        "M"
+      ],
+      [
+        "G",
+        "E",
+        "S",
+        "S",
+        "L",
+        "V",
+        "W",
+        "Y"
+      ],
+      [
+        "H",
+        "N",
+        "V",
+        "T",
+        "T",
+        "B",
+        "O",
+        "W"
+      ],
+      [
+        "T",
+        "R",
+        "A",
+        "Y",
+        "I",
+        "D",
+        "G",
+        "W"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "LOG",
+        "direction": null
+      },
+      {
+        "word": "STAR",
+        "direction": null
+      },
+      {
+        "word": "GOLD",
+        "direction": null
+      },
+      {
+        "word": "CRANE",
+        "direction": null
+      },
+      {
+        "word": "STORM",
+        "direction": null
+      },
+      {
+        "word": "WILLOW",
+        "direction": null
+      },
+      {
+        "word": "RAINBOW",
+        "direction": null
+      },
+      {
+        "word": "MIDNIGHT",
+        "direction": null
+      }
+    ]
+  },
+  {
+    "levelId": 150,
+    "initialGrid": [
+      [
+        "S",
+        "S",
+        "O",
+        "L",
+        "J",
+        "N",
+        "O",
+        "P"
+      ],
+      [
+        "R",
+        "N",
+        "N",
+        "B",
+        "O",
+        "R",
+        "G",
+        "S"
+      ],
+      [
+        "V",
+        "N",
+        "X",
+        "E",
+        "M",
+        "R",
+        "S",
+        "E"
+      ],
+      [
+        "U",
+        "B",
+        "F",
+        "M",
+        "N",
+        "C",
+        "H",
+        "R"
+      ],
+      [
+        "F",
+        "S",
+        "R",
+        "E",
+        "L",
+        "O",
+        "L",
+        "Z"
+      ],
+      [
+        "V",
+        "Z",
+        "K",
+        "E",
+        "L",
+        "X",
+        "M",
+        "E"
+      ],
+      [
+        "H",
+        "D",
+        "H",
+        "W",
+        "R",
+        "A",
+        "H",
+        "W"
+      ],
+      [
+        "A",
+        "A",
+        "T",
+        "C",
+        "D",
+        "L",
+        "J",
+        "L"
+      ]
+    ],
+    "targetWords": [
+      {
+        "word": "RUN",
+        "direction": null
+      },
+      {
+        "word": "BELL",
+        "direction": null
+      },
+      {
+        "word": "MOSS",
+        "direction": null
+      },
+      {
+        "word": "FLAME",
+        "direction": null
+      },
+      {
+        "word": "SHELL",
+        "direction": null
+      },
+      {
+        "word": "HARBOR",
+        "direction": null
+      },
+      {
+        "word": "LANTERN",
+        "direction": null
+      },
+      {
+        "word": "SNOWDROP",
+        "direction": null
+      }
+    ]
   }
 ]

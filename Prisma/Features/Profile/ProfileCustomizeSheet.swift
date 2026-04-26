@@ -61,13 +61,6 @@ struct ProfileCustomizeSheet: View {
                             isOn: $prefs.showSolveTimeStats
                         )
                         SectionToggle(
-                            title: "Leaderboards",
-                            subtitle: "Game Center leaderboard preview",
-                            icon: "trophy.fill",
-                            color: .yellow,
-                            isOn: $prefs.showLeaderboards
-                        )
-                        SectionToggle(
                             title: "Badges",
                             subtitle: "Achievement badge collection",
                             icon: "star.circle.fill",

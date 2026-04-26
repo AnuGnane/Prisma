@@ -49,16 +49,14 @@ struct ShiftPuzzle: Equatable {
     let initialGrid: ShiftGrid
     let solutionGrid: ShiftGrid?
     let targetWords: [TargetWord]
-    let optimalMoveCount: Int
 
     var isDaily: Bool { id < 0 }
 
     init(id: Int, initialGrid: ShiftGrid, targetWords: [TargetWord],
-         optimalMoveCount: Int, solutionGrid: ShiftGrid? = nil) {
+         solutionGrid: ShiftGrid? = nil) {
         self.id = id
         self.initialGrid = initialGrid
         self.solutionGrid = solutionGrid
         self.targetWords = targetWords
-        self.optimalMoveCount = optimalMoveCount
     }
 }

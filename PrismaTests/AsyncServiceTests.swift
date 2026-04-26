@@ -104,11 +104,14 @@ private struct AsyncGameCenterCoordinator {
     let service: GameCenterService
 
     func submitDailyWin(score: Int) async throws {
+        // Phase 2 (2026-04-25): streak boards no longer written. Coverage of
+        // multi-ID submission is preserved by including localMastery alongside
+        // the daily-best ID — both are real, configured leaderboards.
         try await service.submitScore(
             score,
             leaderboardIDs: [
                 GameCenterManager.Leaderboard.signalsDailyBest,
-                GameCenterManager.Leaderboard.signalsDailyStreak
+                GameCenterManager.Leaderboard.localMastery
             ]
         )
     }
@@ -143,7 +146,7 @@ struct AsyncServiceTests {
             score: 420,
             leaderboardIDs: [
                 GameCenterManager.Leaderboard.signalsDailyBest,
-                GameCenterManager.Leaderboard.signalsDailyStreak
+                GameCenterManager.Leaderboard.localMastery
             ]
         ))
     }
@@ -164,16 +167,22 @@ struct AsyncServiceTests {
         let mock = MockGameCenterService()
         let coordinator = AsyncGameCenterCoordinator(service: mock)
 
+        // Use a literal placeholder ID — the test exercises the clamping
+        // logic in the coordinator/mock layer, not the real production
+        // achievement set (which no longer contains progress-style IDs
+        // after Phase 4's local-mastery achievement removal).
+        let placeholderID = "test.progress.placeholder"
+
         try await coordinator.submitProgressAchievement(
             current: 130,
             target: 100,
-            achievementID: GameCenterManager.Achievement.local100
+            achievementID: placeholderID
         )
 
         let achievements = await mock.snapshotAchievements()
         #expect(achievements.count == 1)
         #expect(achievements.first == AchievementSubmission(
-            id: GameCenterManager.Achievement.local100,
+            id: placeholderID,
             percentComplete: 100
         ))
     }

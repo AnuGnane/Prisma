@@ -155,7 +155,8 @@ struct CircuitGameView: View {
         #endif
 
         withAnimation(.easeOut(duration: 0.12)) { winPulse = 1.0 }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+        Task {
+            try? await Task.sleep(for: .milliseconds(120))
             withAnimation(.easeInOut(duration: 0.55)) { winPulse = 0.0 }
         }
     }
@@ -164,25 +165,15 @@ struct CircuitGameView: View {
         guard !hasSavedResult else { return }
         guard case .completed = viewModel.gameState else { return }
 
-        if viewModel.isDaily,
-           PersistenceManager.fetchDailyResult(for: .circuit, on: .now, context: modelContext) != nil {
-            hasSavedResult = true
-            return
-        }
-
         let result = viewModel.buildGameResult()
+        // ScoreManager handles persistence dedup internally.
+        // GameCenterManager.claimDailyGCSubmission guards against duplicate GC calls.
         ScoreManager.shared.processAndSaveResult(result, context: modelContext)
         hasSavedResult = true
     }
 
     private func saveGiveUpIfNeeded() {
         guard !hasSavedResult else { return }
-
-        if viewModel.isDaily,
-           PersistenceManager.fetchDailyResult(for: .circuit, on: .now, context: modelContext) != nil {
-            hasSavedResult = true
-            return
-        }
 
         let result = viewModel.buildGameResult()
         ScoreManager.shared.processAndSaveResult(result, context: modelContext)
@@ -356,7 +347,11 @@ private struct CircuitSolutionGridView: View {
             if let vm = solutionVM {
                 CircuitGridView(viewModel: vm, allowsDrawing: false)
             } else {
-                ContentUnavailableView("No Solution Available", systemImage: "xmark.circle")
+                AppEmptyState(
+                    systemImage: "xmark.circle",
+                    title: "No solution available",
+                    message: "We couldn't load a solution for this board."
+                )
             }
 
             Button {

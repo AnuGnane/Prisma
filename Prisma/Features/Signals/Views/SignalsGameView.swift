@@ -568,15 +568,10 @@ extension SignalsGameView {
             gc.submitScore(viewModel.guessCount,
                            leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyBest])
 
-            // Update streak and submit
-            let streak = StreakManager.recordDailyWin(game: "signals")
-            gc.submitScore(streak,
-                           leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyStreak])
-
-            // Streak achievements
-            if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
-            if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
-            if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
+            // Record the daily-win for the in-app streak counter. Streaks are
+            // intentionally app-only — no Game Center leaderboard, no GC
+            // achievements (Phase 4, 2026-04-25).
+            _ = StreakManager.recordDailyWin(game: "signals")
 
             // Perfect score (1 guess)
             if viewModel.guessCount == 1 {
@@ -585,14 +580,12 @@ extension SignalsGameView {
         }
 
         if !viewModel.isDaily && didWin {
-            // Count all won local levels across both games for mastery
+            // Local Mastery leaderboard still updates. Local mastery
+            // *achievements* removed in Phase 4 (2026-04-25) — milestones
+            // now live in `Badge.local25 / 50 / 100`.
             let totalWon = PersistenceManager.totalLocalWins(context: modelContext)
             gc.submitScore(totalWon,
                            leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
-
-            gc.reportProgressAchievement(GameCenterManager.Achievement.local25, current: totalWon, target: 25)
-            gc.reportProgressAchievement(GameCenterManager.Achievement.local50, current: totalWon, target: 50)
-            gc.reportProgressAchievement(GameCenterManager.Achievement.local100, current: totalWon, target: 100)
         }
     }
 }

@@ -112,7 +112,8 @@ struct ShiftGameView: View {
                 return
             }
             moveCountBounce = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            Task {
+                try? await Task.sleep(for: .milliseconds(250))
                 moveCountBounce = false
             }
         }
@@ -135,31 +136,13 @@ struct ShiftGameView: View {
     // MARK: - Save & Dismiss (after completion or give-up)
 
     private func saveAndDismiss() {
-        // Prevent duplicate daily saves
-        if !viewModel.isDaily || PersistenceManager.fetchDailyResult(for: .shift, on: .now, context: modelContext) == nil {
-            let result = viewModel.buildGameResult()
-            modelContext.insert(result)
-            try? modelContext.save()
-        }
-        if let lvl = viewModel.activeLevelId {
-            let won: Bool
-            if case .completed = viewModel.gameState { won = true } else { won = false }
-            let sc: Int
-            if case .completed(let s) = viewModel.gameState { sc = s } else { sc = 0 }
-            PersistenceManager.markLevelPlayed(gameType: .shift, levelId: lvl, won: won, score: sc,
-                                                guessesUsed: viewModel.moveCount,
-                                                durationSeconds: viewModel.elapsedSeconds,
-                                                context: modelContext)
-        }
-        // Record daily streak and report to Game Center
-        if viewModel.isDaily, case .completed = viewModel.gameState {
-            let streak = StreakManager.recordDailyWin(game: "shift")
-            let gc = GameCenterManager.shared
-            gc.submitScore(streak, leaderboardIDs: [GameCenterManager.Leaderboard.signalsDailyStreak])
-            if streak >= 3  { gc.reportAchievement(GameCenterManager.Achievement.streak3) }
-            if streak >= 7  { gc.reportAchievement(GameCenterManager.Achievement.streak7) }
-            if streak >= 30 { gc.reportAchievement(GameCenterManager.Achievement.streak30) }
-        }
+        let result = viewModel.buildGameResult()
+
+        // Route through centralised ScoreManager — handles daily dedup,
+        // level progression, GC score submission, streak tracking,
+        // and all achievement reporting in one place.
+        ScoreManager.shared.processAndSaveResult(result, context: modelContext)
+
         dismiss()
     }
 }

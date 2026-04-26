@@ -171,15 +171,17 @@ struct CargoGrid: Equatable {
     // MARK: - Solution Helpers
 
     /// Fills the grid using pieces' absolute solution coordinates.
-    /// Uses `solutionCells` (stored by the generator as absolute grid positions) when
-    /// available, falling back to `baseCells` for JSON-loaded puzzles.
+    ///
+    /// Expects every piece to have `solutionCells` populated. Pieces missing
+    /// that data are skipped — earlier versions fell back to `baseCells`,
+    /// which painted every such piece stacked at (0,0). Callers that need a
+    /// guaranteed complete solution should pre-check via
+    /// `CargoGameViewModel.buildSolutionGrid()`.
     mutating func populateSolutionMode(with pieces: [CargoPiece]) {
         for piece in pieces {
-            let coords = piece.solutionCells ?? piece.baseCells
-            for coord in coords {
-                if isInBounds(coord) {
-                    cells[coord.row][coord.col] = .filled(pieceId: piece.id)
-                }
+            guard let coords = piece.solutionCells else { continue }
+            for coord in coords where isInBounds(coord) {
+                cells[coord.row][coord.col] = .filled(pieceId: piece.id)
             }
         }
     }

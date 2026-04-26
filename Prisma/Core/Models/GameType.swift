@@ -43,4 +43,20 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         case .circuit: return "point.3.connected.trianglepath.dotted"
         }
     }
+
+    /// Number of curated local progression levels available for this game.
+    ///
+    /// Used by `LevelSelectorView` to size the tile grid and by progress stats
+    /// to compute completion percentages. As each game's catalog is expanded
+    /// toward the 150-level floor, bump its value here. Keeping this per-game
+    /// means a Signals bump doesn't expose unloadable tiles for other games.
+    var localLevelCount: Int {
+        switch self {
+        case .signals: return 150
+        case .archive: return 100
+        case .cargo:   return 150
+        case .shift:   return 150
+        case .circuit: return 150
+        }
+    }
 }

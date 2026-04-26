@@ -81,10 +81,11 @@ final class SignalsGameViewModel: ShareStringGenerator {
     // The random code for progression generates deterministically using the level integer so it's always the same puzzle.
 
     init(level: Int) {
+        let config = SignalsLevelCatalog.levelOrDefault(id: level)
         let seed = level &* 73856093 ^ 19349669
-        let code = SignalsCode(fromSeed: seed)
+        let code = SignalsCode(fromSeed: seed, digitRange: config.digitRange)
         self.secretCode = code
-        self.maxGuesses = 5
+        self.maxGuesses = config.maxGuesses
         self.gameState = .inProgress
         self.isDaily = false
         self.activeLevelId = level
@@ -92,10 +93,11 @@ final class SignalsGameViewModel: ShareStringGenerator {
 
     /// Loads a specific level, resetting all game state.
     func loadLevel(_ level: Int) {
+        let config = SignalsLevelCatalog.levelOrDefault(id: level)
         let seed = level &* 73856093 ^ 19349669
-        let code = SignalsCode(fromSeed: seed)
+        let code = SignalsCode(fromSeed: seed, digitRange: config.digitRange)
         self.secretCode = code
-        self.maxGuesses = 5
+        self.maxGuesses = config.maxGuesses
         self.gameState = .inProgress
         self.guessHistory = []
         self.currentInput = [nil, nil, nil, nil]

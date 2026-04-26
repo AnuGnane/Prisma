@@ -29,8 +29,19 @@ struct SignalsCode: Equatable {
     /// Creates a deterministic code from an integer seed (e.g. today's daily seed).
     /// Uses a simple LCG so the same seed always produces the same code.
     init(fromSeed seed: Int) {
+        self.init(fromSeed: seed, digitRange: 0...9)
+    }
+
+    /// Creates a deterministic code from an integer seed, restricting digits
+    /// to the given closed range. Used for progression levels where the
+    /// level config narrows the digit set (e.g. 1...6 for novice puzzles).
+    ///
+    /// The range must be within 0...9 because `SignalsCode` still only
+    /// accepts digits 0–9; validation enforces this in `init(digits:)`.
+    init(fromSeed seed: Int, digitRange: ClosedRange<Int>) {
+        let clamped = max(0, digitRange.lowerBound)...min(9, digitRange.upperBound)
         var rng = SeededGenerator(seed: seed)
-        let d = (0..<4).map { _ in Int.random(in: 0...9, using: &rng) }
+        let d = (0..<4).map { _ in Int.random(in: clamped, using: &rng) }
         self.init(digits: d)
     }
 }

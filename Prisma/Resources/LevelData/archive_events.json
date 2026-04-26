@@ -6,7 +6,7 @@
         "year": 1969,
         "hint": "One small step changed it all",
         "event": "Apollo 11 Moon Landing",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Armstrong's bootprints are still up there \u2014 the Moon has no wind or rain to wash them away, so they'll last millions of years."
     },
     {
         "id": 2,
@@ -15,7 +15,7 @@
         "year": 1912,
         "hint": "An unsinkable promise, broken by ice",
         "event": "Sinking of the Titanic",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Titanic's orchestra kept playing as the ship went down. All eight musicians drowned. None were paid for their final shift."
     },
     {
         "id": 3,
@@ -24,7 +24,7 @@
         "year": 1989,
         "hint": "A divided city reunited overnight",
         "event": "Fall of the Berlin Wall",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? East Germans didn't just walk through \u2014 they brought hammers. 'Mauerspechte' (wall woodpeckers) chipped souvenirs for months."
     },
     {
         "id": 4,
@@ -33,7 +33,7 @@
         "year": 1963,
         "hint": "A dream spoken to a quarter million",
         "event": "MLK 'I Have a Dream' Speech",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? King's most famous line, 'I have a dream', wasn't in the prepared speech. Mahalia Jackson shouted for it and he went off-script."
     },
     {
         "id": 5,
@@ -42,7 +42,7 @@
         "year": 1944,
         "hint": "The longest day on five beaches",
         "event": "D-Day Normandy Landings",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Eisenhower carried a pre-written resignation note in case D-Day failed, taking full blame. He never needed to hand it over."
     },
     {
         "id": 6,
@@ -51,7 +51,7 @@
         "year": 1789,
         "hint": "A fortress-prison stormed by revolution",
         "event": "Storming of the Bastille",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Bastille held only seven prisoners the day it was stormed, including one convicted of incest and four forgers."
     },
     {
         "id": 7,
@@ -60,7 +60,7 @@
         "year": 1492,
         "hint": "Three ships found a continent by mistake",
         "event": "Columbus reaches the Americas",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Columbus never admitted he hadn't reached Asia. To his dying day he insisted the Caribbean was somewhere off the coast of India."
     },
     {
         "id": 8,
@@ -69,7 +69,7 @@
         "year": 2001,
         "hint": "A morning that changed airport security forever",
         "event": "September 11 Attacks",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Every US commercial flight was grounded within two hours \u2014 around 4,500 planes. Airspace stayed closed for nearly three days."
     },
     {
         "id": 9,
@@ -78,7 +78,7 @@
         "year": 1963,
         "hint": "A motorcade in Dallas ended an era",
         "event": "Assassination of JFK",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Jackie Kennedy refused to change out of her blood-stained pink Chanel suit. 'Let them see what they've done,' she said."
     },
     {
         "id": 10,
@@ -87,7 +87,7 @@
         "year": 1945,
         "hint": "A blinding flash over a Japanese city",
         "event": "Atomic bombing of Hiroshima",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Hiroshima bomb's core was a grapefruit-sized lump of uranium. Less than 2% of it actually fissioned."
     },
     {
         "id": 11,
@@ -96,7 +96,7 @@
         "year": 1953,
         "hint": "Westminster Abbey crowned a new era",
         "event": "Coronation of Queen Elizabeth II",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Queen's coronation was the first ever televised \u2014 a choice she pushed for despite Churchill and Parliament opposing it."
     },
     {
         "id": 12,
@@ -105,7 +105,7 @@
         "year": 1776,
         "hint": "Thirteen colonies signed their freedom",
         "event": "US Declaration of Independence",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Most signers didn't actually sign on July 4. The famous signing ceremony happened nearly a month later, on August 2, 1776."
     },
     {
         "id": 13,
@@ -114,7 +114,7 @@
         "year": 1815,
         "hint": "A battlefield in Belgium ended an emperor",
         "event": "Battle of Waterloo",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Napoleon was defeated partly by rain. Wet ground delayed his artillery and gave Prussian reinforcements time to arrive."
     },
     {
         "id": 14,
@@ -123,7 +123,7 @@
         "year": 1961,
         "hint": "108 minutes orbiting Earth for the first time",
         "event": "Yuri Gagarin's spaceflight",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Gagarin ejected from his capsule at 7km altitude and parachuted down separately \u2014 a fact the Soviets hid for years to claim records."
     },
     {
         "id": 15,
@@ -132,7 +132,7 @@
         "year": 2000,
         "hint": "Fireworks, fear of bugs, and a new millennium",
         "event": "Y2K / Millennium celebrations",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Programmers were so worried about Y2K that over $300 billion was spent worldwide. When midnight struck, almost nothing broke."
     },
     {
         "id": 16,
@@ -141,7 +141,7 @@
         "year": 1914,
         "hint": "A bullet in Sarajevo lit the fuse",
         "event": "Assassination of Archduke Franz Ferdinand",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The assassin's car had taken a wrong turn. Franz Ferdinand was shot because his driver stopped to reverse \u2014 right next to the gunman."
     },
     {
         "id": 17,
@@ -150,7 +150,7 @@
         "year": 1918,
         "hint": "The eleventh hour of the eleventh day",
         "event": "World War I Armistice",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Armistice was literally signed at 5am but didn't take effect until 11am. Nearly 11,000 soldiers died in those final six hours."
     },
     {
         "id": 18,
@@ -159,7 +159,7 @@
         "year": 2007,
         "hint": "A glass rectangle in your pocket changed everything",
         "event": "First iPhone released",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Steve Jobs insisted the iPhone have no physical keyboard. Most engineers thought customers would hate it. Over 2 billion sold since."
     },
     {
         "id": 19,
@@ -168,7 +168,7 @@
         "year": 1066,
         "hint": "A Norman duke claimed England's throne",
         "event": "Coronation of William the Conqueror",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? William the Conqueror's coronation ended in chaos \u2014 cheering crowds outside were mistaken for a riot, and soldiers set London alight."
     },
     {
         "id": 20,
@@ -177,7 +177,7 @@
         "year": 1605,
         "hint": "Barrels of gunpowder beneath Parliament",
         "event": "Gunpowder Plot discovered",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Guy Fawkes was the explosives expert, not the mastermind. He was caught at midnight guarding 36 barrels of gunpowder in the cellar."
     },
     {
         "id": 21,
@@ -186,7 +186,7 @@
         "year": 1966,
         "hint": "England's finest 90 minutes \u2014 and a few more",
         "event": "England wins the FIFA World Cup",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? England's World Cup win was nearly voided \u2014 the winning goal in extra time probably didn't fully cross the line. Debate still rages."
     },
     {
         "id": 22,
@@ -195,7 +195,7 @@
         "year": 1986,
         "hint": "Reactor number four couldn't be contained",
         "event": "Chernobyl nuclear disaster",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Chernobyl exclusion zone is now one of Europe's largest wildlife sanctuaries. Wolves, lynx, and bison have reclaimed it."
     },
     {
         "id": 23,
@@ -204,7 +204,7 @@
         "year": 1990,
         "hint": "27 years behind bars, then a walk to freedom",
         "event": "Nelson Mandela released from prison",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? After 27 years in prison, Mandela still had to adjust to tiny things \u2014 like an electric toothbrush, which he'd never seen before."
     },
     {
         "id": 24,
@@ -213,7 +213,7 @@
         "year": 1986,
         "hint": "73 seconds after liftoff, the sky split in two",
         "event": "Space Shuttle Challenger disaster",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Challenger was destroyed by a 25-cent rubber O-ring that froze stiff in unusually cold Florida weather the night before launch."
     },
     {
         "id": 25,
@@ -222,7 +222,7 @@
         "year": 1215,
         "hint": "A meadow by the Thames, a king's hand forced to sign",
         "event": "Signing of the Magna Carta",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? King John didn't actually sign the Magna Carta \u2014 he sealed it with wax. Most people couldn't write, including kings."
     },
     {
         "id": 26,
@@ -231,7 +231,7 @@
         "year": 1997,
         "hint": "A tunnel in Paris and a people's princess",
         "event": "Death of Princess Diana",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Diana's funeral was watched by over 2.5 billion people live \u2014 one of the largest broadcast audiences in human history at the time."
     },
     {
         "id": 27,
@@ -240,7 +240,7 @@
         "year": 1773,
         "hint": "A harbour full of tea, dumped in protest",
         "event": "Boston Tea Party",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Boston Tea Party destroyed 342 chests of tea worth about $1.7 million in today's money. Protestors dressed as Mohawks to disguise themselves."
     },
     {
         "id": 28,
@@ -249,7 +249,7 @@
         "year": 2011,
         "hint": "The final shuttle touched down for good",
         "event": "Last Space Shuttle mission (STS-135)",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Space Shuttle fleet flew 135 missions over 30 years. Atlantis, the last to land, is now on display \u2014 still scorched from re-entry."
     },
     {
         "id": 29,
@@ -258,7 +258,7 @@
         "year": 1994,
         "hint": "The rainbow nation inaugurated its first",
         "event": "Nelson Mandela inaugurated as President",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? At his inauguration, Mandela invited his white former jailer to sit in the front row as a VIP guest. The jailer cried."
     },
     {
         "id": 30,
@@ -267,7 +267,7 @@
         "year": 1945,
         "hint": "Dancing in the streets of London and beyond",
         "event": "VE Day \u2014 Victory in Europe",
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? London threw a massive street party for VE Day, and a young Princess Elizabeth snuck out of the palace to join the celebrating crowds incognito."
     },
     {
         "day": 4,
@@ -276,7 +276,7 @@
         "hint": "A beeping sphere started the space race",
         "event": "Sputnik 1 Launch",
         "id": 31,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Sputnik 1 orbited for only three months, but its radio beep could be heard by ham radio operators worldwide \u2014 triggering an American panic."
     },
     {
         "day": 1,
@@ -285,7 +285,7 @@
         "hint": "Tanks crossed a border, igniting a war",
         "event": "Invasion of Poland",
         "id": 32,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Poland's cavalry actually did charge tanks \u2014 but only once, and with anti-tank rifles. The 'lances vs. panzers' image is mostly myth."
     },
     {
         "day": 24,
@@ -294,7 +294,7 @@
         "hint": "Wall Street panicked and fortunes vanished",
         "event": "Black Thursday (Wall Street Crash)",
         "id": 33,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Wall Street Crash wiped out billions, but many 'suicide jumping from skyscrapers' stories were invented later. Most jumps never happened."
     },
     {
         "day": 2,
@@ -303,7 +303,7 @@
         "hint": "A signature on the USS Missouri ended a global conflict",
         "event": "End of World War II",
         "id": 34,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Japan's surrender was signed on the USS Missouri \u2014 which was only 2 years old. The ink pen used is now in the Naval Academy museum."
     },
     {
         "day": 14,
@@ -312,7 +312,7 @@
         "hint": "A new nation was proclaimed in the Middle East",
         "event": "Creation of the State of Israel",
         "id": 35,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Israel was declared minutes before the British Mandate expired. The US recognised it 11 minutes later \u2014 faster than its own State Department expected."
     },
     {
         "day": 1,
@@ -321,7 +321,7 @@
         "hint": "A proclamation made millions forever free",
         "event": "Emancipation Proclamation",
         "id": 36,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Emancipation Proclamation technically only freed slaves in Confederate states, not Union ones. Full abolition took the 13th Amendment in 1865."
     },
     {
         "day": 12,
@@ -330,7 +330,7 @@
         "hint": "Cannons fired on Fort Sumter divided a nation",
         "event": "Start of the American Civil War",
         "id": 37,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The first shots of the Civil War caused zero casualties \u2014 but a cannon misfire during the surrender ceremony killed one Union soldier."
     },
     {
         "day": 15,
@@ -339,7 +339,7 @@
         "hint": "A shot in a theater shocked the Union",
         "event": "Assassination of Abraham Lincoln",
         "id": 38,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? John Wilkes Booth's brother Edwin had actually saved Lincoln's son Robert from a train platform accident months earlier."
     },
     {
         "day": 1,
@@ -348,7 +348,7 @@
         "hint": "A confederation brought provinces together in the north",
         "event": "Canadian Confederation",
         "id": 39,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Canada's flag wasn't designed until 1965 \u2014 for nearly a century, it flew the British Red Ensign instead of the maple leaf."
     },
     {
         "day": 28,
@@ -357,7 +357,7 @@
         "hint": "A treaty in a palace ended the Great War",
         "event": "Signing of the Treaty of Versailles",
         "id": 40,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Treaty of Versailles was signed in the Hall of Mirrors \u2014 the same room where Germany had proclaimed its empire in 1871. The humiliation was deliberate."
     },
     {
         "day": 7,
@@ -366,7 +366,7 @@
         "hint": "A date which will live in infamy",
         "event": "Attack on Pearl Harbor",
         "id": 41,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Pearl Harbor's attack plans were found weeks before by a US intelligence officer \u2014 but the memo was filed under 'routine' and never forwarded."
     },
     {
         "day": 20,
@@ -375,7 +375,7 @@
         "hint": "Justice sought in a German city post-war",
         "event": "Start of the Nuremberg Trials",
         "id": 42,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Nuremberg trials introduced simultaneous translation \u2014 new technology at the time, with interpreters working in sealed glass booths."
     },
     {
         "day": 26,
@@ -384,7 +384,7 @@
         "hint": "A charter signed in San Francisco to unite nations",
         "event": "Signing of the UN Charter",
         "id": 43,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The UN Charter was signed by 50 nations in San Francisco. Poland signed two months late and is still counted as an original member."
     },
     {
         "day": 4,
@@ -393,7 +393,7 @@
         "hint": "A dreamer was lost on a balcony in Memphis",
         "event": "Assassination of Martin Luther King Jr.",
         "id": 44,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? MLK's last meal was catfish, and his killer was caught at Heathrow Airport two months later \u2014 trying to fly to white-ruled Rhodesia."
     },
     {
         "day": 17,
@@ -402,7 +402,7 @@
         "hint": "Two brothers took flight in Kitty Hawk",
         "event": "Wright Brothers' First Flight",
         "id": 45,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Wright Brothers' first flight lasted just 12 seconds and covered 120 feet \u2014 shorter than the wingspan of a modern jumbo jet."
     },
     {
         "day": 15,
@@ -411,7 +411,7 @@
         "hint": "A canal opened, connecting two vast oceans",
         "event": "Opening of the Panama Canal",
         "id": 46,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Panama Canal cost 25,000 lives to build \u2014 mostly from malaria and yellow fever. It also lowered world sea levels by a tiny amount."
     },
     {
         "day": 1,
@@ -420,7 +420,7 @@
         "hint": "A revolutionary car rolled off the assembly line",
         "event": "Introduction of the Ford Model T",
         "id": 47,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Model T came in any colour you wanted, as long as it was black. Black paint dried fastest, so it kept the assembly line moving."
     },
     {
         "day": 21,
@@ -429,7 +429,7 @@
         "hint": "The Spirit of St. Louis crossed the Atlantic solo",
         "event": "Charles Lindbergh's Transatlantic Flight",
         "id": 48,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Lindbergh's plane had no front windshield \u2014 he had to fly 33 hours using a periscope to see forward. He battled sleep by flying inches from the waves."
     },
     {
         "day": 4,
@@ -438,7 +438,7 @@
         "hint": "Three leaders met in Crimea to reshape Europe",
         "event": "Yalta Conference",
         "id": 49,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? At Yalta, Roosevelt was already dying of heart failure. He died just two months later, and critics argue Stalin out-negotiated him ruthlessly."
     },
     {
         "day": 5,
@@ -447,7 +447,7 @@
         "hint": "A mysterious illness was first reported in California",
         "event": "First Reports of AIDS",
         "id": 50,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? AIDS was initially called 'GRID' \u2014 Gay-Related Immune Deficiency \u2014 before doctors realised it affected many different groups."
     },
     {
         "day": 11,
@@ -456,7 +456,7 @@
         "hint": "A massive quake and a nuclear crisis in the east",
         "event": "Fukushima Nuclear Disaster",
         "id": 51,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Fukushima tsunami was taller than some office buildings \u2014 up to 14 metres. The plant's sea wall was built to stop waves half that size."
     },
     {
         "day": 24,
@@ -465,7 +465,7 @@
         "hint": "A mountain erupted, burying an ancient city in ash",
         "event": "Eruption of Mount Vesuvius",
         "id": 52,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Vesuvius buried Pompeii under 6 metres of ash, freezing everything in place. Archaeologists still find loaves of bread inside ancient ovens."
     },
     {
         "day": 15,
@@ -474,7 +474,7 @@
         "hint": "Beware the Ides of March, said a seer to an emperor",
         "event": "Assassination of Julius Caesar",
         "id": 53,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Caesar was stabbed 23 times, but a Roman doctor later concluded only one wound was fatal \u2014 a thrust to the chest by an unknown conspirator."
     },
     {
         "day": 31,
@@ -483,7 +483,7 @@
         "hint": "Ninety-five theses on a door sparked a reformation",
         "event": "Martin Luther starts Protestant Reformation",
         "id": 54,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Luther probably didn't nail his theses to the door \u2014 he more likely mailed them to his archbishop. The hammer story was popularised decades later."
     },
     {
         "day": 25,
@@ -492,7 +492,7 @@
         "hint": "The double helix structure of life was unveiled",
         "event": "Discovery of DNA Structure",
         "id": 55,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Rosalind Franklin's X-ray photo was shown to Watson and Crick without her permission. She didn't share the Nobel \u2014 she'd died of cancer at 37."
     },
     {
         "day": 20,
@@ -501,7 +501,7 @@
         "hint": "A graphical operating system changed personal computing",
         "event": "Release of Windows 1.0",
         "id": 56,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Windows 1.0 shipped two years late and was mocked as a 'bad joke' \u2014 it didn't even properly overlap windows. Version 3.0 finally made it take off."
     },
     {
         "day": 18,
@@ -510,7 +510,7 @@
         "hint": "The earth shook and flames consumed the golden city",
         "event": "San Francisco Earthquake",
         "id": 57,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? San Francisco's earthquake tilted gas lines and started fires that raged for three days. Most damage came from the fires, not the shaking."
     },
     {
         "day": 21,
@@ -519,7 +519,7 @@
         "hint": "Footprints left in the lunar dust for the very first time",
         "event": "First Walk on the Moon",
         "id": 58,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Buzz Aldrin's first act on the Moon was communion. He poured wine and ate bread he'd brought from his church \u2014 privately, off mic."
     },
     {
         "day": 5,
@@ -528,7 +528,7 @@
         "hint": "Terror struck the Olympic Games in Munich",
         "event": "Munich Massacre",
         "id": 59,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Munich attackers had trained in Libya. The German rescue operation used only five snipers for eight terrorists \u2014 all hostages died."
     },
     {
         "day": 22,
@@ -537,7 +537,7 @@
         "hint": "A landmark decision on reproductive rights in the US",
         "event": "Roe v. Wade Decision",
         "id": 60,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Roe v. Wade was decided 7\u20132. The 'Jane Roe' plaintiff, Norma McCorvey, later reversed her views and campaigned to overturn her own case."
     },
     {
         "day": 8,
@@ -546,7 +546,7 @@
         "hint": "A president resigned to avoid certain impeachment",
         "event": "Nixon Resigns",
         "id": 61,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Nixon resigned at 9:01am \u2014 the first US president ever to do so. He left the White House by helicopter and never publicly apologised."
     },
     {
         "day": 30,
@@ -555,7 +555,7 @@
         "hint": "Helicopters evacuated an embassy ending a long war",
         "event": "Fall of Saigon",
         "id": 62,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The famous 'helicopter on a roof' photo from Saigon wasn't the US Embassy \u2014 it was a CIA safe house two blocks away."
     },
     {
         "day": 4,
@@ -564,7 +564,7 @@
         "hint": "Hostages taken in a volatile embassy shift",
         "event": "Iran Hostage Crisis Begins",
         "id": 63,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Iran hostage crisis lasted exactly 444 days. The hostages were released minutes after Reagan's inauguration, snubbing Carter one last time."
     },
     {
         "day": 24,
@@ -573,7 +573,7 @@
         "hint": "A telescope launched to gaze into deep space",
         "event": "Hubble Space Telescope Launch",
         "id": 64,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Hubble was launched with a tiny flaw in its mirror \u2014 1/50th the thickness of a human hair. A shuttle mission flew up in 1993 to fit it with glasses."
     },
     {
         "day": 2,
@@ -582,7 +582,7 @@
         "hint": "Forces invaded a neighbor, starting a desert storm",
         "event": "Iraq Invades Kuwait",
         "id": 65,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Iraq invaded Kuwait partly over a straw \u2014 accusing Kuwait of slant-drilling to steal Iraqi oil across the border. The invasion lasted two days."
     },
     {
         "day": 26,
@@ -591,7 +591,7 @@
         "hint": "A truck bomb echoed through twin towers",
         "event": "World Trade Center Bombing",
         "id": 66,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The 1993 WTC bombing killed six people and injured over 1,000 \u2014 but the towers didn't fall. Engineers cited the explosion's ground-floor placement."
     },
     {
         "day": 19,
@@ -600,7 +600,7 @@
         "hint": "A domestic terror attack shattered an Oklahoma city",
         "event": "Oklahoma City Bombing",
         "id": 67,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Timothy McVeigh's truck bomb was made from fertiliser, diesel, and a rental truck. It killed 168 people, including 19 children in a daycare."
     },
     {
         "day": 5,
@@ -609,7 +609,7 @@
         "hint": "A sheep was born, cloned from an adult cell",
         "event": "Birth of Dolly the Sheep",
         "id": 68,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Dolly the sheep was named after Dolly Parton \u2014 because she was cloned from a mammary gland cell. Scientists thought it was hilarious."
     },
     {
         "day": 1,
@@ -618,7 +618,7 @@
         "hint": "A new currency was adopted across twelve nations",
         "event": "Introduction of the Euro",
         "id": 69,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Euro banknotes don't depict real bridges \u2014 the designs show generic architectural styles, since no single real bridge could represent all of Europe."
     },
     {
         "day": 20,
@@ -627,7 +627,7 @@
         "hint": "A coalition launched a strike to topple a regime",
         "event": "Invasion of Iraq Begins",
         "id": 70,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The 2003 Iraq invasion was launched with 'shock and awe' bombing, but Baghdad fell to ground troops just 21 days after it began."
     },
     {
         "day": 26,
@@ -636,7 +636,7 @@
         "hint": "A massive wave devastated shores across the ocean",
         "event": "Indian Ocean Tsunami",
         "id": 71,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The 2004 Boxing Day tsunami travelled at 800 km/h underwater \u2014 jet speed \u2014 and raised the day's length by 2.68 microseconds by redistributing Earth's mass."
     },
     {
         "day": 4,
@@ -645,7 +645,7 @@
         "hint": "Hope and change elected the first black president",
         "event": "Election of Barack Obama",
         "id": 72,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Obama's 2008 campaign raised over $750 million \u2014 more than the previous two elections combined \u2014 mostly in small online donations."
     },
     {
         "day": 15,
@@ -654,7 +654,7 @@
         "hint": "An iconic cathedral burned but did not shatter",
         "event": "Notre-Dame de Paris Fire",
         "id": 73,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Notre-Dame's main spire collapsed but its three famous rose windows survived. Beekeepers on the roof discovered their bees had also survived the flames."
     },
     {
         "day": 11,
@@ -663,7 +663,7 @@
         "hint": "A viral outbreak was declared global by the WHO",
         "event": "COVID-19 Declared a Pandemic",
         "id": 74,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The word 'pandemic' comes from Greek 'pan-demos' meaning 'all the people'. COVID was the first WHO-declared pandemic since 2009."
     },
     {
         "day": 24,
@@ -672,7 +672,7 @@
         "hint": "A nation woke to an invasion on its eastern flank",
         "event": "Russian Invasion of Ukraine",
         "id": 75,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Russia called its invasion a 'special military operation'. Using the word 'war' in Russian media became punishable by up to 15 years in prison."
     },
     {
         "day": 11,
@@ -681,7 +681,7 @@
         "hint": "An independent city-state was born in Rome",
         "event": "Lateran Treaty (Creation of Vatican City)",
         "id": 76,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Vatican City is smaller than a typical 9-hole golf course \u2014 0.49 sq km \u2014 and has its own post office, train station, and ATM with Latin menus."
     },
     {
         "day": 9,
@@ -690,7 +690,7 @@
         "hint": "A flight claimed to be first over the northern pole",
         "event": "Richard Byrd's North Pole Flight",
         "id": 77,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Byrd's claim to have flown over the North Pole is now widely disputed \u2014 his own flight log had suspicious erasures. He may have turned back early."
     },
     {
         "day": 14,
@@ -699,7 +699,7 @@
         "hint": "A Norwegian team reached the southernmost point",
         "event": "Amundsen Reaches the South Pole",
         "id": 78,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Amundsen's team reached the South Pole using sled dogs, which they also ate along the way \u2014 planning the calories into the expedition from the start."
     },
     {
         "day": 29,
@@ -708,7 +708,7 @@
         "hint": "The highest peak on Earth was finally conquered",
         "event": "First Summit of Mount Everest",
         "id": 79,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Hillary and Tenzing never publicly revealed who stepped on Everest's summit first. They agreed to always say they did it 'together'."
     },
     {
         "day": 12,
@@ -717,7 +717,7 @@
         "hint": "A grey box from IBM redefined personal computing",
         "event": "Release of the IBM PC",
         "id": 80,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The original IBM PC shipped with only 16 KB of RAM \u2014 about 0.000002% of a modern laptop. It cost $1,565, or $5,000 in today's money."
     },
     {
         "day": 5,
@@ -726,7 +726,7 @@
         "hint": "An exiled emperor passed away on a remote island",
         "event": "Death of Napoleon Bonaparte",
         "id": 81,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Napoleon died on Saint Helena at 51, likely from stomach cancer. His hair tested positive for arsenic, but probably from wallpaper dye, not poison."
     },
     {
         "day": 12,
@@ -735,7 +735,7 @@
         "hint": "Two great minds: one of evolution, one of emancipation, born today",
         "event": "Birth of Darwin and Lincoln",
         "id": 82,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Charles Darwin and Abraham Lincoln were born the exact same day \u2014 12 February 1809 \u2014 and both reshaped how humanity saw itself."
     },
     {
         "day": 9,
@@ -744,7 +744,7 @@
         "hint": "An ultimate surrender at a courthouse ended the war",
         "event": "Surrender at Appomattox",
         "id": 83,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? At Appomattox, Grant let Lee's soldiers keep their horses so they could go home and plant crops. It's still cited as a model of post-war grace."
     },
     {
         "day": 10,
@@ -753,7 +753,7 @@
         "hint": "A golden spike united the east and west coasts",
         "event": "Completion of the Transcontinental Railroad",
         "id": 84,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The 'golden spike' was actually not solid gold \u2014 just plated. And it was pulled back out of the rail minutes after the ceremony photo was taken."
     },
     {
         "day": 29,
@@ -762,7 +762,7 @@
         "hint": "The final major clash of the American Indian Wars",
         "event": "Wounded Knee Massacre",
         "id": 85,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Wounded Knee ended with the US Army awarding 20 Medals of Honor. Native American groups still campaign to have them revoked to this day."
     },
     {
         "day": 17,
@@ -771,7 +771,7 @@
         "hint": "A Hawaiian queen was overthrown by a committee",
         "event": "Overthrow of the Hawaiian Kingdom",
         "id": 86,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Queen Liliuokalani spent years under house arrest in her own palace after the coup \u2014 and filled the time composing songs, including 'Aloha Oe'."
     },
     {
         "day": 15,
@@ -780,7 +780,7 @@
         "hint": "A sunken battleship ignited a war with Spain",
         "event": "Sinking of the USS Maine",
         "id": 87,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The USS Maine probably exploded from an internal coal fire, not a Spanish mine \u2014 but 'Remember the Maine!' worked great as a war slogan anyway."
     },
     {
         "day": 8,
@@ -789,7 +789,7 @@
         "hint": "A devastating hurricane swept through a Texas island",
         "event": "Galveston Hurricane",
         "id": 88,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Galveston Hurricane killed over 6,000 people \u2014 still the deadliest natural disaster in US history. The city rebuilt by raising itself 17 feet higher."
     },
     {
         "day": 6,
@@ -798,7 +798,7 @@
         "hint": "America officially joined the immense Great War",
         "event": "US Enters World War I",
         "id": 89,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? By the time America joined WWI, Europe had already been fighting for nearly three years. US troops called themselves 'Doughboys'."
     },
     {
         "day": 3,
@@ -807,7 +807,7 @@
         "hint": "A treaty took Russia out of a global conflict",
         "event": "Treaty of Brest-Litovsk",
         "id": 90,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Brest-Litovsk cost Russia a third of its population and most of its industry \u2014 but Lenin signed anyway, betting Germany would lose the war. He won the bet."
     },
     {
         "day": 16,
@@ -816,7 +816,7 @@
         "hint": "A period began where certain spirits ran dry by law",
         "event": "Start of Prohibition in the US",
         "id": 91,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Prohibition boosted organised crime spectacularly. Al Capone's bootlegging operation earned him an estimated $100 million a year \u2014 tax-free."
     },
     {
         "day": 26,
@@ -825,7 +825,7 @@
         "hint": "The 19th amendment guaranteed a woman's right to vote",
         "event": "Women's Suffrage Recognized in US",
         "id": 92,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The 19th Amendment passed by one vote in Tennessee \u2014 and that vote came from a legislator whose mother had sent him a letter begging him to support it."
     },
     {
         "day": 4,
@@ -834,7 +834,7 @@
         "hint": "An unsealed tomb revealed a boy king's golden mask",
         "event": "Discovery of King Tut's Tomb",
         "id": 93,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Howard Carter first peered into Tut's tomb by candlelight. When asked what he saw, he replied: 'Yes, wonderful things.'"
     },
     {
         "day": 24,
@@ -843,7 +843,7 @@
         "hint": "A groundbreaking friendly computer was introduced",
         "event": "Apple Introduces the Macintosh",
         "id": 94,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Mac's famous '1984' Super Bowl ad only aired once nationally. Apple's board hated it \u2014 Steve Jobs ran it anyway."
     },
     {
         "day": 1,
@@ -852,7 +852,7 @@
         "hint": "A treaty united nations under a new European banner",
         "event": "Maastricht Treaty comes into effect",
         "id": 95,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Maastricht created the European Union and paved the way for the euro. The UK and Denmark negotiated opt-outs \u2014 the UK later used its opt-out to leave entirely."
     },
     {
         "day": 15,
@@ -861,7 +861,7 @@
         "hint": "A free encyclopedia emerged to organize knowledge",
         "event": "Launch of Wikipedia",
         "id": 96,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Wikipedia's first edit was the word 'Hello, World!' \u2014 and the site was originally meant as a side project to feed articles into a more formal encyclopedia called Nupedia."
     },
     {
         "day": 4,
@@ -870,7 +870,7 @@
         "hint": "A social network was born in a dorm room",
         "event": "Launch of Facebook",
         "id": 97,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? Facebook started as 'Thefacebook' and was restricted to Harvard students for weeks. The 'the' was dropped after the company paid $200,000 for facebook.com."
     },
     {
         "day": 23,
@@ -879,7 +879,7 @@
         "hint": "The first video broadcast shared a trip to the zoo",
         "event": "First YouTube video uploaded",
         "id": 98,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The first YouTube video is called 'Me at the zoo' \u2014 19 seconds of co-founder Jawed Karim talking about elephants. It still gets millions of views."
     },
     {
         "day": 14,
@@ -888,7 +888,7 @@
         "hint": "A probe provided our first close look at a distant dwarf",
         "event": "New Horizons flies by Pluto",
         "id": 99,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? New Horizons took 9 years to reach Pluto, travelling at 58,000 km/h. Its flyby lasted just a few hours, but it gathered 16 months of data to send home."
     },
     {
         "day": 22,
@@ -897,6 +897,6 @@
         "hint": "Tragedy struck an arena in Manchester post-concert",
         "event": "Manchester Arena Bombing",
         "id": 100,
-        "funFact": "Did you know? [Fact needed]"
+        "funFact": "Did you know? The Manchester Arena bomb went off as fans left an Ariana Grande concert. Grande returned two weeks later for a benefit concert watched by 50 million."
     }
 ]

@@ -120,11 +120,6 @@ struct ProfileView: View {
                             }
                         }
 
-                        // Game Center placeholder
-                        if prefs.showLeaderboards {
-                            gameCenterPlaceholder
-                        }
-                        
                         // Achievement badges
                         if prefs.showBadges {
                             BadgeGridView(
@@ -307,41 +302,6 @@ struct ProfileView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)
-        .padding(.horizontal, 20)
-    }
-
-    // MARK: - Game Center Leaderboards
-
-    private var gameCenterPlaceholder: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionLabel("LEADERBOARDS")
-
-            NavigationLink(destination: LeaderboardView()) {
-                HStack(spacing: 14) {
-                    Image(systemName: "trophy.fill")
-                        .font(.title2)
-                        .foregroundStyle(.yellow.opacity(0.8))
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Game Center")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(.primary)
-                        Text("Rankings & Friends leaderboards")
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .font(.callout.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                }
-                .padding(16)
-                .background(RoundedRectangle(cornerRadius: 16).fill(Color.primary.opacity(0.12)))
-            }
-            .buttonStyle(.plain)
-        }
         .padding(.horizontal, 20)
     }
 

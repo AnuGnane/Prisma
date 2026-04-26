@@ -380,6 +380,23 @@ final class CargoGameViewModel {
         showingSolution = true
     }
 
+    /// Constructs a fresh grid filled according to each piece's canonical
+    /// `solutionCells`. Returns `nil` if any piece lacks solution data, in
+    /// which case `CargoSolutionGrid` falls back to the player's own grid
+    /// rather than producing a garbage 0,0-stacked layout.
+    func buildSolutionGrid() -> CargoGrid? {
+        guard pieces.allSatisfy({ ($0.solutionCells?.isEmpty == false) }) else {
+            return nil
+        }
+        var solved = CargoGrid(
+            rows: puzzle.gridRows,
+            cols: puzzle.gridCols,
+            blockedCells: puzzle.blockedCells
+        )
+        solved.populateSolutionMode(with: pieces)
+        return solved
+    }
+
     // MARK: - Share & Persistence (Daily)
 
     /// Share string for daily Cargo: pieces placed out of total, and empty squares if any.
