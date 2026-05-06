@@ -71,6 +71,33 @@ struct CircuitGameView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
 
+                // "Finish Early" button — visible when all terminals are
+                // powered but the board isn't fully covered. Gives 1–2 stars
+                // but does NOT submit to the daily leaderboard.
+                if viewModel.canFinishEarly {
+                    Button {
+                        viewModel.forceFinish()
+                    } label: {
+                        Label("Finish Early", systemImage: "checkmark.circle")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(
+                                Capsule().fill(
+                                    LinearGradient(
+                                        colors: [AppTheme.circuit, AppTheme.circuit.opacity(0.7)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                            )
+                    }
+                    .padding(.top, 10)
+                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                    .animation(.easeInOut(duration: 0.25), value: viewModel.canFinishEarly)
+                }
+
                 Spacer(minLength: 0)
             }
 

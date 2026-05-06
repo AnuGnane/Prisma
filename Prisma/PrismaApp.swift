@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import MetricKit
 
 @main
 struct PrismaApp: App {
@@ -16,7 +17,8 @@ struct PrismaApp: App {
     @State private var showSplash = true
 
     init() {
-        // Initialization without GameCenter blocking the thread
+        // Register MetricKit subscriber before any game activity begins.
+        MetricsManager.shared.register()
     }
 
     var body: some Scene {

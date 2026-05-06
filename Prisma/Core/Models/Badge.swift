@@ -30,6 +30,7 @@ enum Badge: String, CaseIterable, Identifiable {
     case archiveMaster     = "archive_master"
     case cargoMaster       = "cargo_master"
     case shiftMaster       = "shift_master"
+    case circuitMaster     = "circuit_master"
     
     var id: String { rawValue }
     
@@ -48,6 +49,7 @@ enum Badge: String, CaseIterable, Identifiable {
         case .archiveMaster:  return "Archive Master"
         case .shiftMaster:    return "Shift Master"
         case .cargoMaster:    return "Cargo Master"
+        case .circuitMaster:  return "Circuit Master"
         }
     }
     
@@ -62,10 +64,11 @@ enum Badge: String, CaseIterable, Identifiable {
         case .local25:        return "Win 25 local levels across all games"
         case .local50:        return "Win 50 local levels across all games"
         case .local100:       return "Win 100 local levels across all games"
-        case .signalsMaster:  return "Win all 100 Signals local levels"
-        case .archiveMaster:  return "Win all 100 Archive local levels"
-        case .shiftMaster:    return "Win all 100 Shift local levels"
-        case .cargoMaster:    return "Win all 100 Cargo local levels"
+        case .signalsMaster:  return "Win all 150 Signals local levels"
+        case .archiveMaster:  return "Win all 150 Archive local levels"
+        case .shiftMaster:    return "Win all 150 Shift local levels"
+        case .cargoMaster:    return "Win all 150 Cargo local levels"
+        case .circuitMaster:  return "Win all 150 Circuit local levels"
         }
     }
     
@@ -84,6 +87,7 @@ enum Badge: String, CaseIterable, Identifiable {
         case .archiveMaster:  return "clock.arrow.circlepath"
         case .shiftMaster:    return "slider.horizontal.3"
         case .cargoMaster:    return "shippingbox.fill"
+        case .circuitMaster:  return "point.3.connected.trianglepath.dotted"
         }
     }
     
@@ -99,6 +103,7 @@ enum Badge: String, CaseIterable, Identifiable {
         case .archiveMaster:                     return AppTheme.archive
         case .cargoMaster:                       return AppTheme.cargo
         case .shiftMaster:                       return AppTheme.shift
+        case .circuitMaster:                     return AppTheme.circuit
         }
     }
 }

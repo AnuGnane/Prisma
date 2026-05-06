@@ -44,6 +44,17 @@ enum GameType: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    /// Emoji shorthand for share strings.
+    var emoji: String {
+        switch self {
+        case .signals: return "📡"
+        case .archive: return "📅"
+        case .cargo:   return "📦"
+        case .shift:   return "🔀"
+        case .circuit: return "⚡️"
+        }
+    }
+
     /// Number of curated local progression levels available for this game.
     ///
     /// Used by `LevelSelectorView` to size the tile grid and by progress stats

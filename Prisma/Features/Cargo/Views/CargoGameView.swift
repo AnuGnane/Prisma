@@ -138,8 +138,10 @@ extension CargoGameView {
             gc.reportAchievement(GameCenterManager.Achievement.firstCargo)
         }
 
-        if viewModel.isDaily && isWin {
-            // Daily best: lower elapsed time is better
+        if viewModel.isDaily && isPerfect {
+            // Daily best: only submit to the leaderboard on a perfect clear
+            // (100% board fill). Incomplete solves save locally but stay off
+            // the leaderboard to keep competition fair.
             gc.submitScore(viewModel.elapsedSeconds,
                            leaderboardIDs: [GameCenterManager.Leaderboard.cargoDailyBest])
 
@@ -148,10 +150,8 @@ extension CargoGameView {
             // achievements (Phase 4, 2026-04-25).
             _ = StreakManager.recordDailyWin(game: "cargo")
 
-            // Perfect Cargo: every 100%-fill solve
-            if isPerfect {
-                gc.reportAchievement(GameCenterManager.Achievement.perfectCargo)
-            }
+            // Perfect Cargo achievement
+            gc.reportAchievement(GameCenterManager.Achievement.perfectCargo)
         }
 
         if !viewModel.isDaily && isWin {
@@ -163,6 +163,10 @@ extension CargoGameView {
             gc.submitScore(totalWon,
                            leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
         }
+
+        // Invalidate friends summary cache so the local player's game icons
+        // update promptly when switching to the Friends tab.
+        FriendsService.shared.invalidateCache()
     }
 }
 

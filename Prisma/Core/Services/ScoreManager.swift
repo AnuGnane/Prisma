@@ -59,11 +59,23 @@ final class ScoreManager {
                     case .archive:
                         gc.submitScore(result.guessCount, leaderboardIDs: [GameCenterManager.Leaderboard.archiveDailyBest])
                     case .cargo:
-                        gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [GameCenterManager.Leaderboard.cargoDailyBest])
+                        // Only submit to the daily leaderboard on a perfect
+                        // clear (100% board fill, score 1000). Incomplete
+                        // solves are saved locally but stay off the
+                        // leaderboard to keep competition fair.
+                        if result.score >= 1000 {
+                            gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [GameCenterManager.Leaderboard.cargoDailyBest])
+                        }
                     case .shift:
                         gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [GameCenterManager.Leaderboard.shiftDailyBest])
                     case .circuit:
-                        gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [GameCenterManager.Leaderboard.circuitDailyBest])
+                        // Only submit to the daily leaderboard if the player
+                        // achieved 3 stars (100% board coverage). Sub-100%
+                        // "Finish Early" results are saved locally but kept
+                        // off the leaderboard to encourage full-board solves.
+                        if result.score >= 300 {
+                            gc.submitScore(Int(result.durationSeconds), leaderboardIDs: [GameCenterManager.Leaderboard.circuitDailyBest])
+                        }
                     }
                     // Fire achievements tied to this daily win
                     reportAchievements(for: result, context: context)
@@ -82,6 +94,10 @@ final class ScoreManager {
         }
 
         try? context.save()
+
+        // Invalidate the friends summary cache so the local player's own
+        // game icons update promptly when switching to the Friends tab.
+        FriendsService.shared.invalidateCache()
     }
 
     // MARK: - Achievement Reporting

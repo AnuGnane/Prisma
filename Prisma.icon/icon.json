@@ -1,0 +1,62 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:0.41095,0.17939,0.84945,1.00000",
+      "display-p3:0.20918,0.36316,0.96783,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 0
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.7
+      }
+    }
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "linear-gradient" : [
+              "extended-gray:0.75000,1.00000",
+              "display-p3:0.93302,0.96783,0.93580,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.5,
+                "y" : 1
+              },
+              "stop" : {
+                "x" : 0.6854895833333333,
+                "y" : 0.4484291888297872
+              }
+            }
+          },
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "prism-svgrepo-com.svg",
+          "name" : "prism-svgrepo-com",
+          "opacity" : 0.7
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

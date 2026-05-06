@@ -324,7 +324,7 @@ struct CircuitLevelLoaderTests {
 
     @Test func allCuratedLevelsLoad() {
         let levels = CircuitLevelLoader.load()
-        #expect(levels.count >= 10)
+        #expect(levels.count == 150, "Expected exactly 150 curated Circuit levels")
     }
 
     @Test func allLevelsHaveTerminalPairs() {
@@ -432,6 +432,47 @@ struct CircuitLevelLoaderTests {
             }
         }
     }
+
+    /// Canonical solutions were curated to achieve 100% board coverage (3 stars).
+    /// This test locks that contract: if any solution degrades to < 3 stars it
+    /// means either the level data or the coverage formula regressed.
+    @MainActor
+    @Test func allCanonicalSolutionsGive3Stars() throws {
+        let levels = CircuitLevelLoader.load()
+        for level in levels {
+            let json = try #require(level.solutionStateJSON, "Level \(level.id) has nil solutionStateJSON")
+            let state = try #require(
+                CircuitStateSerializer.deserialize(json),
+                "Level \(level.id) solutionStateJSON fails to deserialize"
+            )
+            let vm = CircuitGameViewModel(levelId: level.id)
+            vm.restoreState(from: state)
+            let stars = vm.calculateStarRating()
+            #expect(stars == 3, "Level \(level.id) canonical solution gives \(stars) star(s), expected 3")
+        }
+    }
+
+    /// After replaying a canonical solution, `forceFinish()` must transition
+    /// the VM into `.completed(stars: 3)` — not stay in `.inProgress`.
+    @MainActor
+    @Test func canonicalSolutionForceFinishGivesCompletedState() throws {
+        let level = try #require(
+            CircuitLevelLoader.load().first,
+            "Need at least one curated level"
+        )
+        let json = try #require(level.solutionStateJSON)
+        let state = try #require(CircuitStateSerializer.deserialize(json))
+
+        let vm = CircuitGameViewModel(levelId: level.id)
+        vm.restoreState(from: state)
+        vm.forceFinish()
+
+        if case .completed(let stars) = vm.gameState {
+            #expect(stars == 3, "Canonical solution forceFinish must yield 3 stars, got \(stars)")
+        } else {
+            Issue.record("Expected .completed after forceFinish(), got \(vm.gameState)")
+        }
+    }
 }
 
 // MARK: - Star Rating
@@ -439,7 +480,9 @@ struct CircuitLevelLoaderTests {
 @MainActor
 struct CircuitStarRatingTests {
 
-    @Test func levelOneCompletionGivesAtLeastOneStar() {
+    /// Two straight paths across top+bottom rows of a 4×4 grid covers 8/16 cells
+    /// (50% coverage) — below the 80% threshold. Exactly 1 star is expected.
+    @Test func levelOneSuboptimalCompletionGivesOneStar() {
         let vm = CircuitGameViewModel(levelId: 1)
 
         // Level 1: Blue (0,0)→(0,3), Red (3,0)→(3,3) on a 4×4 grid
@@ -455,8 +498,9 @@ struct CircuitStarRatingTests {
         vm.dragMoved(to: GridPosition(3, 3))
         vm.dragEnded()
 
+        // Suboptimal: misses the middle 8 cells → 50% coverage → 1 star
         let stars = vm.calculateStarRating()
-        #expect(stars >= 1)
+        #expect(stars == 1, "Suboptimal L1 path (50% coverage) should yield exactly 1 star, got \(stars)")
     }
 
     @Test func zeroStarsWhenNotComplete() {

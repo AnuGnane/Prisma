@@ -209,6 +209,11 @@ struct ShiftGameResultTests {
 }
 
 // MARK: - Head-to-Head Outcome Tests
+//
+// `FriendGameStats` was slimmed to `bestAllTimeScore` + `bestAllTimeRank` in
+// Phase 2 (2026-04-25) when streak data was removed from the friends models.
+// `HeadToHead.outcome` no longer falls through to a streak tiebreak — equal
+// best scores are simply a `.tie`. These tests reflect the current API.
 
 @MainActor
 @Suite("HeadToHead outcome logic")
@@ -218,8 +223,8 @@ struct HeadToHeadTests {
     func lowerScoreWins() {
         let h2h = HeadToHead(
             game: .signals,
-            myStats: FriendGameStats(game: .signals, bestAllTimeScore: 2, bestAllTimeRank: 1, currentStreak: 5, streakRank: 1),
-            theirStats: FriendGameStats(game: .signals, bestAllTimeScore: 4, bestAllTimeRank: 2, currentStreak: 3, streakRank: 2)
+            myStats: FriendGameStats(game: .signals, bestAllTimeScore: 2, bestAllTimeRank: 1),
+            theirStats: FriendGameStats(game: .signals, bestAllTimeScore: 4, bestAllTimeRank: 2)
         )
         #expect(h2h.outcome == .iWin)
     }
@@ -228,38 +233,31 @@ struct HeadToHeadTests {
     func higherScoreLoses() {
         let h2h = HeadToHead(
             game: .shift,
-            myStats: FriendGameStats(game: .shift, bestAllTimeScore: 120, bestAllTimeRank: 5, currentStreak: 2, streakRank: 3),
-            theirStats: FriendGameStats(game: .shift, bestAllTimeScore: 60, bestAllTimeRank: 1, currentStreak: 1, streakRank: 4)
+            myStats: FriendGameStats(game: .shift, bestAllTimeScore: 120, bestAllTimeRank: 5),
+            theirStats: FriendGameStats(game: .shift, bestAllTimeScore: 60, bestAllTimeRank: 1)
         )
         #expect(h2h.outcome == .theyWin)
     }
 
-    @Test("Equal scores tie-break on streak — higher streak wins")
-    func tieBreakOnStreak() {
+    @Test("Equal scores result in tie (no streak tiebreak)")
+    func equalScoresTie() {
+        // With streak data removed, equal best scores always tie. There's no
+        // longer a fall-through to streak comparison — that path was removed
+        // alongside the streak fields in Phase 2.
         let h2h = HeadToHead(
             game: .cargo,
-            myStats: FriendGameStats(game: .cargo, bestAllTimeScore: 45, bestAllTimeRank: 3, currentStreak: 10, streakRank: 1),
-            theirStats: FriendGameStats(game: .cargo, bestAllTimeScore: 45, bestAllTimeRank: 3, currentStreak: 5, streakRank: 2)
-        )
-        #expect(h2h.outcome == .iWin)
-    }
-
-    @Test("Equal scores and equal streaks result in tie")
-    func trueTie() {
-        let h2h = HeadToHead(
-            game: .circuit,
-            myStats: FriendGameStats(game: .circuit, bestAllTimeScore: 30, bestAllTimeRank: 2, currentStreak: 7, streakRank: 1),
-            theirStats: FriendGameStats(game: .circuit, bestAllTimeScore: 30, bestAllTimeRank: 2, currentStreak: 7, streakRank: 1)
+            myStats: FriendGameStats(game: .cargo, bestAllTimeScore: 45, bestAllTimeRank: 3),
+            theirStats: FriendGameStats(game: .cargo, bestAllTimeScore: 45, bestAllTimeRank: 3)
         )
         #expect(h2h.outcome == .tie)
     }
 
-    @Test("Nil scores result in notEnoughData")
+    @Test("Nil scores on either side result in notEnoughData")
     func nilScoresNotEnoughData() {
         let h2h = HeadToHead(
             game: .archive,
-            myStats: FriendGameStats(game: .archive, bestAllTimeScore: nil, bestAllTimeRank: nil, currentStreak: 0, streakRank: nil),
-            theirStats: FriendGameStats(game: .archive, bestAllTimeScore: 3, bestAllTimeRank: 1, currentStreak: 5, streakRank: 1)
+            myStats: FriendGameStats(game: .archive, bestAllTimeScore: nil, bestAllTimeRank: nil),
+            theirStats: FriendGameStats(game: .archive, bestAllTimeScore: 3, bestAllTimeRank: 1)
         )
         #expect(h2h.outcome == .notEnoughData)
     }
@@ -269,8 +267,8 @@ struct HeadToHeadTests {
         for game in GameType.allCases {
             let h2h = HeadToHead(
                 game: game,
-                myStats: FriendGameStats(game: game, bestAllTimeScore: nil, bestAllTimeRank: nil, currentStreak: 0, streakRank: nil),
-                theirStats: FriendGameStats(game: game, bestAllTimeScore: nil, bestAllTimeRank: nil, currentStreak: 0, streakRank: nil)
+                myStats: FriendGameStats(game: game, bestAllTimeScore: nil, bestAllTimeRank: nil),
+                theirStats: FriendGameStats(game: game, bestAllTimeScore: nil, bestAllTimeRank: nil)
             )
             #expect(h2h.metricLabel == GameCenterManager.metricLabel(for: game))
         }
@@ -278,6 +276,11 @@ struct HeadToHeadTests {
 }
 
 // MARK: - FriendTodaySummary Tests
+//
+// `FriendTodayEntry` was slimmed to `score` + `rank` in Phase 2 — the
+// `streak` parameter was removed alongside the friend-streak feature.
+// `FriendTodaySummary.maxStreak` was also removed; the only computed
+// summary properties left are `hasSolvedToday` and `gamesSolvedToday`.
 
 @MainActor
 @Suite("FriendTodaySummary computed properties")
@@ -301,32 +304,24 @@ struct FriendTodaySummaryTests {
         #expect(summary.gamesSolvedToday == 3)
     }
 
-    @Test("maxStreak returns the highest streak across games")
-    func maxStreakCalculation() {
-        let summary = makeSummary(
-            scores: [.signals: 1, .archive: nil, .cargo: nil, .shift: nil, .circuit: nil],
-            streaks: [.signals: 5, .archive: 2, .cargo: 0, .shift: 12, .circuit: 0]
-        )
-        #expect(summary.maxStreak == 12)
+    @Test("All five games scored gives gamesSolvedToday == 5")
+    func fullSweepCount() {
+        let summary = makeSummary(scores: [.signals: 1, .archive: 2, .cargo: 30, .shift: 80, .circuit: 45])
+        #expect(summary.gamesSolvedToday == 5)
     }
 
     // MARK: - Helpers
 
-    private func makeSummary(
-        scores: [GameType: Int?],
-        streaks: [GameType: Int] = [:]
-    ) -> FriendTodaySummary {
+    private func makeSummary(scores: [GameType: Int?]) -> FriendTodaySummary {
         var perGame: [GameType: FriendTodayEntry] = [:]
         for game in GameType.allCases {
             perGame[game] = FriendTodayEntry(
                 score: scores[game] ?? nil,
-                rank: scores[game] != nil ? 1 : nil,
-                streak: streaks[game] ?? 0
+                rank: scores[game] != nil ? 1 : nil
             )
         }
-        // Using a mock player isn't possible without GKPlayer — but FriendTodaySummary
-        // stores it opaquely. We rely on the computed properties only for these tests.
-        // Create a minimal summary with the GKLocalPlayer as a stand-in.
+        // FriendTodaySummary stores the player opaquely — only the computed
+        // helpers (hasSolvedToday / gamesSolvedToday) are under test.
         return FriendTodaySummary(player: GKLocalPlayer.local, perGame: perGame)
     }
 }

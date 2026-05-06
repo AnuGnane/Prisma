@@ -227,10 +227,11 @@ final class CircuitGameViewModel: PrismaGameViewModel {
             // Starting from a source terminal — clear existing path and begin fresh.
             startNewPath(color: color, signal: signal, at: position)
         default:
-            // Check pathLayer: player may be tapping on an existing drawn path
-            // (which no longer shows as .path in liveGrid with the new architecture).
+            // Check pathLayer: player may be tapping on an existing drawn path.
+            // Only set the active draw color so drags can retrace from the path's
+            // current head — do NOT truncate here, which would destroy segments on
+            // accidental touches.
             if let color = colorOfPath(at: position) {
-                truncatePath(color: color, to: position)
                 activeDrawColor = color
             }
         }
@@ -538,10 +539,19 @@ final class CircuitGameViewModel: PrismaGameViewModel {
     // MARK: - Win Condition
 
     func checkWinCondition() {
-        // Completion baseline is all targets powered + all waypoints visited.
-        guard allTerminalsPowered && allWaypointsVisited else { return }
+        // Auto-completion requires ALL cells covered (100% board coverage)
+        // in addition to all targets powered and all waypoints visited.
+        // Sub-100% finishes use the explicit "Finish Early" button instead.
+        guard allTerminalsPowered && allWaypointsVisited && coveragePercent >= 1.0 else { return }
         
         forceFinish()
+    }
+
+    /// True when the board is in a valid completion state but not all cells
+    /// are covered. The user can tap "Finish Early" to accept a lower star
+    /// rating without being submitted to the daily leaderboard.
+    var canFinishEarly: Bool {
+        allTerminalsPowered && allWaypointsVisited && coveragePercent < 1.0 && gameState == .inProgress
     }
     
     /// Finishes the game early when the user settles for a sub-optimal solution.

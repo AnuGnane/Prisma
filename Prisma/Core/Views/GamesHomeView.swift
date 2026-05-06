@@ -19,6 +19,28 @@ struct GameDetailDestination: Hashable {
 struct GamesHomeView: View {
     @Environment(\.modelContext) private var modelContext
 
+    // MARK: - Daily Sweep detection
+
+    /// Today's daily results, refreshed automatically by SwiftData.
+    @Query private var todayResults: [GameResult]
+
+    /// Persisted flag: timestamp of the last day we showed the sweep.
+    /// Prevents re-showing after the user dismisses it today.
+    @AppStorage("sweep.lastShownDay") private var lastSweepShownDay: String = ""
+
+    @State private var showSweep = false
+
+    init() {
+        // Filter to today's winning daily results. SwiftData @Query predicates
+        // can't call Calendar helpers directly, so we filter by `isDaily` here
+        // and winnow to today in the view — the full-day predicate would require
+        // a stored "startOfDay" date which isn't available at init time.
+        _todayResults = Query(
+            filter: #Predicate<GameResult> { $0.isDaily && $0.score > 0 },
+            sort: \.date, order: .forward
+        )
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -50,7 +72,40 @@ struct GamesHomeView: View {
             .navigationDestination(for: GameDetailDestination.self) { dest in
                 GameDetailView(game: dest.game, modelContext: modelContext)
             }
+            .sheet(isPresented: $showSweep) {
+                DailySweepView(results: todayWins)
+                    .presentationDragIndicator(.visible)
+            }
+            .onChange(of: todayWins.count) { _, count in
+                triggerSweepIfEligible()
+            }
+            .onAppear {
+                triggerSweepIfEligible()
+            }
         }
+    }
+
+    // MARK: - Sweep helpers
+
+    /// Today's winning daily results, one per game type (deduped).
+    private var todayWins: [GameResult] {
+        let today = Calendar.current.startOfDay(for: .now)
+        let wins = todayResults.filter { Calendar.current.startOfDay(for: $0.date) == today }
+        // Deduplicate: keep the latest result per game type
+        var seen = Set<GameType>()
+        return wins.filter { seen.insert($0.gameType).inserted }
+    }
+
+    private var todayDayString: String {
+        let d = Calendar.current.dateComponents([.year, .month, .day], from: .now)
+        return "\(d.year!)-\(d.month!)-\(d.day!)"
+    }
+
+    private func triggerSweepIfEligible() {
+        guard DailySweepView.isSweep(todayWins) else { return }
+        guard lastSweepShownDay != todayDayString else { return }
+        lastSweepShownDay = todayDayString
+        showSweep = true
     }
 
     private var headerSection: some View {

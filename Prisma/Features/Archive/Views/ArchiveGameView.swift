@@ -44,6 +44,15 @@ struct ArchiveGameView: View {
 
                 Spacer(minLength: 8)
 
+                // Invalid date text alert
+                if let message = viewModel.invalidDateMessage {
+                    Text(message)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.red)
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                        .animation(.easeInOut(duration: 0.2), value: viewModel.invalidDateMessage)
+                }
+
                 if !viewModel.gameState.isOver {
                     ArchiveInputView(viewModel: viewModel) {
                         viewModel.submitGuess()
@@ -69,7 +78,8 @@ struct ArchiveGameView: View {
                                 PersistenceManager.save(result, context: modelContext)
                             }
                             
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+                            Task {
+                                try? await Task.sleep(for: .milliseconds(1400))
                                 if viewModel.gameState.isCompleted { Haptics.playSuccess() }
                                 else { Haptics.playMediumImpact() }
                                 
@@ -641,6 +651,10 @@ extension ArchiveGameView {
             gc.submitScore(totalWon,
                            leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
         }
+
+        // Invalidate friends summary cache so the local player's game icons
+        // update promptly when switching to the Friends tab.
+        FriendsService.shared.invalidateCache()
     }
 }
 

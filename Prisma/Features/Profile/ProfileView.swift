@@ -332,6 +332,10 @@ private struct StatCard: View {
         guard !wins.isEmpty else { return 0 }
         return Double(wins.reduce(0) { $0 + $1.guessesUsed }) / Double(wins.count)
     }
+    /// Total levels for this game's catalogue. Drives the "won / total"
+    /// display and the progress bar denominator. Reads from `GameType` so a
+    /// future bump to 200 levels updates here automatically.
+    private var totalLevels: Int { game.localLevelCount }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -352,7 +356,7 @@ private struct StatCard: View {
                     Text("\(won)")
                         .font(.title.weight(.heavy))
                         .foregroundStyle(accentColor)
-                    Text("/ 100")
+                    Text("/ \(totalLevels)")
                         .font(.callout.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -362,7 +366,7 @@ private struct StatCard: View {
             }
 
             // Progress bar — using ProgressView avoids GeometryReader
-            ProgressView(value: Double(won), total: 100)
+            ProgressView(value: Double(won), total: Double(totalLevels))
                 .progressViewStyle(.linear)
                 .tint(accentColor)
 
@@ -482,13 +486,8 @@ private struct DailyResultRow: View {
 
             Spacer()
 
-            if result.gameType == .cargo {
-                Text(result.shareString)
-                    .font(.caption.weight(.medium).monospaced())
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            } else if result.score > 0 {
-                Text("\(result.guessCount) guesses")
+            if result.score > 0 {
+                Text(result.formattedMetric)
                     .font(.callout.weight(.medium).monospaced())
                     .foregroundStyle(.secondary)
             } else {

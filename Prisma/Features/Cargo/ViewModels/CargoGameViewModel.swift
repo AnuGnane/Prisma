@@ -203,12 +203,10 @@ final class CargoGameViewModel {
             pendingOrigin = restoreOrigin
             lastValidOrigin = nil
             Haptics.playError()
-            SoundManager.playError()
         } else {
             // Invalid drop with nowhere to restore — cancel cleanly so piece returns to tray.
             cancelPendingPiece()
             Haptics.playError()
-            SoundManager.playError()
         }
         
         // Reset drag tracking

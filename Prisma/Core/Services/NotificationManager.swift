@@ -51,7 +51,7 @@ final class NotificationManager {
 
         let content = UNMutableNotificationContent()
         content.title = "Your daily puzzles are waiting 🧩"
-        content.body = "Signals, Archive, Cargo, Shift — keep your streak alive!"
+        content.body = "Signals, Archive, Cargo, Shift, Circuit — keep your streak alive!"
         content.sound = .default
 
         var dateComponents = DateComponents()

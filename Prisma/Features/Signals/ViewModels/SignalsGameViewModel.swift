@@ -47,7 +47,7 @@ final class SignalsGameViewModel: ShareStringGenerator {
         let start = Date()
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(for: .nanoseconds(250_000_000))
+                try? await Task.sleep(for: .milliseconds(250))
                 guard let self = self else { break }
                 await MainActor.run { self.elapsedSeconds = Date().timeIntervalSince(start) }
             }
@@ -205,7 +205,6 @@ final class SignalsGameViewModel: ShareStringGenerator {
         guard !gameState.isOver else { return }
         guard let slot = currentInput.firstIndex(of: nil) else {
             Haptics.playError()
-            SoundManager.playError()
             return 
         }
         currentInput[slot] = digit
@@ -231,7 +230,6 @@ final class SignalsGameViewModel: ShareStringGenerator {
         guard !gameState.isOver else { return }
         guard isInputComplete else {
             Haptics.playError()
-            SoundManager.playError()
             return 
         }
         let digits = currentInput.compactMap { $0 }
@@ -260,7 +258,6 @@ final class SignalsGameViewModel: ShareStringGenerator {
             gameState = .failed
             stopTimer()
             Haptics.playError()
-            SoundManager.playError()
         } else {
             Haptics.playMediumImpact()
             SoundManager.playClick()

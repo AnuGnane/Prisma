@@ -15,6 +15,15 @@
 //  The algorithm is deterministic for a given seed, so the same date always
 //  produces the same puzzle, independent of the local JSON level pool.
 //
+//  IMPORTANT — Set iteration determinism (2026-05-06):
+//  Swift `Set` iteration order is randomised per process via the Hasher seed.
+//  Earlier versions used `Set<CellCoord>` for the unclaimed/frontier pools and
+//  called `randomElement(using:)` on them — same RNG state, different element
+//  returned each launch, producing a different puzzle for the same date. The
+//  fix is to convert any Set to a deterministically-ordered array (sorted by
+//  row, then column) BEFORE drawing from the seeded RNG. Don't reintroduce
+//  `Set<CellCoord>.randomElement(using:)` or `Array(set)` in random-pick paths.
+//
 
 import Foundation
 
@@ -53,6 +62,8 @@ struct CargoPuzzleGenerator {
 
         // Build a region map: each cell in the rows×cols grid is assigned a piece-region ID.
         // We grow regions one at a time from random seed cells until every cell is claimed.
+        // `unclaimed` is a Set for O(1) contains/remove, but every random pick from it MUST
+        // go through `sortedSet(_:)` first to enforce a stable iteration order across runs.
         var regionMap = Array(repeating: Array(repeating: -1, count: cols), count: rows)
         var regionCells: [[CellCoord]] = []   // regionCells[i] = all coords belonging to region i
         var unclaimed: Set<CellCoord> = {
@@ -67,13 +78,15 @@ struct CargoPuzzleGenerator {
             guard !unclaimed.isEmpty else { break }
 
             let regionId = regionCells.count
-            // Pick a random unclaimed cell as the seed for this region
-            let start = unclaimed.randomElement(using: &rng)!
+            // Pick a deterministic-order start cell. `sortedSet` enforces a
+            // stable order so the seeded RNG draws the same element across runs.
+            let start = sortedSet(unclaimed).randomElement(using: &rng)!
             var region: [CellCoord] = [start]
             regionMap[start.row][start.col] = regionId
             unclaimed.remove(start)
 
-            // Grow the region by BFS/random-frontier until target size or no neighbours left
+            // Grow the region by random-frontier expansion. `adjacentUnclaimed`
+            // already returns a sorted array, so this pick is deterministic too.
             var frontier = adjacentUnclaimed(to: region, in: &unclaimed, rows: rows, cols: cols)
             while region.count < targetSize, !frontier.isEmpty {
                 let pick = frontier.randomElement(using: &rng)!
@@ -86,8 +99,9 @@ struct CargoPuzzleGenerator {
             regionCells.append(region)
         }
 
-        // If any unclaimed cells remain (rounding), merge them into the closest region
-        for coord in unclaimed {
+        // If any unclaimed cells remain (rounding), merge them into the closest region.
+        // Iterate in sorted order so the merge target is consistent across runs.
+        for coord in sortedSet(unclaimed) {
             let neighbourId = neighbourRegionId(for: coord, in: regionMap, rows: rows, cols: cols)
             let id = neighbourId ?? (regionCells.count - 1)
             regionMap[coord.row][coord.col] = id
@@ -162,7 +176,20 @@ struct CargoPuzzleGenerator {
                 }
             }
         }
-        return Array(frontier)
+        // Always return a sorted array — see "Set iteration determinism" note
+        // at the top of the file. `Array(set)` preserves the Set's randomised
+        // iteration order and breaks the seeded RNG's determinism.
+        return sortedSet(frontier)
+    }
+
+    /// Returns the set's elements in a stable order (row, then column).
+    /// Use this anywhere a seeded RNG is going to draw from a Set — Swift's
+    /// hash randomisation otherwise yields different orderings per process.
+    private static func sortedSet(_ set: Set<CellCoord>) -> [CellCoord] {
+        set.sorted { lhs, rhs in
+            if lhs.row != rhs.row { return lhs.row < rhs.row }
+            return lhs.col < rhs.col
+        }
     }
 
     private static func neighbourRegionId(

@@ -587,6 +587,10 @@ extension SignalsGameView {
             gc.submitScore(totalWon,
                            leaderboardIDs: [GameCenterManager.Leaderboard.localMastery])
         }
+
+        // Invalidate friends summary cache so the local player's game icons
+        // update promptly when switching to the Friends tab.
+        FriendsService.shared.invalidateCache()
     }
 }
 

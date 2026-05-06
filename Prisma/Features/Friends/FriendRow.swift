@@ -112,10 +112,15 @@ struct FriendAvatarView: View {
             image = cached
             return
         }
-        if let uiImage = try? await player.loadPhoto(for: .small) {
+        do {
+            let uiImage = try await player.loadPhoto(for: .small)
             let img = Image(uiImage: uiImage)
             Self.cache[pid] = img
             image = img
+        } catch {
+            #if DEBUG
+            print("[FriendRow] loadPhoto failed for \(pid): \(error.localizedDescription)")
+            #endif
         }
     }
 }

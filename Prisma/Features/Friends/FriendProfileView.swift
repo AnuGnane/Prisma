@@ -186,7 +186,7 @@ private struct GameStatCard: View {
                     .font(.subheadline.weight(.semibold))
 
                 if let best = stats.bestAllTimeScore {
-                    Label("\(best) \(GameCenterManager.metricLabel(for: game))", systemImage: "trophy")
+                    Label(formattedScore(best, game: game), systemImage: "trophy")
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
                 } else {
@@ -233,5 +233,21 @@ private struct GameStatCard: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(Capsule().fill(color.opacity(0.12)))
+    }
+
+    /// Formats a raw GC score with appropriate units.
+    private func formattedScore(_ score: Int, game: GameType) -> String {
+        switch game {
+        case .signals, .archive:
+            return "\(score) \(score == 1 ? "guess" : "guesses")"
+        case .shift, .cargo, .circuit:
+            if score >= 60 {
+                let m = score / 60
+                let s = score % 60
+                return "\(m):\(s.formatted(.number.precision(.integerLength(2))))"
+            } else {
+                return "\(score)s"
+            }
+        }
     }
 }

@@ -21,6 +21,10 @@ struct FriendsListContent: View {
 
     private let gc = GameCenterManager.shared
 
+    /// Tracks whether a cross-day boundary was detected so we force a full
+    /// refetch instead of hitting the 30 s summary cache.
+    @State private var lastSeenDay: Int = Calendar.current.component(.day, from: .now)
+
     var body: some View {
         content
             .sheet(item: $selectedFriend) { friend in
@@ -233,6 +237,13 @@ struct FriendsListContent: View {
     private func onAppear() async {
         guard gc.isAuthenticated else { return }
 
+        // Detect calendar-day boundary — if we crossed midnight since the last
+        // view appearance, invalidate the summary cache so `.today` scores
+        // reflect the new day immediately.
+        let currentDay = Calendar.current.component(.day, from: .now)
+        let crossedDay = currentDay != lastSeenDay
+        if crossedDay { lastSeenDay = currentDay }
+
         // First visit: check status, then auto-load if already authorized
         if service.authState == .unknown {
             await service.checkAuthorizationStatus()
@@ -241,8 +252,9 @@ struct FriendsListContent: View {
         if service.authState == .authorized && service.friends.isEmpty {
             await service.loadFriends()
         } else if service.authState == .authorized && !service.friends.isEmpty {
-            // Already have friends — just refresh summaries if cache is stale
-            await service.loadTodaySummaries()
+            // Already have friends — refresh summaries.
+            // Force if we crossed a day boundary so today's scores reset.
+            await service.loadTodaySummaries(force: crossedDay)
         }
     }
 

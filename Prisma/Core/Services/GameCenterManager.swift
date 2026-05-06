@@ -41,10 +41,21 @@ final class GameCenterManager: @unchecked Sendable {
     // MARK: - Daily GC Dedup
     //
     // Tracks which (gameType, calendarDay) pairs have already had a GC score
-    // submitted this session. Prevents duplicate GK calls when the result overlay
-    // is shown multiple times (e.g. user dismisses and re-enters the completed game).
+    // submitted. Persisted to UserDefaults so it survives app termination.
+    // Entries from previous calendar days are pruned on launch.
 
-    private var submittedDailyKeys: Set<String> = []
+    private static let submittedDailyKeysKey = "GC_submittedDailyKeys"
+
+    private var submittedDailyKeys: Set<String> = {
+        let stored = UserDefaults.standard.stringArray(forKey: submittedDailyKeysKey) ?? []
+        // Prune entries from previous calendar days
+        let todayPrefix = {
+            let cal = Calendar.current
+            let day = cal.dateComponents([.year, .month, .day], from: .now)
+            return "\(day.year!)-\(day.month!)-\(day.day!)"
+        }()
+        return Set(stored.filter { $0.hasSuffix(todayPrefix) })
+    }()
 
     /// Returns `true` and records the key if this is the first GC submission for
     /// this game type today. Returns `false` on subsequent calls.
@@ -54,6 +65,7 @@ final class GameCenterManager: @unchecked Sendable {
         let key = "\(gameType.rawValue)-\(day.year!)-\(day.month!)-\(day.day!)"
         if submittedDailyKeys.contains(key) { return false }
         submittedDailyKeys.insert(key)
+        UserDefaults.standard.set(Array(submittedDailyKeys), forKey: Self.submittedDailyKeysKey)
         return true
     }
 
@@ -148,12 +160,42 @@ final class GameCenterManager: @unchecked Sendable {
                 if authenticated && !wasAuthenticated {
                     print("[GameCenter] Authenticated as \(name ?? "unknown") — draining \(self.pendingSubmissions.count) queued submissions")
                     await self.drainPendingSubmissions()
+                    #if DEBUG
+                    await self.runVisibilityProbe()
+                    #endif
                 } else if !authenticated {
                     print("[GameCenter] Not authenticated yet (viewController pending: \(viewController != nil))")
                 }
             }
         }
     }
+
+    #if DEBUG
+    /// One-shot diagnostic that prints which leaderboards and achievements
+    /// GameKit can actually see for the running app. Run once after auth.
+    ///
+    /// Apple's `loadLeaderboards()` (no IDs) returns *every* leaderboard
+    /// currently visible to the local player for this app. If it returns 0,
+    /// the leaderboards configured in ASC are not yet "live" for this app
+    /// version — typically because the app version hasn't been approved by
+    /// App Store / Beta App Review yet, or sandbox state is stale.
+    private func runVisibilityProbe() async {
+        do {
+            let allBoards = try await GKLeaderboard.loadLeaderboards()
+            let ids = allBoards.map { $0.baseLeaderboardID }.sorted()
+            print("[GameCenter] PROBE: \(allBoards.count) leaderboards visible to GameKit: \(ids)")
+        } catch {
+            print("[GameCenter] PROBE: loadLeaderboards() failed: \(error.localizedDescription)")
+        }
+        do {
+            let allAchievements = try await GKAchievementDescription.loadAchievementDescriptions()
+            let ids = allAchievements.map { $0.identifier }.sorted()
+            print("[GameCenter] PROBE: \(allAchievements.count) achievements visible to GameKit: \(ids)")
+        } catch {
+            print("[GameCenter] PROBE: loadAchievementDescriptions() failed: \(error.localizedDescription)")
+        }
+    }
+    #endif
 
     // MARK: - Score Submission
 

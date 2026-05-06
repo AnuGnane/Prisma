@@ -28,6 +28,10 @@ struct LeaderboardContent: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var localPlayerRank: Int?
+    /// Local player's own entry, queried explicitly so it's available even
+    /// when `.friendsOnly` scope returns nothing (a known GC quirk on some
+    /// accounts where teamPlayerID/gamePlayerID don't match across queries).
+    @State private var localPlayerScore: Int?
 
     private let gc = GameCenterManager.shared
 
@@ -72,6 +76,18 @@ struct LeaderboardContent: View {
                 Spacer()
             }
             .padding(.horizontal, 20)
+            .padding(.bottom, 2)
+
+            // Metric clarification — tells the user what the score means.
+            HStack {
+                Image(systemName: metricIcon(for: selectedGame))
+                    .font(.caption2.weight(.semibold))
+                Text(metricSubtitle(for: selectedGame))
+                    .font(.caption.weight(.medium))
+                Spacer()
+            }
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 20)
             .padding(.bottom, 12)
 
             if isLoading {
@@ -94,12 +110,18 @@ struct LeaderboardContent: View {
                 )
             } else {
                 List {
-                    if let rank = localPlayerRank {
+                    // "Your rank" section uses the explicit local-player query
+                    // (localPlayerScore / localPlayerRank). Falls through if
+                    // the local player has no score today — rank 0 / score 0
+                    // is GC's "not played" sentinel and shouldn't be shown.
+                    if let rank = localPlayerRank, rank > 0,
+                       let score = localPlayerScore, score > 0 {
                         Section("Your rank") {
                             RankRow(
                                 rank: rank,
                                 name: gc.playerName ?? "You",
-                                score: entries.first(where: { $0.isLocalPlayer })?.score ?? 0,
+                                score: score,
+                                game: selectedGame,
                                 isHighlighted: true
                             )
                         }
@@ -111,6 +133,7 @@ struct LeaderboardContent: View {
                                 rank: entry.rank,
                                 name: entry.playerName,
                                 score: entry.score,
+                                game: selectedGame,
                                 isHighlighted: entry.isLocalPlayer
                             )
                         }
@@ -149,22 +172,49 @@ struct LeaderboardContent: View {
             let leaderboardID = leaderboardID(for: selectedGame)
             let leaderboards = try await GKLeaderboard.loadLeaderboards(IDs: [leaderboardID])
             guard let board = leaderboards.first else {
+                #if DEBUG
+                print("[LeaderboardContent] No board returned for \(selectedGame.rawValue) (ID: \(leaderboardID))")
+                #endif
                 entries = []
+                localPlayerRank = nil
+                localPlayerScore = nil
                 isLoading = false
                 return
             }
 
-            // Hardcoded scope: today's puzzle, friends only.
-            // Phase 3 locked decision — see header comment.
-            let (localEntry, entries: topEntries, _) = try await board.loadEntries(
+            // Run two queries in parallel:
+            //  - .friendsOnly scope (friend ranks, includes local player on
+            //    well-behaved GC accounts but is known-flaky on some)
+            //  - explicit query for the local player so their entry is
+            //    guaranteed regardless of scope quirks
+            async let friendsResult = board.loadEntries(
                 for: .friendsOnly,
                 timeScope: .today,
                 range: NSRange(1...20)
             )
+            async let localResult = board.loadEntries(
+                for: [GKLocalPlayer.local],
+                timeScope: .today
+            )
 
-            entries = topEntries.map { LeaderboardEntry(entry: $0) }
-            localPlayerRank = localEntry.map { Int($0.rank) }
+            let (friendsLocalEntry, friendsTopEntries, _) = try await friendsResult
+            let (_, localPlayerEntries) = try await localResult
+
+            // Prefer the explicit local-player entry; fall back to the
+            // friendsOnly localEntry if the explicit query returned nothing.
+            let resolvedLocalEntry = localPlayerEntries.first ?? friendsLocalEntry
+
+            entries = friendsTopEntries.map { LeaderboardEntry(entry: $0) }
+            localPlayerRank = resolvedLocalEntry.map { Int($0.rank) }
+            localPlayerScore = resolvedLocalEntry.map { $0.score }
+
+            #if DEBUG
+            print("[LeaderboardContent] \(selectedGame.rawValue): friendsOnly=\(friendsTopEntries.count) local=\(localPlayerEntries.count) rank=\(localPlayerRank ?? -1) score=\(localPlayerScore ?? -1)")
+            #endif
         } catch {
+            #if DEBUG
+            print("[LeaderboardContent] loadEntries failed: \(error.localizedDescription)")
+            #endif
             errorMessage = "Check your connection and try again."
         }
 
@@ -181,6 +231,22 @@ struct LeaderboardContent: View {
         case .cargo:   return GameCenterManager.Leaderboard.cargoDailyBest
         case .shift:   return GameCenterManager.Leaderboard.shiftDailyBest
         case .circuit: return GameCenterManager.Leaderboard.circuitDailyBest
+        }
+    }
+
+    /// Human-readable subtitle explaining what the score means for each game.
+    private func metricSubtitle(for game: GameType) -> String {
+        switch game {
+        case .signals, .archive: return "Fewest guesses wins"
+        case .shift, .cargo, .circuit: return "Fastest time wins"
+        }
+    }
+
+    /// Small icon for the metric subtitle.
+    private func metricIcon(for game: GameType) -> String {
+        switch game {
+        case .signals, .archive: return "number.circle"
+        case .shift, .cargo, .circuit: return "clock"
         }
     }
 }
@@ -240,6 +306,7 @@ struct RankRow: View {
     let rank: Int
     let name: String
     let score: Int
+    let game: GameType
     let isHighlighted: Bool
 
     var body: some View {
@@ -260,11 +327,22 @@ struct RankRow: View {
 
             Spacer()
 
-            Text(score.formatted())
+            Text(formattedScore)
                 .font(.callout.weight(.bold).monospaced())
                 .foregroundStyle(isHighlighted ? .primary : .secondary)
         }
         .listRowBackground(isHighlighted ? Color.accentColor.opacity(0.08) : Color.clear)
+    }
+
+    /// Formats the raw GC score with appropriate units.
+    /// Guess-based games show "3 guesses", time-based games show "1:23" or "42s".
+    private var formattedScore: String {
+        switch game {
+        case .signals, .archive:
+            return "\(score) \(score == 1 ? "guess" : "guesses")"
+        case .shift, .cargo, .circuit:
+            return GameResult.formatElapsedSeconds(score)
+        }
     }
 
     private var rankColor: Color {

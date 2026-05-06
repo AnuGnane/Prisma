@@ -67,8 +67,8 @@ final class BadgeManager {
             }
         }
         
-        // Streak badges
-        let streakGames = ["signals", "archive", "cargo", "shift"]
+        // Streak badges — max streak across all five games
+        let streakGames = ["signals", "archive", "cargo", "shift", "circuit"]
         let maxStreak = streakGames.map { StreakManager.currentStreak(for: $0) }.max() ?? 0
         
         for (badge, threshold) in [(Badge.streak3, 3), (.streak7, 7), (.streak30, 30)] {
@@ -104,11 +104,19 @@ final class BadgeManager {
             }
         }
         
-        // Per-game mastery (all 100 local levels won)
-        for (badge, game) in [(Badge.signalsMaster, GameType.signals), (.archiveMaster, .archive), (.cargoMaster, .cargo), (.shiftMaster, .shift)] {
+        // Per-game mastery — all local levels won. Threshold reads from
+        // `GameType.localLevelCount` so a future bump (150 → 200) updates
+        // here automatically. Includes Circuit (added 2026-05-06).
+        for (badge, game) in [
+            (Badge.signalsMaster, GameType.signals),
+            (.archiveMaster,     .archive),
+            (.cargoMaster,       .cargo),
+            (.shiftMaster,       .shift),
+            (.circuitMaster,     .circuit),
+        ] {
             if !isUnlocked(badge) {
                 let gameWins = allProgress.filter { $0.gameTypeRaw == game.rawValue && $0.won }.count
-                if gameWins >= 100 {
+                if gameWins >= game.localLevelCount {
                     unlock(badge)
                     newlyUnlocked.append(badge)
                 }

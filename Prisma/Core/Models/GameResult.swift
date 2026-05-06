@@ -57,4 +57,32 @@ final class GameResult {
     var gameType: GameType {
         GameType(rawValue: gameTypeRaw) ?? .signals
     }
+
+    // MARK: - Display helpers
+
+    /// Formats raw elapsed seconds into "42s" or "1:45".
+    static func formatElapsedSeconds(_ seconds: Int) -> String {
+        if seconds >= 60 {
+            let m = seconds / 60
+            let s = seconds % 60
+            return "\(m):\(s.formatted(.number.precision(.integerLength(2))))"
+        } else {
+            return "\(seconds)s"
+        }
+    }
+
+    /// Human-readable metric for this result:
+    ///  - Signals / Archive → "X guess(es)"
+    ///  - Shift             → "X move(s)"
+    ///  - Cargo / Circuit   → elapsed time ("42s" / "1:45")
+    var formattedMetric: String {
+        switch gameType {
+        case .signals, .archive:
+            return "\(guessCount) \(guessCount == 1 ? "guess" : "guesses")"
+        case .shift:
+            return "\(guessCount) \(guessCount == 1 ? "move" : "moves")"
+        case .cargo, .circuit:
+            return GameResult.formatElapsedSeconds(Int(durationSeconds))
+        }
+    }
 }

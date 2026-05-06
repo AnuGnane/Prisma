@@ -49,6 +49,13 @@ final class FriendsService {
     private var summaryCachedAt: Date?
     private let summaryCacheTTL: TimeInterval = 30  // seconds — lower for more responsive friend updates
 
+    /// Invalidates the summary cache so the next `loadTodaySummaries()` call
+    /// fetches fresh data from Game Center. Call this after submitting a new
+    /// score so the local player's own game icons update promptly.
+    func invalidateCache() {
+        summaryCachedAt = nil
+    }
+
     // MARK: - Computed
 
     /// Friends sorted per spec: active-today first (gamesSolvedToday desc),
@@ -83,7 +90,9 @@ final class FriendsService {
             authState = mapAuthStatus(status)
         } catch {
             authState = .unknown
+            #if DEBUG
             print("[FriendsService] loadFriendsAuthorizationStatus error: \(error)")
+            #endif
         }
     }
 
@@ -113,11 +122,15 @@ final class FriendsService {
             await loadTodaySummaries(force: true)
         } catch let gcError as GKError where gcError.code == .notAuthorized {
             authState = .denied
+            #if DEBUG
             print("[FriendsService] Friends access denied")
+            #endif
         } catch {
             authState = .unknown
             friendsError = "Couldn't load friends. Check your connection."
+            #if DEBUG
             print("[FriendsService] loadFriends error: \(error)")
+            #endif
         }
     }
 
@@ -128,75 +141,134 @@ final class FriendsService {
     func loadTodaySummaries(force: Bool = false) async {
         guard !friends.isEmpty else { return }
 
-        // Cache check
+        // Cache check — also invalidate if the cached data is from a previous
+        // calendar day, since `.today` scope entries would be stale.
         if !force, let cachedAt = summaryCachedAt,
-           Date().timeIntervalSince(cachedAt) < summaryCacheTTL {
+           Date().timeIntervalSince(cachedAt) < summaryCacheTTL,
+           Calendar.current.isDate(cachedAt, inSameDayAs: Date()) {
             return
         }
 
         isLoadingSummaries = true
         defer { isLoadingSummaries = false }
 
+        struct LeaderboardResult: @unchecked Sendable {
+            let game: GameType
+            /// Entries keyed by friend `displayName` — the only identifier
+            /// that's guaranteed consistent between `loadFriends()` and
+            /// leaderboard entry players across all GC account contexts.
+            let entries: [(displayName: String, score: Int, rank: Int)]
+        }
+
+        var results: [LeaderboardResult] = []
+
+        // Step 1: BATCH-load all 5 leaderboards in a single call.
+        //
+        // Critical: do NOT split this into per-game `loadLeaderboards(IDs:)`
+        // calls inside the TaskGroup below. A previous attempt did exactly
+        // that and Game Center returned empty arrays for every game (logged
+        // as "No board found …"), almost certainly due to GameKit's internal
+        // rate-limiting on concurrent loadLeaderboards calls. Batched, this
+        // is one network round trip and reliably returns all 5 boards.
         let allIDs = GameType.allCases.map { bestLeaderboardID($0) }
-
+        let allBoards: [GKLeaderboard]
         do {
-            let loadedBoards = try await GKLeaderboard.loadLeaderboards(IDs: allIDs)
-            let boardByID = Dictionary(
-                uniqueKeysWithValues: loadedBoards.map { ($0.baseLeaderboardID, $0) }
-            )
+            allBoards = try await GKLeaderboard.loadLeaderboards(IDs: allIDs)
+        } catch {
+            #if DEBUG
+            print("[FriendsService] batch loadLeaderboards failed: \(error.localizedDescription)")
+            #endif
+            summaries = [:]
+            summaryCachedAt = Date()
+            return
+        }
 
-            struct LeaderboardResult: @unchecked Sendable {
-                let game: GameType
-                let entries: [(playerID: String, score: Int, rank: Int)]
-            }
+        // Build lookup keyed by `baseLeaderboardID`. This is the recurring-
+        // leaderboard family identifier (e.g. `prisma.signals.daily.best`),
+        // matching what we passed into loadLeaderboards. The previous "batch
+        // mismatch" concern was unfounded — Apple consistently sets
+        // baseLeaderboardID to the input ID for non-recurring boards.
+        let boardByID = Dictionary(
+            uniqueKeysWithValues: allBoards.map { ($0.baseLeaderboardID, $0) }
+        )
 
-            var results: [LeaderboardResult] = []
+        #if DEBUG
+        print("[FriendsService] Loaded \(allBoards.count) of \(allIDs.count) boards. IDs: \(boardByID.keys.sorted())")
+        #endif
 
-            await withTaskGroup(of: LeaderboardResult?.self) { group in
-                for game in GameType.allCases {
-                    guard let board = boardByID[bestLeaderboardID(game)] else { continue }
-                    group.addTask { [board] in
-                        guard let (_, entries, _) = try? await board.loadEntries(
-                            for: .friendsOnly,
-                            timeScope: .today,
-                            range: NSRange(location: 1, length: 100)
-                        ) else { return nil }
+        // Step 2: Use player-specific queries (loadEntries(for: [GKPlayer]))
+        // instead of .friendsOnly scope. The .friendsOnly scope returns player
+        // objects whose gamePlayerID/teamPlayerID don't match the IDs from
+        // loadFriends() — causing silent 0/5 on some accounts. Passing the
+        // actual GKPlayer objects from loadFriends() avoids that.
+        let friendsCopy = friends  // capture for Sendable closure
+        await withTaskGroup(of: LeaderboardResult?.self) { group in
+            for game in GameType.allCases {
+                let leaderboardID = bestLeaderboardID(game)
+                guard let board = boardByID[leaderboardID] else {
+                    #if DEBUG
+                    print("[FriendsService] Board missing from batch result for \(game.rawValue) (ID: \(leaderboardID))")
+                    #endif
+                    continue
+                }
+                group.addTask { [friendsCopy, board] in
+                    do {
+                        let (_, entries) = try await board.loadEntries(
+                            for: friendsCopy,
+                            timeScope: .today
+                        )
+
+                        #if DEBUG
+                        print("[FriendsService] \(game.rawValue): \(entries.count) friend entries today")
+                        #endif
                         return LeaderboardResult(
                             game: game,
-                            entries: entries.map { ($0.player.gamePlayerID, $0.score, Int($0.rank)) }
+                            entries: entries.map {
+                                ($0.player.displayName, $0.score, Int($0.rank))
+                            }
                         )
+                    } catch {
+                        #if DEBUG
+                        print("[FriendsService] \(game.rawValue) loadEntries failed: \(error.localizedDescription)")
+                        #endif
+                        return nil
                     }
                 }
-                for await r in group {
-                    if let r { results.append(r) }
-                }
             }
-
-            // Parse results into lookup dict
-            var todayBest: [GameType: [String: (score: Int, rank: Int)]] = [:]
-            for r in results {
-                todayBest[r.game] = Dictionary(
-                    uniqueKeysWithValues: r.entries.map { ($0.playerID, ($0.score, $0.rank)) }
-                )
+            for await r in group {
+                if let r { results.append(r) }
             }
-
-            // Build per-friend summaries
-            var newSummaries: [String: FriendTodaySummary] = [:]
-            for friend in friends {
-                let pid = friend.gamePlayerID
-                var perGame: [GameType: FriendTodayEntry] = [:]
-                for game in GameType.allCases {
-                    let entry = todayBest[game]?[pid]
-                    perGame[game] = FriendTodayEntry(score: entry?.score, rank: entry?.rank)
-                }
-                newSummaries[pid] = FriendTodaySummary(player: friend, perGame: perGame)
-            }
-
-            summaries = newSummaries
-            summaryCachedAt = Date()
-        } catch {
-            print("[FriendsService] loadTodaySummaries error: \(error)")
         }
+
+        // Parse results into lookup dict keyed by displayName
+        var todayBest: [GameType: [String: (score: Int, rank: Int)]] = [:]
+        for r in results {
+            todayBest[r.game] = Dictionary(
+                uniqueKeysWithValues: r.entries.map { ($0.displayName, ($0.score, $0.rank)) }
+            )
+        }
+
+        // Build per-friend summaries — match by displayName
+        var newSummaries: [String: FriendTodaySummary] = [:]
+        for friend in friends {
+            let name = friend.displayName
+            var perGame: [GameType: FriendTodayEntry] = [:]
+            for game in GameType.allCases {
+                let entry = todayBest[game]?[name]
+                perGame[game] = FriendTodayEntry(score: entry?.score, rank: entry?.rank)
+            }
+            let summary = FriendTodaySummary(player: friend, perGame: perGame)
+            // Key by gamePlayerID for internal lookups (FriendRow etc.)
+            newSummaries[friend.gamePlayerID] = summary
+        }
+
+        #if DEBUG
+        let totalScores = newSummaries.values.reduce(0) { $0 + $1.gamesSolvedToday }
+        print("[FriendsService] Summaries built for \(newSummaries.count) friends, \(totalScores) total scores found")
+        #endif
+
+        summaries = newSummaries
+        summaryCachedAt = Date()
     }
 
     // MARK: - Friend Profile (all-time stats)
@@ -204,10 +276,6 @@ final class FriendsService {
     /// Loads full all-time stats for a specific friend across all 5 games.
     /// Used by FriendProfileView — one call when the profile sheet opens.
     func loadFriendProfile(for friend: GKPlayer) async throws -> [GameType: FriendGameStats] {
-        let allIDs = GameType.allCases.map { bestLeaderboardID($0) }
-        let boards = try await GKLeaderboard.loadLeaderboards(IDs: allIDs)
-        let boardByID = Dictionary(uniqueKeysWithValues: boards.map { ($0.baseLeaderboardID, $0) })
-
         struct RawEntry: @unchecked Sendable {
             let game: GameType
             let score: Int?
@@ -216,13 +284,49 @@ final class FriendsService {
 
         var rawEntries: [RawEntry] = []
 
+        // BATCH-load all 5 leaderboards in one call (see loadTodaySummaries
+        // for the rationale — concurrent per-id calls trigger GameKit
+        // rate-limiting and return empty arrays).
+        let allIDs = GameType.allCases.map { bestLeaderboardID($0) }
+        let allBoards: [GKLeaderboard]
+        do {
+            allBoards = try await GKLeaderboard.loadLeaderboards(IDs: allIDs)
+        } catch {
+            #if DEBUG
+            print("[FriendsService] loadFriendProfile batch loadLeaderboards failed: \(error.localizedDescription)")
+            #endif
+            // Return empty stats for all games rather than throwing — caller
+            // renders the "no games yet" placeholder per game.
+            return Dictionary(uniqueKeysWithValues: GameType.allCases.map {
+                ($0, FriendGameStats(game: $0, bestAllTimeScore: nil, bestAllTimeRank: nil))
+            })
+        }
+        let boardByID = Dictionary(
+            uniqueKeysWithValues: allBoards.map { ($0.baseLeaderboardID, $0) }
+        )
+
+        // Now query each board's entries for the friend in parallel — these
+        // are independent calls per loaded board, which GameKit handles fine.
         await withTaskGroup(of: RawEntry?.self) { group in
             for game in GameType.allCases {
-                guard let board = boardByID[bestLeaderboardID(game)] else { continue }
+                let leaderboardID = bestLeaderboardID(game)
+                guard let board = boardByID[leaderboardID] else {
+                    #if DEBUG
+                    print("[FriendsService] loadFriendProfile: board missing for \(game.rawValue) (ID: \(leaderboardID))")
+                    #endif
+                    continue
+                }
                 group.addTask { [board] in
-                    // loadEntries(for:[GKPlayer],timeScope:) → (GKLeaderboard.Entry?, [GKLeaderboard.Entry])
-                    let result = try? await board.loadEntries(for: [friend], timeScope: .allTime)
-                    let e = result?.1.first  // .1 = entries array for the passed players
+                    let e: GKLeaderboard.Entry?
+                    do {
+                        let result = try await board.loadEntries(for: [friend], timeScope: .allTime)
+                        e = result.1.first  // .1 = entries array for the passed players
+                    } catch {
+                        #if DEBUG
+                        print("[FriendsService] loadFriendProfile loadEntries(\(leaderboardID)) failed: \(error.localizedDescription)")
+                        #endif
+                        e = nil
+                    }
                     return RawEntry(
                         game: game,
                         score: e.map { $0.score },

@@ -33,9 +33,9 @@ struct SoundManager {
         AudioServicesPlaySystemSound(1105)
     }
 
-    /// Play an error/invalid sound.
+    /// Play a soft error/invalid sound (subtle low tick, not a sharp alert).
     static func playError() {
         guard shouldPlay else { return }
-        AudioServicesPlaySystemSound(1073)
+        AudioServicesPlaySystemSound(1103)
     }
 }

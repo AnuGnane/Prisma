@@ -40,7 +40,7 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         let start = Date()
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(for: .nanoseconds(250_000_000))
+                try? await Task.sleep(for: .milliseconds(250))
                 guard let self = self else { break }
                 await MainActor.run { self.elapsedSeconds = Date().timeIntervalSince(start) }
             }
@@ -60,6 +60,9 @@ final class ArchiveGameViewModel: ShareStringGenerator {
 
     /// True when the last submission was an invalid date — drives a shake animation.
     var showInvalidShake = false
+
+    /// Brief message shown when the user enters an invalid date.
+    var invalidDateMessage: String? = nil
 
     var remainingGuesses: Int { maxGuesses - guessHistory.count }
     var guessCount: Int { guessHistory.count }
@@ -163,7 +166,6 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         guard !gameState.isOver else { return }
         guard let slot = currentInput.firstIndex(of: nil) else {
             Haptics.playError()
-            SoundManager.playError()
             return
         }
         currentInput[slot] = digit
@@ -210,7 +212,6 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         guard !gameState.isOver else { return }
         guard isInputComplete else {
             Haptics.playError()
-            SoundManager.playError()
             return 
         }
         let digits = currentInput.compactMap { $0 }
@@ -221,11 +222,13 @@ final class ArchiveGameViewModel: ShareStringGenerator {
         // Validate date
         guard guess.isValidDate else {
             showInvalidShake = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
-                self?.showInvalidShake = false
+            invalidDateMessage = "Invalid date"
+            Task {
+                try? await Task.sleep(for: .seconds(2))
+                showInvalidShake = false
+                invalidDateMessage = nil
             }
             Haptics.playError()
-            SoundManager.playError()
             return
         }
 
@@ -245,7 +248,6 @@ final class ArchiveGameViewModel: ShareStringGenerator {
             gameState = .failed
             stopTimer()
             Haptics.playError()
-            SoundManager.playError()
         } else {
             Haptics.playMediumImpact()
             SoundManager.playClick()

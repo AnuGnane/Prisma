@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "5F9AB2CE-8A3D-4245-8270-BEEA2005225C",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Prisma.xcodeproj",
+      "identifier" : "6195A4732F51173F003F7D66",
+      "name" : "Prisma"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Prisma.xcodeproj",
+        "identifier" : "6195A4802F511741003F7D66",
+        "name" : "PrismaTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Prisma.xcodeproj",
+        "identifier" : "6195A48A2F511741003F7D66",
+        "name" : "PrismaUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
